@@ -10,8 +10,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-var mergeInto string
-
 func init() {
 	rootCmd.AddCommand(featureCmd)
 }
