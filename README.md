@@ -1,4 +1,6 @@
-# Glow - Git-Flow for Gitlab
+# Glow - Git-Flow (for Gitlab)
+
+You can use this tool in any git project of course. But there are some commands which are bound to the gitlab api. So therefore i promote this as a tool tailored for gitlab.
 
 ## Commands
 
