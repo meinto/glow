@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/meinto/glow/cmd/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,13 +38,13 @@ var mergeRequestCmd = &cobra.Command{
 		source := args[0]
 		target := args[1]
 
-		CheckRequiredStringField(source, "source branch")
-		CheckRequiredStringField(target, "target branch")
-		CheckRequiredStringField(mergeRequestCmdOptions.GitlabEndpoint, "gitlab endpoint")
-		CheckRequiredStringField(mergeRequestCmdOptions.ProjectNamespace, "project namespace")
-		CheckRequiredStringField(mergeRequestCmdOptions.ProjectName, "project name")
-		CheckRequiredStringField(mergeRequestCmdOptions.GitlabCIToken, "gitlab ci token")
+		utils.CheckRequiredStringField(source, "source branch")
+		utils.CheckRequiredStringField(target, "target branch")
+		utils.CheckRequiredStringField(mergeRequestCmdOptions.GitlabEndpoint, "gitlab endpoint")
+		utils.CheckRequiredStringField(mergeRequestCmdOptions.ProjectNamespace, "project namespace")
+		utils.CheckRequiredStringField(mergeRequestCmdOptions.ProjectName, "project name")
+		utils.CheckRequiredStringField(mergeRequestCmdOptions.GitlabCIToken, "gitlab ci token")
 
-		CreateMergeRequest(source, target)
+		utils.CreateMergeRequest(source, target)
 	},
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/meinto/glow/cmd/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -21,23 +22,23 @@ var featureCmd = &cobra.Command{
 		feature := args[0]
 
 		r, err := git.PlainOpen(".")
-		CheckForError(err, "PlainOpen")
+		utils.CheckForError(err, "PlainOpen")
 
 		headRef, err := r.Head()
-		CheckForError(err, "Head")
+		utils.CheckForError(err, "Head")
 
 		branchName := fmt.Sprintf("refs/heads/features/%s/%s", viper.GetString("author"), feature)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)
-		CheckForError(err, "SetReference")
+		utils.CheckForError(err, "SetReference")
 
 		w, err := r.Worktree()
-		CheckForError(err, "Worktree")
+		utils.CheckForError(err, "Worktree")
 
 		err = w.Checkout(&git.CheckoutOptions{
 			Branch: plumbing.ReferenceName(branchName),
 		})
-		CheckForError(err, "Checkout")
+		utils.CheckForError(err, "Checkout")
 	},
 }

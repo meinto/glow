@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/meinto/glow/cmd/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -34,6 +35,6 @@ var publishCmd = &cobra.Command{
 
 		source := fmt.Sprintf("release/v%s", version)
 		target := "master"
-		CreateMergeRequest(source, target)
+		utils.CreateMergeRequest(source, target)
 	},
 }
