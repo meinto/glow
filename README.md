@@ -45,6 +45,25 @@ glow mergeRequest source/branch target/branch \
   -t abc                  # gitlabCIToken
 ```
 
+### Publish a release
+
+```bash
+# I recommend to provide the properties
+# - gitlabEndpoint
+# - projectNamespace
+# - projectName
+# - gitlabCIToken
+# in the glow.json.
+glow publish 1.2.3
+
+# If you don't want to use the config file you can do ist all on the command line:
+glow mergeRequest 1.2.3 \
+  -e https://gitlab.com \ # gitlabEndpoint
+  -n my-namespace \       # projectNamespace
+  -p my-project \         # projectName
+  -t abc                  # gitlabCIToken
+```
+
 ## Config
 
 For some commands you must provide information like the url of your gitlab instance or your gitlab ci token. These informations can be put in a `glow.json` file. Glow will lookup this json in the directory where its executed.
