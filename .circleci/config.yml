@@ -8,6 +8,7 @@ jobs:
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
+      - run: go get -u github.com/tcnksm/ghr
       - run: go get ./...
-      - run: GOOS=darwin go build .
+      - run: ./.circleci/build.sh
       - run: ls -la
