@@ -10,4 +10,4 @@ jobs:
       - checkout
       - run: go get ./...
       - run: ./.circleci/build.sh
-      - run: ghr %(cat cmd/version.go | grep -o '"[0-9.]*"' | rev | cut -c2- | rev | cut -c2-) build
+      - run: ghr $(cat cmd/version.go | grep -o '"[0-9.]*"' | rev | cut -c2- | rev | cut -c2-) build
