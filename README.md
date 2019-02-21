@@ -6,85 +6,84 @@ You can use this tool in any git project of course. But there are some commands 
 
 Here you can find all [available Binaries](https://github.com/meinto/glow/releases).
 
-## Commands
+## Workflow
 
-### Create a feature branch
+> Important!  
+> Some commands need additional information like git author or gitlab namespace and project name.  
+> These Informations can be stored in a config file or can be passed through flags.
+
+### Feature Development
+
+The following command will create a new feature branch in the following form: `features/dvader/death-star`. The name of the author (`dvader`) is grabbed from the config file.
 
 ```bash
-# this will create a feature branch like:
-# features/dvader/death-star
-glow feature death-star --author dvader
-
-# shorter when you provide your author name in the glow.json file
+# author grabbed from config
 glow feature death-star
 ```
 
-### Create a release branch
+After you created the feature branch it is automatically checked out.  
+When you finish your feature you can create a merge request in gitlab:
 
 ```bash
-# this will create a release branch like:
-# release/v1.2.3
-glow release 1.2.3
-
-# When you want to do some actions after createing the release branch, for example to increase the version of your product, you can provide a post release script
-glow release 1.2.3 --postRelease increaseVersion.sh
+# gitlab information grabbed from config
+glow mergeRequest features/dvader/death-star develop
 ```
 
-### Create a merge request
+### Create a release
+
+I recommend to use [Semver](https://semver.org/) for versioning. The following command will create a release branch with the following format: `release/v1.2.3`.
 
 ```bash
-# I recommend to provide the properties
-# - gitlabEndpoint
-# - projectNamespace
-# - projectName
-# - gitlabCIToken
-# in the glow.json.
-glow mergeRequest source/branch target/branch
-
-# If you don't want to use the config file you can do ist all on the command line:
-glow mergeRequest source/branch target/branch \
-  -e https://gitlab.com \ # gitlabEndpoint
-  -n my-namespace \       # projectNamespace
-  -p my-project \         # projectName
-  -t abc                  # gitlabCIToken
+glow release 1.2.3
 ```
 
 ### Publish a release
 
-```bash
-# I recommend to provide the properties
-# - gitlabEndpoint
-# - projectNamespace
-# - projectName
-# - gitlabCIToken
-# in the glow.json.
-glow publish 1.2.3
+When you decide that the release is stable and you want to publish it, the following command will create a merge request in gitlab on the `master` branch.
 
-# If you don't want to use the config file you can do ist all on the command line:
-glow publish 1.2.3 \
-  -e https://gitlab.com \ # gitlabEndpoint
-  -n my-namespace \       # projectNamespace
-  -p my-project \         # projectName
-  -t abc                  # gitlabCIToken
+```bash
+glow publish 1.2.3
 ```
 
 ### Finish a release
 
-```bash
-# I recommend to provide the properties
-# - gitlabEndpoint
-# - projectNamespace
-# - projectName
-# - gitlabCIToken
-# in the glow.json.
-glow finish 1.2.3
+After publishing the release, you have to merge all changes made on the release branch back into `develop`. The following command creates a merge request of the release branch into `develop`.
 
-# If you don't want to use the config file you can do ist all on the command line:
+```bash
+glow finish 1.2.3
+```
+
+## Commands
+
+```bash
+# feature
+glow feature <name-of-the-feature> \ 
+  --author <name-of-the-author> # optional when using config file
+
+# release
+glow release <version> \ 
+  --postRelease <name-of-script> # optional
+
+# merge request
+glow mergeRequest <source-branch> <target-branch> \
+  -e <gitlabEndpoint> \     # optional when using config file
+  -n <projectNamespace> \   # optional when using config file
+  -p <projectName> \        # optional when using config file
+  -t <gitlabCIToken>        # optional when using config file
+
+# publish
+glow publish <version> \
+  -e <gitlabEndpoint> \     # optional when using config file
+  -n <projectNamespace> \   # optional when using config file
+  -p <projectName> \        # optional when using config file
+  -t <gitlabCIToken>        # optional when using config file
+
+# finish release
 glow finish 1.2.3 \
-  -e https://gitlab.com \ # gitlabEndpoint
-  -n my-namespace \       # projectNamespace
-  -p my-project \         # projectName
-  -t abc                  # gitlabCIToken
+  -e <gitlabEndpoint> \     # optional when using config file
+  -n <projectNamespace> \   # optional when using config file
+  -p <projectName> \        # optional when using config file
+  -t <gitlabCIToken>        # optional when using config file
 ```
 
 ## Config
