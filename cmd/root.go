@@ -8,7 +8,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var author string
+var rootCmdOptions struct {
+	Author string
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "glow",
@@ -17,7 +19,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&author, "author", "a", "test", "name of the author")
+	rootCmd.PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "test", "name of the author")
 	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
 }
 

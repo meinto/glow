@@ -11,14 +11,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-var gitlabEndpoint, projectNamespace, projectName, gitlabCIToken string
+var mergeRequestCmdOptions struct {
+	GitlabEndpoint   string
+	ProjectNamespace string
+	ProjectName      string
+	GitlabCIToken    string
+}
 
 func init() {
 	rootCmd.AddCommand(mergeRequestCmd)
-	mergeRequestCmd.Flags().StringVarP(&gitlabEndpoint, "endpoint", "e", "", "gitlab endpoint")
-	mergeRequestCmd.Flags().StringVarP(&projectNamespace, "namespace", "n", "", "project namespace")
-	mergeRequestCmd.Flags().StringVarP(&projectName, "project", "p", "", "project name")
-	mergeRequestCmd.Flags().StringVarP(&gitlabCIToken, "token", "t", "", "gitlab ci token")
+	mergeRequestCmd.Flags().StringVarP(&mergeRequestCmdOptions.GitlabEndpoint, "endpoint", "e", "", "gitlab endpoint")
+	mergeRequestCmd.Flags().StringVarP(&mergeRequestCmdOptions.ProjectNamespace, "namespace", "n", "", "project namespace")
+	mergeRequestCmd.Flags().StringVarP(&mergeRequestCmdOptions.ProjectName, "project", "p", "", "project name")
+	mergeRequestCmd.Flags().StringVarP(&mergeRequestCmdOptions.GitlabCIToken, "token", "t", "", "gitlab ci token")
 	viper.BindPFlag("gitlabEndpoint", mergeRequestCmd.Flags().Lookup("endpoint"))
 	viper.BindPFlag("projectNamespace", mergeRequestCmd.Flags().Lookup("namespace"))
 	viper.BindPFlag("projectName", mergeRequestCmd.Flags().Lookup("project"))
@@ -38,10 +43,10 @@ var mergeRequestCmd = &cobra.Command{
 
 		CheckRequiredStringField(source, "source branch")
 		CheckRequiredStringField(target, "target branch")
-		CheckRequiredStringField(gitlabEndpoint, "gitlab endpoint")
-		CheckRequiredStringField(projectNamespace, "project namespace")
-		CheckRequiredStringField(projectName, "project name")
-		CheckRequiredStringField(gitlabCIToken, "gitlab ci token")
+		CheckRequiredStringField(mergeRequestCmdOptions.GitlabEndpoint, "gitlab endpoint")
+		CheckRequiredStringField(mergeRequestCmdOptions.ProjectNamespace, "project namespace")
+		CheckRequiredStringField(mergeRequestCmdOptions.ProjectName, "project name")
+		CheckRequiredStringField(mergeRequestCmdOptions.GitlabCIToken, "gitlab ci token")
 
 		type Payload struct {
 			SourceBranch       string `json:"source_branch"`

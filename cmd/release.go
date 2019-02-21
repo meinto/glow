@@ -13,11 +13,13 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-var postReleaseScript string
+var releaseCmdOptions struct {
+	PostReleaseScript string
+}
 
 func init() {
 	rootCmd.AddCommand(releaseCmd)
-	releaseCmd.Flags().StringVar(&postReleaseScript, "postRelease", "", "script that executes after switching to release branch")
+	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
 }
 
 var releaseCmd = &cobra.Command{
@@ -46,14 +48,14 @@ var releaseCmd = &cobra.Command{
 		})
 		CheckForError(err, "Checkout")
 
-		if postReleaseScript != "" {
+		if releaseCmdOptions.PostReleaseScript != "" {
 			postRelease(version)
 		}
 	},
 }
 
 func postRelease(version string) {
-	pathToFile, err := filepath.Abs(postReleaseScript)
+	pathToFile, err := filepath.Abs(releaseCmdOptions.PostReleaseScript)
 	if err != nil {
 		log.Println("cannot find post-release script", err)
 	}
