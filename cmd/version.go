@@ -14,6 +14,6 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "version of glow",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("version: 0.7.0")
+		fmt.Println("version: 0.8.0")
 	},
 }

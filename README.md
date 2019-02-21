@@ -57,7 +57,26 @@ glow mergeRequest source/branch target/branch \
 glow publish 1.2.3
 
 # If you don't want to use the config file you can do ist all on the command line:
-glow mergeRequest 1.2.3 \
+glow publish 1.2.3 \
+  -e https://gitlab.com \ # gitlabEndpoint
+  -n my-namespace \       # projectNamespace
+  -p my-project \         # projectName
+  -t abc                  # gitlabCIToken
+```
+
+### Finish a release
+
+```bash
+# I recommend to provide the properties
+# - gitlabEndpoint
+# - projectNamespace
+# - projectName
+# - gitlabCIToken
+# in the glow.json.
+glow finish 1.2.3
+
+# If you don't want to use the config file you can do ist all on the command line:
+glow finish 1.2.3 \
   -e https://gitlab.com \ # gitlabEndpoint
   -n my-namespace \       # projectNamespace
   -p my-project \         # projectName
