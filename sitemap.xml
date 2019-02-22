@@ -3,17 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://meinto.github.io/categories/</loc>
+    <loc>https://meinto.github.io/glow/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://meinto.github.io/</loc>
+    <loc>https://meinto.github.io/glow/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://meinto.github.io/tags/</loc>
+    <loc>https://meinto.github.io/glow/tags/</loc>
     <priority>0</priority>
   </url>
   
