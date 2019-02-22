@@ -1,4 +1,4 @@
-baseURL = "http://example.org/"
+baseURL = "https://meinto.github.io/"
 languageCode = "en-us"
 title = "Glow"
 theme = "hermit"
