@@ -18,6 +18,7 @@ func init() {
 var featureCmd = &cobra.Command{
 	Use:   "feature",
 	Short: "create a feature branch",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		feature := args[0]
 
