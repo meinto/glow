@@ -22,7 +22,7 @@ var fixCmd = &cobra.Command{
 	Short: "create a fix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		feature := args[0]
+		fix := args[0]
 
 		r, err := git.PlainOpen(".")
 		util.CheckForError(err, "PlainOpen")
@@ -36,7 +36,7 @@ var fixCmd = &cobra.Command{
 			log.Fatalf("Please switch branch...")
 		}
 
-		branchName := fmt.Sprintf("refs/heads/fix/%s/%s", viper.GetString("author"), feature)
+		branchName := fmt.Sprintf("refs/heads/fix/%s/%s", viper.GetString("author"), fix)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)

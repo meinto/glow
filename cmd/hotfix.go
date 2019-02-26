@@ -14,15 +14,15 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(featureCmd)
+	rootCmd.AddCommand(hotfixCmd)
 }
 
-var featureCmd = &cobra.Command{
-	Use:   "feature",
-	Short: "create a feature branch",
+var hotfixCmd = &cobra.Command{
+	Use:   "hotfix",
+	Short: "create a hotfix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		feature := args[0]
+		hotix := args[0]
 
 		r, err := git.PlainOpen(".")
 		util.CheckForError(err, "PlainOpen")
@@ -31,12 +31,12 @@ var featureCmd = &cobra.Command{
 		util.CheckForError(err, "Head")
 
 		refName := string(headRef.Name())
-		if !strings.Contains(refName, "develop") {
-			log.Println("You are not on the develop branch.")
+		if !strings.Contains(refName, "master") {
+			log.Println("You are not on the master branch.")
 			log.Fatalf("Please switch branch...")
 		}
 
-		branchName := fmt.Sprintf("refs/heads/features/%s/%s", viper.GetString("author"), feature)
+		branchName := fmt.Sprintf("refs/heads/hotfix/%s/%s", viper.GetString("author"), hotix)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)
