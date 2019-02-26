@@ -12,6 +12,8 @@ Here you can find all [available Binaries](https://github.com/meinto/glow/releas
 > Some commands need additional information like git author or gitlab namespace and project name.  
 > These Informations can be stored in a config file or can be passed through flags.
 
+![glow workflow](./glow.jpg?raw=true)
+
 ### Feature Development
 
 The following command will create a new feature branch in the following form: `features/dvader/death-star`. The name of the author (`dvader`) is grabbed from the config file.
