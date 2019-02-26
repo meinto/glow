@@ -16,8 +16,8 @@ func init() {
 }
 
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "init glow",
+	Use:   "install",
+	Short: "install glow",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		filePath, err := pathToGlowFile()
