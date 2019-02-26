@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/meinto/glow/cmd/util"
 	"github.com/spf13/cobra"
@@ -27,6 +29,12 @@ var featureCmd = &cobra.Command{
 
 		headRef, err := r.Head()
 		util.CheckForError(err, "Head")
+
+		refName := string(headRef.Name())
+		if !strings.Contains(refName, "develop") {
+			log.Println("You are not in the develop branch.")
+			log.Fatalf("Please switch branch...")
+		}
 
 		branchName := fmt.Sprintf("refs/heads/features/%s/%s", viper.GetString("author"), feature)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
