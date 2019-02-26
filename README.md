@@ -26,7 +26,7 @@ When you finish your feature you can create a merge request in gitlab:
 
 ```bash
 # gitlab information grabbed from config
-glow mergeRequest features/dvader/death-star develop
+glow close
 ```
 
 ### Create a release
@@ -39,18 +39,18 @@ glow release 1.2.3
 
 ### Publish a release
 
-When you decide that the release is stable and you want to publish it, the following command will create a merge request in gitlab on the `master` branch.
+When you decide that the release is stable and you want to publish it, the following command will create a merge request on the `master` branch in gitlab.
 
 ```bash
-glow publish 1.2.3
+glow publish
 ```
 
-### Finish a release
+### Close a release
 
 After publishing the release, you have to merge all changes made on the release branch back into `develop`. The following command creates a merge request of the release branch into `develop`.
 
 ```bash
-glow finish 1.2.3
+glow close
 ```
 
 ## Commands
@@ -72,14 +72,14 @@ glow mergeRequest <source-branch> <target-branch> \
   -t <gitlabCIToken>        # optional when using config file
 
 # publish
-glow publish <version> \
+glow publish \
   -e <gitlabEndpoint> \     # optional when using config file
   -n <projectNamespace> \   # optional when using config file
   -p <projectName> \        # optional when using config file
   -t <gitlabCIToken>        # optional when using config file
 
 # finish release
-glow finish 1.2.3 \
+glow close \
   -e <gitlabEndpoint> \     # optional when using config file
   -n <projectNamespace> \   # optional when using config file
   -p <projectName> \        # optional when using config file
