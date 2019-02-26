@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/meinto/glow/cmd/utils"
+	"github.com/meinto/glow/cmd/util"
 	"github.com/spf13/cobra"
 
 	"gopkg.in/src-d/go-git.v4"
@@ -30,24 +30,24 @@ var releaseCmd = &cobra.Command{
 		version := args[0] // should be semver
 
 		r, err := git.PlainOpen(".")
-		utils.CheckForError(err, "PlainOpen")
+		util.CheckForError(err, "PlainOpen")
 
 		headRef, err := r.Head()
-		utils.CheckForError(err, "Head")
+		util.CheckForError(err, "Head")
 
 		branchName := fmt.Sprintf("refs/heads/release/v%s", version)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)
-		utils.CheckForError(err, "SetReference")
+		util.CheckForError(err, "SetReference")
 
 		w, err := r.Worktree()
-		utils.CheckForError(err, "Worktree")
+		util.CheckForError(err, "Worktree")
 
 		err = w.Checkout(&git.CheckoutOptions{
 			Branch: plumbing.ReferenceName(branchName),
 		})
-		utils.CheckForError(err, "Checkout")
+		util.CheckForError(err, "Checkout")
 
 		if releaseCmdOptions.PostReleaseScript != "" {
 			postRelease(version)

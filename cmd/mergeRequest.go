@@ -3,13 +3,13 @@ package cmd
 import (
 	"log"
 
-	"github.com/meinto/glow/cmd/utils"
+	"github.com/meinto/glow/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(mergeRequestCmd)
-	utils.AddFlagsForMergeRequests(mergeRequestCmd)
+	util.AddFlagsForMergeRequests(mergeRequestCmd)
 }
 
 var mergeRequestCmd = &cobra.Command{
@@ -23,13 +23,13 @@ var mergeRequestCmd = &cobra.Command{
 		source := args[0]
 		target := args[1]
 
-		utils.CheckRequiredStringField(source, "source branch")
-		utils.CheckRequiredStringField(target, "target branch")
-		utils.CheckRequiredStringField(utils.MergeRequestFlags.GitlabEndpoint, "gitlab endpoint")
-		utils.CheckRequiredStringField(utils.MergeRequestFlags.ProjectNamespace, "project namespace")
-		utils.CheckRequiredStringField(utils.MergeRequestFlags.ProjectName, "project name")
-		utils.CheckRequiredStringField(utils.MergeRequestFlags.GitlabCIToken, "gitlab ci token")
+		util.CheckRequiredStringField(source, "source branch")
+		util.CheckRequiredStringField(target, "target branch")
+		util.CheckRequiredStringField(util.MergeRequestFlags.GitlabEndpoint, "gitlab endpoint")
+		util.CheckRequiredStringField(util.MergeRequestFlags.ProjectNamespace, "project namespace")
+		util.CheckRequiredStringField(util.MergeRequestFlags.ProjectName, "project name")
+		util.CheckRequiredStringField(util.MergeRequestFlags.GitlabCIToken, "gitlab ci token")
 
-		utils.CreateMergeRequest(source, target)
+		util.CreateMergeRequest(source, target)
 	},
 }

@@ -3,13 +3,13 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/meinto/glow/cmd/utils"
+	"github.com/meinto/glow/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(publishCmd)
-	utils.AddFlagsForMergeRequests(publishCmd)
+	util.AddFlagsForMergeRequests(publishCmd)
 }
 
 var publishCmd = &cobra.Command{
@@ -20,6 +20,6 @@ var publishCmd = &cobra.Command{
 
 		source := fmt.Sprintf("release/v%s", version)
 		target := "master"
-		utils.CreateMergeRequest(source, target)
+		util.CreateMergeRequest(source, target)
 	},
 }
