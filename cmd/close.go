@@ -31,8 +31,9 @@ var finishCmd = &cobra.Command{
 
 		if strings.Contains(refName, "feature/") ||
 			strings.Contains(refName, "release/") ||
-			strings.Contains(refName, "hotix/") {
+			strings.Contains(refName, "hotfix/") {
 			util.CreateMergeRequest(refName, "develop")
+			return
 		}
 
 		if strings.Contains(refName, "fix/") {

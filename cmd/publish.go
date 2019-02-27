@@ -27,7 +27,7 @@ var publishCmd = &cobra.Command{
 		refName := string(headRef.Name())
 
 		if strings.Contains(refName, "release/") ||
-			strings.Contains(refName, "hotix/") {
+			strings.Contains(refName, "hotfix/") {
 			util.CreateMergeRequest(refName, "master")
 		}
 	},
