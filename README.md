@@ -4,13 +4,18 @@ You can use this tool in any git project of course. But there are some commands 
 
 ## Installation
 
-Here you can find all [available Binaries](https://github.com/meinto/glow/releases).
+Here you can find all [available Binaries](https://github.com/meinto/glow/releases). Download the binary and run the install command:
+
+```bash
+<name-of-binary> install
+```
 
 ## Workflow
 
 > Important!  
 > Some commands need additional information like git author or gitlab namespace and project name.  
 > These Informations can be stored in a config file or can be passed through flags.
+> To configure the glow.json config file run the "init" command
 
 ![glow workflow](./glow.jpg?raw=true)
 
@@ -91,6 +96,12 @@ glow close \
 ## Config
 
 For some commands you must provide information like the url of your gitlab instance or your gitlab ci token. These informations can be put in a `glow.json` file. Glow will lookup this json in the directory where its executed.
+
+You can create this json with the `init` command. The json will be automatically added to the `.gitignore`:
+
+```bash
+glow init
+```
 
 **List of all config params**
 
