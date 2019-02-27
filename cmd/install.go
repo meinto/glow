@@ -12,10 +12,10 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(installCmd)
 }
 
-var initCmd = &cobra.Command{
+var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "install glow",
 	Run: func(cmd *cobra.Command, args []string) {
