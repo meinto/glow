@@ -36,7 +36,7 @@ var featureCmd = &cobra.Command{
 			log.Fatalf("Please switch branch...")
 		}
 
-		branchName := fmt.Sprintf("refs/heads/features/%s/%s", viper.GetString("author"), feature)
+		branchName := fmt.Sprintf("refs/heads/feature/%s/%s", viper.GetString("author"), feature)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)
