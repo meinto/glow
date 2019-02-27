@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -16,7 +17,9 @@ func CheckRequiredStringField(val, fieldName string) {
 	}
 }
 
-func CreateMergeRequest(source, target string) {
+func CreateMergeRequest(rawSource, rawTarget string) {
+	source := strings.TrimPrefix(rawSource, "refs/heads/")
+	target := strings.TrimPrefix(rawTarget, "refs/heads/")
 	CheckRequiredStringField(source, "source branch")
 	CheckRequiredStringField(target, "target branch")
 	CheckRequiredStringField(viper.GetString("gitlabEndpoint"), "gitlab endpoint")

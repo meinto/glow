@@ -14,10 +14,10 @@ import (
 
 type ConfigType struct {
 	Author           string `json:"author,omitempty"`
-	GitlabEndpoint   string `json:"gitlab_endpoint,omitempty"`
-	ProjectNamespace string `json:"project_namespace,omitempty"`
-	ProjectName      string `json:"project_name,omitempty"`
-	GitlabCIToken    string `json:"gitlab_ci_token,omitempty"`
+	GitlabEndpoint   string `json:"gitlabEndpoint,omitempty"`
+	ProjectNamespace string `json:"projectNamespace,omitempty"`
+	ProjectName      string `json:"projectName,omitempty"`
+	GitlabCIToken    string `json:"gitlabCIToken,omitempty"`
 }
 
 var configFileName = "glow.json"
