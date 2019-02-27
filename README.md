@@ -1,5 +1,7 @@
 # Glow - Git-Flow (for Gitlab)
 
+![glow logo](./glow-logo.png?raw=true)
+
 You can use this tool in any git project of course. But there are some commands which are bound to the Gitlab api. So therefore I promote this as a tool tailored for Gitlab.
 
 ## Installation
