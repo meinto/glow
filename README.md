@@ -14,7 +14,7 @@ Here you can find all [available Binaries](https://github.com/meinto/glow/releas
 
 > Important!  
 > Some commands need additional information like git author or Gitlab namespace and project name.  
-> These Informations can be stored in a config file or can be passed through flags.
+> These informations can be stored in a config file or can be passed through flags.
 > To configure the glow.json config file run the "init" command
 
 ![glow workflow](./glow.jpg?raw=true)
