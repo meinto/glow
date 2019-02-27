@@ -39,7 +39,10 @@ var finishCmd = &cobra.Command{
 			var releaseBranches = make([]string, 0)
 			iterator, _ := r.References()
 			iterator.ForEach(func(ref *plumbing.Reference) error {
-				releaseBranches = append(releaseBranches, string(ref.Name()))
+				name := string(ref.Name())
+				if strings.Contains(name, "release/v") {
+					releaseBranches = append(releaseBranches, string(ref.Name()))
+				}
 				return nil
 			})
 			if len(releaseBranches) > 0 {
@@ -49,6 +52,9 @@ var finishCmd = &cobra.Command{
 				}
 				mergeWith := releaseBranches[index]
 				util.CreateMergeRequest(refName, mergeWith)
+			} else {
+				log.Println("There is no remote release branch you could merge with.")
+				log.Println("If you did't push your release branch please do this first.")
 			}
 		}
 	},
