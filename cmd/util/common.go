@@ -60,6 +60,7 @@ func CreateMergeRequest(rawSource, rawTarget string) {
 
 	resp, err := http.DefaultClient.Do(req)
 	CheckForError(err, "mergeRequestCmd do request")
-
 	defer resp.Body.Close()
+
+	log.Printf("created merge request of %s into %s", source, target)
 }
