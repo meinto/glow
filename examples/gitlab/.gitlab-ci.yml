@@ -1,0 +1,54 @@
+
+stages:
+  - test
+  - build
+  - glow
+
+#############
+# glow part #
+#############
+# merge feature
+# close release
+# close fix
+# close hotfix
+merge_feature:
+  stage: glow
+  script: git glow close
+  only:
+    - /^feature\/.*$/
+    - /^release\/v.*$/
+    - /^fix\/.*$/
+    - /^hotfix\/.*$/
+  when: manual
+
+# create a release
+create_major_release:
+  stage: glow
+  script: git glow release $(./getNextMajorVersionNumber.sh)
+  only:
+    - develop
+  when: manual
+
+create_minor_release:
+  stage: glow
+  script: git glow release $(./getNextMinorVersionNumber.sh)
+  only:
+    - develop
+  when: manual
+
+create_patch_release:
+  stage: glow
+  script: git glow release $(./getNextPatchVersionNumber.sh)
+  only:
+    - develop
+  when: manual
+
+# publish release
+# publish hotfix
+publish_release_hotfix:
+  stage: glow
+  script: git glow publish
+  only:
+    - /^release\/v.*$/
+    - /^hotfix\/.*$/
+  when: manual
