@@ -24,21 +24,21 @@ merge_feature:
 # create a release
 create_major_release:
   stage: glow
-  script: git glow release $(./getNextMajorVersionNumber.sh)
+  script: git glow release $(git semver get major -r)
   only:
     - develop
   when: manual
 
 create_minor_release:
   stage: glow
-  script: git glow release $(./getNextMinorVersionNumber.sh)
+  script: git glow release $(git semver get minor -r)
   only:
     - develop
   when: manual
 
 create_patch_release:
   stage: glow
-  script: git glow release $(./getNextPatchVersionNumber.sh)
+  script: git glow release $(git semver get patch -r)
   only:
     - develop
   when: manual
