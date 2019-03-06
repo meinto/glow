@@ -45,9 +45,7 @@ var fixCmd = &cobra.Command{
 		w, err := r.Worktree()
 		util.CheckForError(err, "Worktree")
 
-		err = w.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.ReferenceName(branchName),
-		})
+		err = util.Checkout(w, branchName, util.ShouldUseNativeGitBinding("checkout"))
 		util.CheckForError(err, "Checkout")
 	},
 }
