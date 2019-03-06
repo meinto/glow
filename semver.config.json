@@ -4,9 +4,5 @@
   "tagVersions": true,
   "pushChanges": true,
   "author": "Tobias Meinhardt",
-  "email": "tobias.meinhardt89@gmail.com",
-  "gitPath": "/usr/local/bin/git",
-  "useNativeGitBindings": [
-    "checkout"
-  ]
+  "email": "tobias.meinhardt89@gmail.com"
 }
