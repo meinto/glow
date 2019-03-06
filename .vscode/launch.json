@@ -16,7 +16,7 @@
       "env": {},
       "args": [
         "feature",
-        "test15",
+        "test25",
         "-a",
         "debugger"
       ],
