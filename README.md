@@ -114,5 +114,15 @@ glow init
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitlabCIToken": "abc",
+  "gitPath": "/usr/local/bin/git",
+  "useNativeGitBindings": [
+    "checkout"
+  ]
 }
 ```
+
+## Performance
+
+The standalone git implementation of this library is based on [go-git](https://github.com/src-d/go-git). Unfortunately this lib has some performance problems at the moment. Checking out a branch on large Projects for example can be realy slow.
+
+Therefore i decided to provide the posibility to use native git bindings for some commands like the `checkout` command. To enable this feature provide the path to your native git installation in the config file: `gitPath`. With the property `useNativeGitBindings` you can specify which commands should be performed with your native git installation. At the moment only the `checkout` command is critical, and the only one you can switch.
