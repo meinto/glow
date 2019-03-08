@@ -12,7 +12,9 @@ type GoGitAdapter struct{}
 
 // CurrentBranch returns the current branch name
 func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
-	r, err := git.PlainOpen(".")
+	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		return glow.Branch{}, errors.Wrap(err, "error opening repository")
 	}
@@ -28,7 +30,9 @@ func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
 
 // Create a new branch
 func (g GoGitAdapter) Create(b glow.IBranch) error {
-	r, err := git.PlainOpen(".")
+	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		return errors.Wrap(err, "error opening repository")
 	}
@@ -39,7 +43,7 @@ func (g GoGitAdapter) Create(b glow.IBranch) error {
 	}
 
 	refName := string(headRef.Name())
-	if b.CreationIsAllowedFrom(refName) {
+	if !b.CreationIsAllowedFrom(refName) {
 		return errors.New("You are not on the develop branch.\nPlease switch branch...\n")
 	}
 
@@ -51,7 +55,9 @@ func (g GoGitAdapter) Create(b glow.IBranch) error {
 
 // Checkout a branch
 func (g GoGitAdapter) Checkout(b glow.IBranch) error {
-	r, err := git.PlainOpen(".")
+	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		return errors.Wrap(err, "error opening repository")
 	}

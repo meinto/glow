@@ -59,7 +59,7 @@ type AuthoredBranch struct {
 }
 
 // NewAuthoredBranch creates a new branch definition
-func NewAuthoredBranch(author, name, branchTemplate string) (AuthoredBranch, error) {
+func NewAuthoredBranch(branchTemplate, author, name string) (AuthoredBranch, error) {
 	branchName := fmt.Sprintf(branchTemplate, author, name)
 	return AuthoredBranch{
 		author,
