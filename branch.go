@@ -14,15 +14,18 @@ type IBranch interface {
 	CloseBranches(availableBranches []string) []string
 	PublishBranch() string
 	BranchName() string
+	ShortBranchName() string
 }
 
-// BranchService describes all actions which can performed with a branch
+// GitService describes all actions which can performed with a branch
 type GitService interface {
 	CurrentBranch() (Branch, error)
 	Create(b IBranch) error
 	Checkout(b IBranch) error
 }
 
+// GitHostingService describes all actions which can performed
+// with the git hosting service (gitlab etc.)
 type GitHostingService interface {
 	Close(b IBranch) error
 	Publish(b IBranch) error
@@ -41,6 +44,11 @@ func NewBranch(name string) (Branch, error) {
 // BranchName is a getter for the branch name
 func (b Branch) BranchName() string {
 	return b.name
+}
+
+// ShortBranchName is a getter for the short version of the branch name
+func (b Branch) ShortBranchName() string {
+	return strings.TrimPrefix(b.name, "refs/heads/")
 }
 
 // AuthoredBranch definition
