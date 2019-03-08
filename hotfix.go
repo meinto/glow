@@ -1,18 +1,62 @@
 package glow
 
-import "fmt"
+import (
+	"strings"
 
-type hotfix struct {
-	author     string
-	name       string
-	branchName string
+	"github.com/pkg/errors"
+)
+
+// Hotfix definition
+type Hotfix struct {
+	AuthoredBranch
 }
 
-func NewHotfix(author, name string) hotfix {
-	branchName := fmt.Sprintf("refs/heads/hotfix/%s/%s", author, name)
-	return hotfix{
-		author,
-		name,
-		branchName,
+// NewHotfix creates a new hotfix definition
+func NewHotfix(author, name string) (Hotfix, error) {
+	ab, err := NewAuthoredBranch("refs/heads/hotfix/%s/%s", author, name)
+	if err != nil {
+		return Hotfix{}, errors.Wrap(err, "error while creating hotfix definition")
 	}
+	return Hotfix{ab}, nil
+}
+
+// HotfixFromBranch extracts a fix definition from branch name
+func HotfixFromBranch(branchName string) (Hotfix, error) {
+	if !strings.Contains(branchName, "/hotfix/") {
+		return Hotfix{}, errors.New("no valid hotfix branch")
+	}
+	ab, err := AuthoredBranchFromBranchName(branchName)
+	if err != nil {
+		return Hotfix{}, errors.Wrap(err, "error while creating hotfix definition from branch name")
+	}
+	return Hotfix{ab}, nil
+}
+
+// CreationIsAllowedFrom returns wheter branch is allowed to be created
+// from given this source branch
+func (f Hotfix) CreationIsAllowedFrom(sourceBranch string) bool {
+	if strings.Contains(sourceBranch, "master") {
+		return true
+	}
+	return false
+}
+
+// CanBeClosed checks if the branch name is a valid
+func (f Hotfix) CanBeClosed() bool {
+	return true
+}
+
+// CanBePublished checks if the branch can be published directly to production
+func (f Hotfix) CanBePublished() bool {
+	return true
+}
+
+// CloseBranches returns all branches which this branch have to be merged with
+func (f Hotfix) CloseBranches(availableBranches []string) []string {
+	return []string{}
+}
+
+// PublishBranch returns the publish branch if available
+func (f Hotfix) PublishBranch() string {
+	return "master"
 }

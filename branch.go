@@ -6,22 +6,37 @@ import (
 	"strings"
 )
 
-// Branch interface
-type Branch interface {
-	CreationIsAllowed(sourceBranch string) bool
-	IsValid() bool
+// IBranch interface
+type IBranch interface {
+	CreationIsAllowedFrom(sourceBranch string) bool
+	CanBeClosed() bool
+	CanBePublished() bool
+	CloseBranches(availableBranches []string) []string
+	PublishBranch() string
+}
+
+// BranchService describes all actions which can performed with a branch
+type BranchService interface {
+	Create(b IBranch) error
+	Close(b IBranch) error
+	Publish(b IBranch) error
 }
 
 // Branch definition
-type branch struct {
+type Branch struct {
 	name string
+}
+
+// NewBranch creates a new branch definition
+func NewBranch(name string) (Branch, error) {
+	return Branch{name}, nil
 }
 
 // AuthoredBranch definition
 type AuthoredBranch struct {
 	author string
 	name   string
-	branch
+	Branch
 }
 
 // NewAuthoredBranch creates a new branch definition
@@ -30,7 +45,7 @@ func NewAuthoredBranch(author, name, branchTemplate string) (AuthoredBranch, err
 	return AuthoredBranch{
 		author,
 		name,
-		branch{branchName},
+		Branch{branchName},
 	}, nil
 }
 
@@ -46,6 +61,6 @@ func AuthoredBranchFromBranchName(branchName string) (AuthoredBranch, error) {
 	return AuthoredBranch{
 		author,
 		name,
-		branch{branchName},
+		Branch{branchName},
 	}, nil
 }

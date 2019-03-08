@@ -22,6 +22,9 @@ func NewFeature(author, name string) (Feature, error) {
 
 // FeatureFromBranch extracts a feature definition from branch name
 func FeatureFromBranch(branchName string) (Feature, error) {
+	if !strings.Contains(branchName, "/feature/") {
+		return Feature{}, errors.New("no valid feature branch")
+	}
 	ab, err := AuthoredBranchFromBranchName(branchName)
 	if err != nil {
 		return Feature{}, errors.Wrap(err, "error while creating feature definition from branch name")
@@ -29,25 +32,31 @@ func FeatureFromBranch(branchName string) (Feature, error) {
 	return Feature{ab}, nil
 }
 
-// CreationIsAllowed returns wheter branch is allowed to be created
+// CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f Feature) CreationIsAllowed(sourceBranch string) bool {
+func (f Feature) CreationIsAllowedFrom(sourceBranch string) bool {
 	if strings.Contains(sourceBranch, "develop") {
 		return true
 	}
 	return false
 }
 
-// IsValid checks if the branch name is a valid
-func (f Feature) IsValid() bool {
-	if strings.Contains(f.name, "/feature/") {
-		return true
-	}
+// CanBeClosed checks if the branch name is a valid
+func (f Feature) CanBeClosed() bool {
+	return true
+}
+
+// CanBePublished checks if the branch can be published directly to production
+func (f Feature) CanBePublished() bool {
 	return false
 }
 
-// FeatureService describes all actions which can performed with a feature
-type FeatureService interface {
-	Create(f Feature) error
-	Close(f Feature) error
+// CloseBranches returns all branches which this branch have to be merged with
+func (f Feature) CloseBranches(availableBranches []string) []string {
+	return []string{}
+}
+
+// PublishBranch returns the publish branch if available
+func (f Feature) PublishBranch() string {
+	return ""
 }
