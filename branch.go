@@ -13,11 +13,17 @@ type IBranch interface {
 	CanBePublished() bool
 	CloseBranches(availableBranches []string) []string
 	PublishBranch() string
+	BranchName() string
 }
 
 // BranchService describes all actions which can performed with a branch
-type BranchService interface {
+type GitService interface {
+	CurrentBranch() (Branch, error)
 	Create(b IBranch) error
+	Checkout(b IBranch) error
+}
+
+type GitHostingService interface {
 	Close(b IBranch) error
 	Publish(b IBranch) error
 }
@@ -30,6 +36,11 @@ type Branch struct {
 // NewBranch creates a new branch definition
 func NewBranch(name string) (Branch, error) {
 	return Branch{name}, nil
+}
+
+// BranchName is a getter for the branch name
+func (b Branch) BranchName() string {
+	return b.name
 }
 
 // AuthoredBranch definition
