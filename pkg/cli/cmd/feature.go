@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/meinto/glow/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
