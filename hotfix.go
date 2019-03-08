@@ -14,10 +14,7 @@ type Hotfix struct {
 // NewHotfix creates a new hotfix definition
 func NewHotfix(author, name string) (Hotfix, error) {
 	ab, err := NewAuthoredBranch("refs/heads/hotfix/%s/%s", author, name)
-	if err != nil {
-		return Hotfix{}, errors.Wrap(err, "error while creating hotfix definition")
-	}
-	return Hotfix{ab}, nil
+	return Hotfix{ab}, errors.Wrap(err, "error while creating hotfix definition")
 }
 
 // HotfixFromBranch extracts a fix definition from branch name
@@ -26,10 +23,7 @@ func HotfixFromBranch(branchName string) (Hotfix, error) {
 		return Hotfix{}, errors.New("no valid hotfix branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)
-	if err != nil {
-		return Hotfix{}, errors.Wrap(err, "error while creating hotfix definition from branch name")
-	}
-	return Hotfix{ab}, nil
+	return Hotfix{ab}, errors.Wrap(err, "error while creating hotfix definition from branch name")
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
