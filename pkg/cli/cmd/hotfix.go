@@ -1,16 +1,11 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"strings"
-
+	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 func init() {
@@ -22,30 +17,17 @@ var hotfixCmd = &cobra.Command{
 	Short: "create a hotfix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		hotix := args[0]
+		hotixName := args[0]
 
-		r, err := git.PlainOpen(".")
-		util.CheckForError(err, "PlainOpen")
+		hotfix, err := glow.NewHotfix(viper.GetString("author"), hotixName)
+		util.CheckForError(err, "NewHotfix")
 
-		headRef, err := r.Head()
-		util.CheckForError(err, "Head")
+		g := git.NewGit()
 
-		refName := string(headRef.Name())
-		if !strings.Contains(refName, "master") {
-			log.Println("You are not on the master branch.")
-			log.Fatalf("Please switch branch...")
-		}
+		err = g.Create(hotfix)
+		util.CheckForError(err, "Create")
 
-		branchName := fmt.Sprintf("refs/heads/hotfix/%s/%s", viper.GetString("author"), hotix)
-		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
-
-		err = r.Storer.SetReference(ref)
-		util.CheckForError(err, "SetReference")
-
-		w, err := r.Worktree()
-		util.CheckForError(err, "Worktree")
-
-		err = util.Checkout(w, branchName, util.ShouldUseNativeGitBinding("checkout"))
+		g.Checkout(hotfix)
 		util.CheckForError(err, "Checkout")
 	},
 }
