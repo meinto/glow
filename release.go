@@ -17,10 +17,7 @@ type Release struct {
 func NewRelease(version, name string) (Release, error) {
 	branchName := fmt.Sprintf("refs/heads/release/v%s", version)
 	b, err := NewBranch(branchName)
-	if err != nil {
-		return Release{}, errors.New("error while creating release definition")
-	}
-	return Release{version, b}, nil
+	return Release{version, b}, errors.Wrap(err, "error while creating release definition")
 }
 
 // ReleaseFromBranch extracts a release definition from branch name

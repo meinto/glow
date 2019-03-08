@@ -13,10 +13,7 @@ type Fix struct {
 // NewFix creates a new fix definition
 func NewFix(author, name string) (Fix, error) {
 	ab, err := NewAuthoredBranch("refs/heads/fix/%s/%s", author, name)
-	if err != nil {
-		return Fix{}, errors.Wrap(err, "error while creating fix definition")
-	}
-	return Fix{ab}, nil
+	return Fix{ab}, errors.Wrap(err, "error while creating fix definition")
 }
 
 // FixFromBranch extracts a fix definition from branch name
@@ -25,10 +22,7 @@ func FixFromBranch(branchName string) (Fix, error) {
 		return Fix{}, errors.New("no valid fix branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)
-	if err != nil {
-		return Fix{}, errors.Wrap(err, "error while creating fix definition from branch name")
-	}
-	return Fix{ab}, nil
+	return Fix{ab}, errors.Wrap(err, "error while creating fix definition from branch name")
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created

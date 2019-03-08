@@ -14,10 +14,7 @@ type Feature struct {
 // NewFeature creates a new feature definition
 func NewFeature(author, name string) (Feature, error) {
 	ab, err := NewAuthoredBranch("refs/heads/feature/%s/%s", author, name)
-	if err != nil {
-		return Feature{}, errors.Wrap(err, "error while creating feature definition")
-	}
-	return Feature{ab}, nil
+	return Feature{ab}, errors.Wrap(err, "error while creating feature definition")
 }
 
 // FeatureFromBranch extracts a feature definition from branch name
@@ -26,10 +23,7 @@ func FeatureFromBranch(branchName string) (Feature, error) {
 		return Feature{}, errors.New("no valid feature branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)
-	if err != nil {
-		return Feature{}, errors.Wrap(err, "error while creating feature definition from branch name")
-	}
-	return Feature{ab}, nil
+	return Feature{ab}, errors.Wrap(err, "error while creating feature definition from branch name")
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
