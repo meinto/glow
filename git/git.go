@@ -3,13 +3,9 @@ package git
 import "github.com/meinto/glow"
 
 type Git struct {
-	gogit  glow.GitService
-	native glow.GitService
+	adapter glow.GitService
 }
 
-func NewGit() Git {
-	return Git{
-		GoGitAdapter{},
-		NativeGitAdapter{},
-	}
+func NewGit(a glow.GitService) Git {
+	return Git{a}
 }

@@ -7,8 +7,10 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
+// GoGitAdapter implemented with go-git
 type GoGitAdapter struct{}
 
+// CurrentBranch returns the current branch name
 func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
 	r, err := git.PlainOpen(".")
 	if err != nil {
@@ -24,6 +26,7 @@ func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
 	return glow.NewBranch(refName)
 }
 
+// Create a new branch
 func (g GoGitAdapter) Create(b glow.IBranch) error {
 	r, err := git.PlainOpen(".")
 	if err != nil {
@@ -37,7 +40,7 @@ func (g GoGitAdapter) Create(b glow.IBranch) error {
 
 	refName := string(headRef.Name())
 	if b.CreationIsAllowedFrom(refName) {
-		return errors.New("You are not on the develop branch.\nPlease switch branch...")
+		return errors.New("You are not on the develop branch.\nPlease switch branch...\n")
 	}
 
 	ref := plumbing.NewHashReference(plumbing.ReferenceName(b.BranchName()), headRef.Hash())
@@ -46,6 +49,20 @@ func (g GoGitAdapter) Create(b glow.IBranch) error {
 	return errors.Wrap(err, "error while creating branch")
 }
 
+// Checkout a branch
 func (g GoGitAdapter) Checkout(b glow.IBranch) error {
-	return errors.New("not implemented yet")
+	r, err := git.PlainOpen(".")
+	if err != nil {
+		return errors.Wrap(err, "error opening repository")
+	}
+
+	w, err := r.Worktree()
+	if err != nil {
+		return errors.Wrap(err, "error getting worktree")
+	}
+
+	err = w.Checkout(&git.CheckoutOptions{
+		Branch: plumbing.ReferenceName(b.BranchName()),
+	})
+	return errors.Wrapf(err, "error while checkout branch %s", b.BranchName())
 }
