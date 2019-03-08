@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/meinto/glow/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -14,15 +14,15 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(hotfixCmd)
+	rootCmd.AddCommand(fixCmd)
 }
 
-var hotfixCmd = &cobra.Command{
-	Use:   "hotfix",
-	Short: "create a hotfix branch",
+var fixCmd = &cobra.Command{
+	Use:   "fix",
+	Short: "create a fix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		hotix := args[0]
+		fix := args[0]
 
 		r, err := git.PlainOpen(".")
 		util.CheckForError(err, "PlainOpen")
@@ -31,12 +31,12 @@ var hotfixCmd = &cobra.Command{
 		util.CheckForError(err, "Head")
 
 		refName := string(headRef.Name())
-		if !strings.Contains(refName, "master") {
-			log.Println("You are not on the master branch.")
+		if !strings.Contains(refName, "release/") {
+			log.Println("You are not on a release branch.")
 			log.Fatalf("Please switch branch...")
 		}
 
-		branchName := fmt.Sprintf("refs/heads/hotfix/%s/%s", viper.GetString("author"), hotix)
+		branchName := fmt.Sprintf("refs/heads/fix/%s/%s", viper.GetString("author"), fix)
 		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
 
 		err = r.Storer.SetReference(ref)
