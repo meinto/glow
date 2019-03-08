@@ -1,16 +1,11 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"strings"
-
+	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 func init() {
@@ -22,30 +17,17 @@ var fixCmd = &cobra.Command{
 	Short: "create a fix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fix := args[0]
+		fixName := args[0]
 
-		r, err := git.PlainOpen(".")
-		util.CheckForError(err, "PlainOpen")
+		fix, err := glow.NewFix(viper.GetString("author"), fixName)
+		util.CheckForError(err, "NewFix")
 
-		headRef, err := r.Head()
-		util.CheckForError(err, "Head")
+		g := git.NewGit()
 
-		refName := string(headRef.Name())
-		if !strings.Contains(refName, "release/") {
-			log.Println("You are not on a release branch.")
-			log.Fatalf("Please switch branch...")
-		}
+		err = g.Create(fix)
+		util.CheckForError(err, "Create")
 
-		branchName := fmt.Sprintf("refs/heads/fix/%s/%s", viper.GetString("author"), fix)
-		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
-
-		err = r.Storer.SetReference(ref)
-		util.CheckForError(err, "SetReference")
-
-		w, err := r.Worktree()
-		util.CheckForError(err, "Worktree")
-
-		err = util.Checkout(w, branchName, util.ShouldUseNativeGitBinding("checkout"))
+		g.Checkout(fix)
 		util.CheckForError(err, "Checkout")
 	},
 }
