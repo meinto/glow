@@ -14,7 +14,7 @@ type Release struct {
 }
 
 // NewRelease creates a new release definition
-func NewRelease(version, name string) (Release, error) {
+func NewRelease(version string) (Release, error) {
 	branchName := fmt.Sprintf("refs/heads/release/v%s", version)
 	b, err := NewBranch(branchName)
 	return Release{version, b}, errors.Wrap(err, "error while creating release definition")
