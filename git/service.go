@@ -4,6 +4,7 @@ import "github.com/meinto/glow"
 
 // Service describes all actions which can performed with git
 type Service interface {
+	GitRepoPath() (string, error)
 	CurrentBranch() (glow.Branch, error)
 	BranchList() ([]glow.Branch, error)
 	Fetch() error
