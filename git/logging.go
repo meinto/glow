@@ -33,6 +33,14 @@ func (s loggingService) BranchList() (b []glow.Branch, err error) {
 	return s.next.BranchList()
 }
 
+// Fetch changes
+func (s loggingService) Fetch() (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "Fetch", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.Fetch()
+}
+
 // Create a new branch
 func (s loggingService) Create(b glow.Branch) (err error) {
 	defer func(begin time.Time) {

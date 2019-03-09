@@ -6,6 +6,7 @@ import "github.com/meinto/glow"
 type Service interface {
 	CurrentBranch() (glow.Branch, error)
 	BranchList() ([]glow.Branch, error)
+	Fetch() error
 	Create(b glow.Branch) error
 	Checkout(b glow.Branch) error
 }
