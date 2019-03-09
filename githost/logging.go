@@ -15,10 +15,10 @@ func NewLoggingService(l log.Logger, s Service) Service {
 	return &loggingService{l, s}
 }
 
-func (s *loggingService) Close(b glow.IBranch) error {
+func (s *loggingService) Close(b glow.Branch) error {
 	return errors.New("not implemented yet")
 }
 
-func (s *loggingService) Publish(b glow.IBranch) error {
+func (s *loggingService) Publish(b glow.Branch) error {
 	return errors.New("not implemented yet")
 }

@@ -40,14 +40,12 @@ func (f Feature) CanBeClosed() bool {
 	return true
 }
 
-// CanBePublished checks if the branch can be published directly to production
-func (f Feature) CanBePublished() bool {
-	return false
-}
-
 // CloseBranches returns all branches which this branch have to be merged with
-func (f Feature) CloseBranches(availableBranches []string) []string {
-	return []string{}
+func (f Feature) CloseBranches(availableBranches []Branch) []Branch {
+	develop, _ := NewBranch("develop")
+	return []Branch{
+		develop,
+	}
 }
 
 // PublishBranch returns the publish branch if available

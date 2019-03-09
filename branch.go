@@ -7,33 +7,59 @@ import (
 )
 
 // IBranch interface
-type IBranch interface {
+type Branch interface {
 	CreationIsAllowedFrom(sourceBranch string) bool
 	CanBeClosed() bool
 	CanBePublished() bool
-	CloseBranches(availableBranches []string) []string
+	CloseBranches(availableBranches []Branch) []Branch
 	PublishBranch() string
 	BranchName() string
 	ShortBranchName() string
 }
 
 // Branch definition
-type Branch struct {
+type branch struct {
 	name string
 }
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) (Branch, error) {
-	return Branch{name}, nil
+	return branch{name}, nil
+}
+
+// CreationIsAllowedFrom returns wheter branch is allowed to be created
+// from given this source branch
+func (b branch) CreationIsAllowedFrom(sourceBranch string) bool {
+	return false
+}
+
+// CanBeClosed checks if the branch name is a valid
+func (b branch) CanBeClosed() bool {
+	return false
+}
+
+// CanBePublished checks if the branch can be published directly to production
+func (b branch) CanBePublished() bool {
+	return false
+}
+
+// CloseBranches returns all branches which this branch have to be merged with
+func (b branch) CloseBranches(availableBranches []Branch) []Branch {
+	return []Branch{}
+}
+
+// PublishBranch returns the publish branch if available
+func (b branch) PublishBranch() string {
+	return ""
 }
 
 // BranchName is a getter for the branch name
-func (b Branch) BranchName() string {
+func (b branch) BranchName() string {
 	return b.name
 }
 
 // ShortBranchName is a getter for the short version of the branch name
-func (b Branch) ShortBranchName() string {
+func (b branch) ShortBranchName() string {
 	return strings.TrimPrefix(b.name, "refs/heads/")
 }
 
@@ -50,7 +76,7 @@ func NewAuthoredBranch(branchTemplate, author, name string) (AuthoredBranch, err
 	return AuthoredBranch{
 		author,
 		name,
-		Branch{branchName},
+		branch{branchName},
 	}, nil
 }
 
@@ -66,6 +92,6 @@ func AuthoredBranchFromBranchName(branchName string) (AuthoredBranch, error) {
 	return AuthoredBranch{
 		author,
 		name,
-		Branch{branchName},
+		branch{branchName},
 	}, nil
 }

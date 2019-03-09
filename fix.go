@@ -45,8 +45,14 @@ func (f Fix) CanBePublished() bool {
 }
 
 // CloseBranches returns all branches which this branch have to be merged with
-func (f Fix) CloseBranches(availableBranches []string) []string {
-	return []string{}
+func (f Fix) CloseBranches(availableBranches []Branch) []Branch {
+	branches := make([]Branch, 0)
+	for _, b := range availableBranches {
+		if strings.Contains(b.BranchName(), "/release/v") {
+			branches = append(branches, b)
+		}
+	}
+	return branches
 }
 
 // PublishBranch returns the publish branch if available

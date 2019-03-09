@@ -46,8 +46,16 @@ func (f Hotfix) CanBePublished() bool {
 }
 
 // CloseBranches returns all branches which this branch have to be merged with
-func (f Hotfix) CloseBranches(availableBranches []string) []string {
-	return []string{}
+func (f Hotfix) CloseBranches(availableBranches []Branch) []Branch {
+	branches := make([]Branch, 0)
+	for _, b := range availableBranches {
+		if strings.Contains(b.BranchName(), "/release/v") {
+			branches = append(branches, b)
+		}
+	}
+	develop, _ := NewBranch("develop")
+	branches = append(branches, develop)
+	return branches
 }
 
 // PublishBranch returns the publish branch if available

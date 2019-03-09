@@ -26,7 +26,7 @@ func (s loggingService) CurrentBranch() (b glow.Branch, err error) {
 }
 
 // Create a new branch
-func (s loggingService) Create(b glow.IBranch) (err error) {
+func (s loggingService) Create(b glow.Branch) (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "Create", "took", time.Since(begin), "err", err)
 	}(time.Now())
@@ -34,7 +34,7 @@ func (s loggingService) Create(b glow.IBranch) (err error) {
 }
 
 // Checkout a branch
-func (s loggingService) Checkout(b glow.IBranch) (err error) {
+func (s loggingService) Checkout(b glow.Branch) (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "Checkout", "took", time.Since(begin), "err", err)
 	}(time.Now())
