@@ -17,8 +17,16 @@ func NewLoggingService(logger log.Logger, s Service) Service {
 	return &loggingService{logger, s}
 }
 
+// GitRepoPath returns the path to the root with the .git folder
+func (s loggingService) GitRepoPath() (_ string, err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "GitRepoPath", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.GitRepoPath()
+}
+
 // CurrentBranch returns the current branch name
-func (s loggingService) CurrentBranch() (b glow.Branch, err error) {
+func (s loggingService) CurrentBranch() (_ glow.Branch, err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "CurrentBranch", "took", time.Since(begin), "err", err)
 	}(time.Now())
@@ -26,7 +34,7 @@ func (s loggingService) CurrentBranch() (b glow.Branch, err error) {
 }
 
 // BranchList returns a list of avalilable branches
-func (s loggingService) BranchList() (b []glow.Branch, err error) {
+func (s loggingService) BranchList() (_ []glow.Branch, err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "BranchList", "took", time.Since(begin), "err", err)
 	}(time.Now())

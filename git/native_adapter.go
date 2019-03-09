@@ -12,6 +12,11 @@ type nativeGitAdapter struct {
 	gitPath string
 }
 
+// GitRepoPath returns the path to the root with the .git folder
+func (a nativeGitAdapter) GitRepoPath() (string, error) {
+	return "", errors.New("not implemented yet")
+}
+
 // CurrentBranch returns the current branch name
 func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
 	return nil, errors.New("not implemented yet")
