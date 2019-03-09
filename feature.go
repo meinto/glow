@@ -46,8 +46,3 @@ func (f Feature) CloseBranches(availableBranches []Branch) []Branch {
 		NewPlainBranch("develop"),
 	}
 }
-
-// PublishBranch returns the publish branch if available
-func (f Feature) PublishBranch() string {
-	return ""
-}

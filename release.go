@@ -57,13 +57,12 @@ func (f Release) CanBePublished() bool {
 
 // CloseBranches returns all branches which this branch have to be merged with
 func (f Release) CloseBranches(availableBranches []Branch) []Branch {
-	develop, _ := NewBranch("develop")
 	return []Branch{
-		develop,
+		NewPlainBranch("develop"),
 	}
 }
 
 // PublishBranch returns the publish branch if available
-func (f Release) PublishBranch() string {
-	return "master"
+func (f Release) PublishBranch() Branch {
+	return NewPlainBranch("master")
 }
