@@ -62,39 +62,6 @@ After publishing the release, you have to merge all changes made on the release 
 glow close
 ```
 
-## Commands
-
-```bash
-# feature
-glow feature <name-of-the-feature> \ 
-  --author <name-of-the-author> # optional when using config file
-
-# release
-glow release <version> \ 
-  --postRelease <name-of-script> # optional
-
-# merge request
-glow mergeRequest <source-branch> <target-branch> \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-
-# publish
-glow publish \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-
-# finish release
-glow close \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-```
-
 ## Config
 
 For some commands you must provide information like the url of your Gitlab instance or your Gitlab ci token. These informations can be put in a `glow.json` file. Glow will lookup this json in the directory where its executed.
@@ -114,15 +81,5 @@ glow init
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitlabCIToken": "abc",
-  "gitPath": "/usr/local/bin/git",
-  "useNativeGitBindings": [
-    "checkout"
-  ]
 }
 ```
-
-## Performance
-
-The standalone git implementation of this library is based on [go-git](https://github.com/src-d/go-git). Unfortunately this lib has some performance problems at the moment. Checking out a branch on large Projects for example can be realy slow.
-
-Therefore i decided to provide the posibility to use native git bindings for some commands like the `checkout` command. To enable this feature provide the path to your native git installation in the config file: `gitPath`. With the property `useNativeGitBindings` you can specify which commands should be performed with your native git installation. At the moment only the `checkout` command is critical, and the only one you can switch.
