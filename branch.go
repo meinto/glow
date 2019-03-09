@@ -12,7 +12,7 @@ type Branch interface {
 	CanBeClosed() bool
 	CanBePublished() bool
 	CloseBranches(availableBranches []Branch) []Branch
-	PublishBranch() string
+	PublishBranch() Branch
 	BranchName() string
 	ShortBranchName() string
 }
@@ -66,8 +66,8 @@ func (b branch) CloseBranches(availableBranches []Branch) []Branch {
 }
 
 // PublishBranch returns the publish branch if available
-func (b branch) PublishBranch() string {
-	return ""
+func (b branch) PublishBranch() Branch {
+	return branch{}
 }
 
 // BranchName is a getter for the branch name

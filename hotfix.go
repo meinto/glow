@@ -58,6 +58,6 @@ func (f Hotfix) CloseBranches(availableBranches []Branch) []Branch {
 }
 
 // PublishBranch returns the publish branch if available
-func (f Hotfix) PublishBranch() string {
-	return "master"
+func (f Hotfix) PublishBranch() Branch {
+	return NewPlainBranch("master")
 }

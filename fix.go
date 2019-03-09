@@ -39,11 +39,6 @@ func (f Fix) CanBeClosed() bool {
 	return true
 }
 
-// CanBePublished checks if the branch can be published directly to production
-func (f Fix) CanBePublished() bool {
-	return false
-}
-
 // CloseBranches returns all branches which this branch have to be merged with
 func (f Fix) CloseBranches(availableBranches []Branch) []Branch {
 	branches := make([]Branch, 0)
@@ -53,9 +48,4 @@ func (f Fix) CloseBranches(availableBranches []Branch) []Branch {
 		}
 	}
 	return branches
-}
-
-// PublishBranch returns the publish branch if available
-func (f Fix) PublishBranch() string {
-	return ""
 }
