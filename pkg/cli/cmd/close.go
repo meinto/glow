@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/meinto/glow/githost"
 
 	"github.com/meinto/glow/git"
@@ -25,14 +23,10 @@ var finishCmd = &cobra.Command{
 		g = git.NewLoggingService(logger, g)
 
 		err := g.Fetch()
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.CheckForError(err, "Fetch")
 
 		currentBranch, err := g.CurrentBranch()
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.CheckForError(err, "CurrentBranch")
 
 		gh := githost.NewGitlabService(
 			viper.GetString("gitlabEndpoint"),
@@ -43,8 +37,6 @@ var finishCmd = &cobra.Command{
 		gh = githost.NewLoggingService(logger, gh)
 
 		gh.Close(currentBranch)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.CheckForError(err, "Close")
 	},
 }
