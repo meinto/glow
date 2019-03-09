@@ -64,7 +64,7 @@ func (a goGitAdapter) CurrentBranch() (glow.Branch, error) {
 		return nil, errors.Wrap(err, "error getting current branch")
 	}
 
-	refName := string(headRef.Name())
+	refName := headRef.Name().String()
 	return glow.NewBranch(refName)
 }
 
@@ -93,7 +93,7 @@ func (s goGitAdapter) BranchList() ([]glow.Branch, error) {
 		return nil
 	})
 
-	return nil, errors.New("")
+	return branches, nil
 }
 
 // Fetch changes
