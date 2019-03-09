@@ -2,16 +2,14 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"os/exec"
 	"path/filepath"
 
-	"github.com/meinto/glow/cmd/util"
+	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 var releaseCmdOptions struct {
@@ -27,24 +25,18 @@ var releaseCmd = &cobra.Command{
 	Use:   "release",
 	Short: "create a release branch",
 	Run: func(cmd *cobra.Command, args []string) {
-		version := args[0] // should be semver
+		version := args[0]
 
-		r, err := git.PlainOpen(".")
-		util.CheckForError(err, "PlainOpen")
+		release, err := glow.NewRelease(version)
+		util.CheckForError(err, "NewRelease")
 
-		headRef, err := r.Head()
-		util.CheckForError(err, "Head")
+		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
-		branchName := fmt.Sprintf("refs/heads/release/v%s", version)
-		ref := plumbing.NewHashReference(plumbing.ReferenceName(branchName), headRef.Hash())
+		err = g.Create(release)
+		util.CheckForError(err, "Create")
 
-		err = r.Storer.SetReference(ref)
-		util.CheckForError(err, "SetReference")
-
-		w, err := r.Worktree()
-		util.CheckForError(err, "Worktree")
-
-		err = util.Checkout(w, branchName, util.ShouldUseNativeGitBinding("checkout"))
+		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
 		if releaseCmdOptions.PostReleaseScript != "" {
