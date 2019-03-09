@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/go-kit/kit/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -13,6 +14,8 @@ var rootCmdOptions struct {
 	GitPath              string
 	UseNativeGitBindings []string
 }
+
+var logger log.Logger
 
 var rootCmd = &cobra.Command{
 	Use:   "glow",
@@ -30,6 +33,9 @@ func init() {
 }
 
 func Execute() {
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
