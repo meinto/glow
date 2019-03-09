@@ -1,6 +1,6 @@
 # Glow - Git-Flow (for Gitlab)
 
-![glow logo](./glow-logo.svg)
+![glow logo](./assets/glow-logo.svg)
 
 You can use this tool in any git project of course. But there are some commands which are bound to the Gitlab api. So therefore I promote this as a tool tailored for Gitlab.
 
@@ -19,7 +19,7 @@ Here you can find all [available Binaries](https://github.com/meinto/glow/releas
 > These informations can be stored in a config file or can be passed through flags.
 > To configure the glow.json config file run the "init" command
 
-![glow workflow](./glow.jpg?raw=true)
+![glow workflow](./assets/glow.jpg?raw=true)
 
 ### Feature Development
 
