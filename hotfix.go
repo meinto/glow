@@ -53,8 +53,7 @@ func (f Hotfix) CloseBranches(availableBranches []Branch) []Branch {
 			branches = append(branches, b)
 		}
 	}
-	develop, _ := NewPlainBranch("develop")
-	branches = append(branches, develop)
+	branches = append(branches, NewPlainBranch("develop"))
 	return branches
 }
 
