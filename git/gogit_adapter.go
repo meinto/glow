@@ -58,6 +58,17 @@ func (s goGitAdapter) BranchList() ([]glow.Branch, error) {
 	return nil, errors.New("")
 }
 
+// Fetch changes
+func (a goGitAdapter) Fetch() error {
+	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
+	if err != nil {
+		return errors.Wrap(err, "error while fetching")
+	}
+	return r.Fetch(&git.FetchOptions{})
+}
+
 // Create a new branch
 func (a goGitAdapter) Create(b glow.Branch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
