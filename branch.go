@@ -36,7 +36,12 @@ func NewBranch(name string) (Branch, error) {
 	if strings.Contains(name, "/release/v") {
 		return ReleaseFromBranch(name)
 	}
-	return branch{name}, nil
+	return NewPlainBranch(name), nil
+}
+
+// NewPlainBranch creates a new plain branch
+func NewPlainBranch(name string) Branch {
+	return branch{name}
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
