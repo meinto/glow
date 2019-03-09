@@ -16,8 +16,8 @@ type Release struct {
 // NewRelease creates a new release definition
 func NewRelease(version string) (Release, error) {
 	branchName := fmt.Sprintf("refs/heads/release/v%s", version)
-	b, err := NewBranch(branchName)
-	return Release{version, b}, errors.Wrap(err, "error while creating release definition")
+	b := NewPlainBranch(branchName)
+	return Release{version, b}, nil
 }
 
 // ReleaseFromBranch extracts a release definition from branch name
@@ -25,10 +25,7 @@ func ReleaseFromBranch(branchName string) (Release, error) {
 	if !strings.Contains(branchName, "/release/v") {
 		return Release{}, errors.New("no valid release branch")
 	}
-	b, err := NewBranch(branchName)
-	if err != nil {
-		return Release{}, errors.Wrap(err, "error while creating release definition from branch name")
-	}
+	b := NewPlainBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
 		return Release{}, errors.New("invalid branch name " + branchName)
