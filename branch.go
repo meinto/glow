@@ -24,6 +24,18 @@ type branch struct {
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) (Branch, error) {
+	if strings.Contains(name, "/feature/") {
+		return FeatureFromBranch(name)
+	}
+	if strings.Contains(name, "/fix/") {
+		return FixFromBranch(name)
+	}
+	if strings.Contains(name, "/hotfix/") {
+		return HotfixFromBranch(name)
+	}
+	if strings.Contains(name, "/release/v") {
+		return ReleaseFromBranch(name)
+	}
 	return branch{name}, nil
 }
 
