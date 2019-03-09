@@ -17,13 +17,6 @@ type IBranch interface {
 	ShortBranchName() string
 }
 
-// GitHostingService describes all actions which can performed
-// with the git hosting service (gitlab etc.)
-type GitHostingService interface {
-	Close(b IBranch) error
-	Publish(b IBranch) error
-}
-
 // Branch definition
 type Branch struct {
 	name string
