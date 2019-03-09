@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"strings"
-
+	"github.com/meinto/glow/git"
+	"github.com/meinto/glow/githost"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"gopkg.in/src-d/go-git.v4"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -18,17 +18,24 @@ var publishCmd = &cobra.Command{
 	Short: "publish a release branch",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		r, err := git.PlainOpen(".")
-		util.CheckForError(err, "PlainOpen")
+		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
-		r.Fetch(&git.FetchOptions{})
+		err := g.Fetch()
+		util.CheckForError(err, "Fetch")
 
-		headRef, err := r.Head()
-		refName := string(headRef.Name())
+		currentBranch, err := g.CurrentBranch()
+		util.CheckForError(err, "CurrentBranch")
 
-		if strings.Contains(refName, "release/") ||
-			strings.Contains(refName, "hotfix/") {
-			util.CreateMergeRequest(refName, "master")
-		}
+		gh := githost.NewGitlabService(
+			viper.GetString("gitlabEndpoint"),
+			viper.GetString("projectNamespace"),
+			viper.GetString("projectName"),
+			viper.GetString("gitlabCIToken"),
+		)
+		gh = githost.NewLoggingService(logger, gh)
+
+		gh.Publish(currentBranch)
+		util.CheckForError(err, "Close")
 	},
 }
