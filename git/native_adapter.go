@@ -17,6 +17,11 @@ func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
 	return nil, errors.New("not implemented yet")
 }
 
+// BranchList returns a list of avalilable branches
+func (s nativeGitAdapter) BranchList() ([]glow.Branch, error) {
+	return nil, errors.New("not implemented yet")
+}
+
 // Create a new branch
 func (a nativeGitAdapter) Create(b glow.Branch) error {
 	return errors.New("not implemented yet")

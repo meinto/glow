@@ -25,6 +25,14 @@ func (s loggingService) CurrentBranch() (b glow.Branch, err error) {
 	return s.next.CurrentBranch()
 }
 
+// BranchList returns a list of avalilable branches
+func (s loggingService) BranchList() (b []glow.Branch, err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "BranchList", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.BranchList()
+}
+
 // Create a new branch
 func (s loggingService) Create(b glow.Branch) (err error) {
 	defer func(begin time.Time) {

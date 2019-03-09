@@ -1,6 +1,8 @@
 package git
 
 import (
+	"strings"
+
 	"github.com/meinto/glow"
 	"github.com/pkg/errors"
 	"gopkg.in/src-d/go-git.v4"
@@ -26,6 +28,34 @@ func (a goGitAdapter) CurrentBranch() (glow.Branch, error) {
 
 	refName := string(headRef.Name())
 	return glow.NewBranch(refName)
+}
+
+// BranchList returns a list of avalilable branches
+func (s goGitAdapter) BranchList() ([]glow.Branch, error) {
+	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "error opening repository")
+	}
+
+	refList, err := r.References()
+	if err != nil {
+		return nil, errors.Wrap(err, "error getting ref list")
+	}
+
+	branches := make([]glow.Branch, 0)
+	refPrefix := "refs/heads/"
+	refList.ForEach(func(ref *plumbing.Reference) error {
+		refName := ref.Name().String()
+		if strings.HasPrefix(refName, refPrefix) {
+			b, _ := glow.NewBranch(refName)
+			branches = append(branches, b)
+		}
+		return nil
+	})
+
+	return nil, errors.New("")
 }
 
 // Create a new branch
