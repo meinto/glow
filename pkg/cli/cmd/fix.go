@@ -23,6 +23,7 @@ var fixCmd = &cobra.Command{
 		util.CheckForError(err, "NewFix")
 
 		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
 		err = g.Create(fix)
 		util.CheckForError(err, "Create")

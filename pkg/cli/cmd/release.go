@@ -31,6 +31,7 @@ var releaseCmd = &cobra.Command{
 		util.CheckForError(err, "NewRelease")
 
 		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
 		err = g.Create(release)
 		util.CheckForError(err, "Create")
