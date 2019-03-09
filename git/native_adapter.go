@@ -14,16 +14,16 @@ type nativeGitAdapter struct {
 
 // CurrentBranch returns the current branch name
 func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
-	return glow.Branch{}, errors.New("not implemented yet")
+	return nil, errors.New("not implemented yet")
 }
 
 // Create a new branch
-func (a nativeGitAdapter) Create(b glow.IBranch) error {
+func (a nativeGitAdapter) Create(b glow.Branch) error {
 	return errors.New("not implemented yet")
 }
 
 // Checkout a branch
-func (a nativeGitAdapter) Checkout(b glow.IBranch) error {
+func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "checkout", b.ShortBranchName())
 	err := cmd.Run()
 	return errors.Wrap(err, "native checkout")

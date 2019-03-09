@@ -16,12 +16,12 @@ func (a goGitAdapter) CurrentBranch() (glow.Branch, error) {
 		DetectDotGit: true,
 	})
 	if err != nil {
-		return glow.Branch{}, errors.Wrap(err, "error opening repository")
+		return nil, errors.Wrap(err, "error opening repository")
 	}
 
 	headRef, err := r.Head()
 	if err != nil {
-		return glow.Branch{}, errors.Wrap(err, "error getting current branch")
+		return nil, errors.Wrap(err, "error getting current branch")
 	}
 
 	refName := string(headRef.Name())
@@ -29,7 +29,7 @@ func (a goGitAdapter) CurrentBranch() (glow.Branch, error) {
 }
 
 // Create a new branch
-func (a goGitAdapter) Create(b glow.IBranch) error {
+func (a goGitAdapter) Create(b glow.Branch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
@@ -54,7 +54,7 @@ func (a goGitAdapter) Create(b glow.IBranch) error {
 }
 
 // Checkout a branch
-func (a goGitAdapter) Checkout(b glow.IBranch) error {
+func (a goGitAdapter) Checkout(b glow.Branch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
