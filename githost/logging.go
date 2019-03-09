@@ -1,4 +1,4 @@
-package gitlab
+package githost
 
 import (
 	"github.com/go-kit/kit/log"
