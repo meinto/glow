@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"log"
-	"strings"
 
-	"github.com/manifoldco/promptui"
+	"github.com/meinto/glow/githost"
+
+	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -21,55 +21,30 @@ var finishCmd = &cobra.Command{
 	Short: "close a branch",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		r, err := git.PlainOpen(".")
-		util.CheckForError(err, "PlainOpen")
+		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
-		r.Fetch(&git.FetchOptions{})
-
-		headRef, err := r.Head()
-		refName := string(headRef.Name())
-
-		if strings.Contains(refName, "feature/") ||
-			strings.Contains(refName, "release/") ||
-			strings.Contains(refName, "hotfix/") {
-			util.CreateMergeRequest(refName, "develop")
-			return
+		err := g.Fetch()
+		if err != nil {
+			log.Fatal(err)
 		}
 
-		if strings.Contains(refName, "fix/") {
-			var releaseBranches = make([]string, 0)
-			iterator, _ := r.References()
-			iterator.ForEach(func(ref *plumbing.Reference) error {
-				name := string(ref.Name())
-				if strings.Contains(name, "refs/heads/release/v") {
-					releaseBranches = append(releaseBranches, string(ref.Name()))
-				}
-				return nil
-			})
-			if len(releaseBranches) > 0 {
-				index, err := mergeWith(releaseBranches)
-				if err != nil {
-					log.Fatalf(err.Error())
-				}
-				mergeWith := releaseBranches[index]
-				util.CreateMergeRequest(refName, mergeWith)
-			} else {
-				log.Println("There is no release branch you could merge with.")
-			}
+		currentBranch, err := g.CurrentBranch()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		gh := githost.NewGitlabService(
+			viper.GetString("gitlabEndpoint"),
+			viper.GetString("projectNamespace"),
+			viper.GetString("projectName"),
+			viper.GetString("gitlabCIToken"),
+		)
+		gh = githost.NewLoggingService(logger, gh)
+
+		gh.Close(currentBranch)
+		if err != nil {
+			log.Fatal(err)
 		}
 	},
-}
-
-func mergeWith(refs []string) (int, error) {
-	prompt := promptui.Select{
-		Label: "Which branch do you want for merge?",
-		Items: refs,
-	}
-
-	index, _, err := prompt.Run()
-	if err != nil {
-		return -1, err
-	}
-
-	return index, nil
 }
