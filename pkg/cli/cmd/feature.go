@@ -23,7 +23,7 @@ var featureCmd = &cobra.Command{
 		feature, err := glow.NewFeature(viper.GetString("author"), featureName)
 		util.CheckForError(err, "NewFeature")
 
-		g := git.NewGit()
+		g := git.NewGoGitService()
 
 		err = g.Create(feature)
 		util.CheckForError(err, "Create")

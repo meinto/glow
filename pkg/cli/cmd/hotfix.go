@@ -22,7 +22,7 @@ var hotfixCmd = &cobra.Command{
 		hotfix, err := glow.NewHotfix(viper.GetString("author"), hotixName)
 		util.CheckForError(err, "NewHotfix")
 
-		g := git.NewGit()
+		g := git.NewGoGitService()
 
 		err = g.Create(hotfix)
 		util.CheckForError(err, "Create")

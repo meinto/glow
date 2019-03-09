@@ -22,7 +22,7 @@ var fixCmd = &cobra.Command{
 		fix, err := glow.NewFix(viper.GetString("author"), fixName)
 		util.CheckForError(err, "NewFix")
 
-		g := git.NewGit()
+		g := git.NewGoGitService()
 
 		err = g.Create(fix)
 		util.CheckForError(err, "Create")

@@ -17,13 +17,6 @@ type IBranch interface {
 	ShortBranchName() string
 }
 
-// GitService describes all actions which can performed with a branch
-type GitService interface {
-	CurrentBranch() (Branch, error)
-	Create(b IBranch) error
-	Checkout(b IBranch) error
-}
-
 // GitHostingService describes all actions which can performed
 // with the git hosting service (gitlab etc.)
 type GitHostingService interface {

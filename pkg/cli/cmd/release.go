@@ -30,7 +30,7 @@ var releaseCmd = &cobra.Command{
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
 
-		g := git.NewGit()
+		g := git.NewGoGitService()
 
 		err = g.Create(release)
 		util.CheckForError(err, "Create")
