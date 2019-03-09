@@ -24,6 +24,7 @@ var featureCmd = &cobra.Command{
 		util.CheckForError(err, "NewFeature")
 
 		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
 		err = g.Create(feature)
 		util.CheckForError(err, "Create")

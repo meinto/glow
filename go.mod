@@ -1,6 +1,8 @@
 module github.com/meinto/glow
 
 require (
+	github.com/go-kit/kit v0.8.0
+	github.com/go-logfmt/logfmt v0.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.3.2
 	github.com/pkg/errors v0.8.0

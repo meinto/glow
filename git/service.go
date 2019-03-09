@@ -13,10 +13,10 @@ type service struct {
 	Service
 }
 
-func NewGoGitService() service {
-	return service{GoGitAdapter{}}
+func NewGoGitService() Service {
+	return service{goGitAdapter{}}
 }
 
-func NewNativeService(gitPath string) service {
-	return service{NativeGitAdapter{gitPath}}
+func NewNativeService(gitPath string) Service {
+	return service{nativeGitAdapter{gitPath}}
 }

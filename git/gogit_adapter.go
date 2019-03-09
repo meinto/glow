@@ -8,10 +8,10 @@ import (
 )
 
 // GoGitAdapter implemented with go-git
-type GoGitAdapter struct{}
+type goGitAdapter struct{}
 
 // CurrentBranch returns the current branch name
-func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
+func (a goGitAdapter) CurrentBranch() (glow.Branch, error) {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
@@ -29,7 +29,7 @@ func (g GoGitAdapter) CurrentBranch() (glow.Branch, error) {
 }
 
 // Create a new branch
-func (g GoGitAdapter) Create(b glow.IBranch) error {
+func (a goGitAdapter) Create(b glow.IBranch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
@@ -54,7 +54,7 @@ func (g GoGitAdapter) Create(b glow.IBranch) error {
 }
 
 // Checkout a branch
-func (g GoGitAdapter) Checkout(b glow.IBranch) error {
+func (a goGitAdapter) Checkout(b glow.IBranch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
