@@ -22,8 +22,8 @@ var finishCmd = &cobra.Command{
 		g := git.NewGoGitService()
 		g = git.NewLoggingService(logger, g)
 
-		err := g.Fetch()
-		util.CheckForError(err, "Fetch")
+		// err := g.Fetch()
+		// util.CheckForError(err, "Fetch")
 
 		currentBranch, err := g.CurrentBranch()
 		util.CheckForError(err, "CurrentBranch")
