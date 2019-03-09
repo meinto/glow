@@ -23,6 +23,7 @@ var hotfixCmd = &cobra.Command{
 		util.CheckForError(err, "NewHotfix")
 
 		g := git.NewGoGitService()
+		g = git.NewLoggingService(logger, g)
 
 		err = g.Create(hotfix)
 		util.CheckForError(err, "Create")
