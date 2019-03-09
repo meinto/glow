@@ -1,11 +1,13 @@
 package util
 
-import "log"
+import (
+	"log"
+	"os"
+)
 
 func CheckForError(err error, desc string) {
 	if err != nil {
-		log.Println(desc)
-		log.Println("---")
-		log.Panicln(err)
+		log.Printf("%+v", err)
+		os.Exit(1)
 	}
 }
