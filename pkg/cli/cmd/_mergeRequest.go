@@ -7,8 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO implement this cmd
 func init() {
-	rootCmd.AddCommand(mergeRequestCmd)
+	// rootCmd.AddCommand(mergeRequestCmd)
 	util.AddFlagsForMergeRequests(mergeRequestCmd)
 }
 
