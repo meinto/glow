@@ -22,7 +22,8 @@ type ConfigType struct {
 	Token             string `json:"token,omitempty"`
 }
 
-var configFileName = "glow.json"
+var publicConfigFileName = "glow.config.json"
+var privateConfigFileName = "glow.private.json"
 
 func init() {
 	rootCmd.AddCommand(initCmd)
@@ -33,12 +34,12 @@ var initCmd = &cobra.Command{
 	Short: "init glow",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		author, err := promtNotEmpty("Your name - Author ")
+		author, err := promtNotEmpty("Short author name; Will be used for the 'author part' in feature branch names")
 		if err != nil {
 			log.Fatalf("error setting author: %s", err)
 		}
 
-		gitProviderDomain, err := promptURL("Your git host api endpoint (%s) ", "https://gitlab.com")
+		gitProviderDomain, err := promptURL("Your git host api endpoint (%s)", "https://gitlab.com")
 		if err != nil {
 			log.Fatalf("error setting git provider api endpoint: %s", err)
 		}
@@ -51,23 +52,18 @@ var initCmd = &cobra.Command{
 			log.Fatalf("error setting git provider: %s", err)
 		}
 
-		projectNamespace, err := promtNotEmpty("Project namespace ")
+		projectNamespace, err := promtNotEmpty("Project namespace")
 		if err != nil {
 			log.Fatalf("error setting project namespace: %s", err)
 		}
 
-		projectName, err := promtNotEmpty("Project name ")
+		projectName, err := promtNotEmpty("Project name")
 		if err != nil {
 			log.Fatalf("error setting project name: %s", err)
 		}
 
-		token, err := promtNotEmpty("Git provider ci token ")
-		if err != nil {
-			log.Fatalf("error setting gitlab ci token: %s", err)
-		}
-
-		if _, err := os.Stat(configFileName); !os.IsNotExist(err) {
-			replace, err := replaceFile(configFileName)
+		if _, err := os.Stat(publicConfigFileName); !os.IsNotExist(err) {
+			replace, err := replaceFile(publicConfigFileName)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -76,17 +72,25 @@ var initCmd = &cobra.Command{
 			}
 		}
 
-		addToGitIgnore(configFileName)
-
 		var config = ConfigType{
 			Author:            author,
 			GitProviderDomain: gitProviderDomain,
 			GitProvider:       gitProvider,
 			ProjectNamespace:  projectNamespace,
 			ProjectName:       projectName,
-			Token:             token,
 		}
-		writeJSONFile(config, configFileName)
+		writeJSONFile(config, publicConfigFileName)
+
+		token, err := promtNotEmpty("Git provider ci token")
+		if err != nil {
+			log.Fatalf("error setting gitlab ci token: %s", err)
+		}
+		addToGitIgnore(privateConfigFileName)
+
+		config = ConfigType{
+			Token: token,
+		}
+		writeJSONFile(config, privateConfigFileName)
 
 		log.Println(config, author, gitProviderDomain, gitProvider, projectNamespace, projectName, token)
 	},
