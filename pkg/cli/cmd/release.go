@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
@@ -30,8 +29,8 @@ var releaseCmd = &cobra.Command{
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
 
-		g := git.NewGoGitService()
-		g = git.NewLoggingService(logger, g)
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
 
 		err = g.Create(release)
 		util.CheckForError(err, "Create")
