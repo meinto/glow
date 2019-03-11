@@ -1,7 +1,7 @@
 {
   "versionFileName": "VERSION",
   "versionFileType": "raw",
-  "tagVersions": true,
+  "tagVersions": false,
   "pushChanges": true,
   "author": "Tobias Meinhardt",
   "email": "tobias.meinhardt89@gmail.com"

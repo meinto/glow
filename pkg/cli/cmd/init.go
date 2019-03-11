@@ -9,18 +9,21 @@ import (
 	"strings"
 
 	"github.com/manifoldco/promptui"
+	"github.com/meinto/cobra-utils"
 	"github.com/spf13/cobra"
 )
 
 type ConfigType struct {
 	Author            string `json:"author,omitempty"`
 	GitProviderDomain string `json:"gitProviderDomain,omitempty"`
+	GitProvider       string `json:"gitProvider,omitempty"`
 	ProjectNamespace  string `json:"projectNamespace,omitempty"`
 	ProjectName       string `json:"projectName,omitempty"`
 	Token             string `json:"token,omitempty"`
 }
 
-var configFileName = "glow.json"
+var publicConfigFileName = "glow.config.json"
+var privateConfigFileName = "glow.private.json"
 
 func init() {
 	rootCmd.AddCommand(initCmd)
@@ -31,33 +34,36 @@ var initCmd = &cobra.Command{
 	Short: "init glow",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		author, err := promtNotEmpty("Your name - Author ")
+		author, err := promtNotEmpty("Short author name; Will be used for the 'author part' in feature branch names")
 		if err != nil {
 			log.Fatalf("error setting author: %s", err)
 		}
 
-		gitProviderDomain, err := promptURL("Your git host endpoint (%s) ", "https://gitlab.com")
+		gitProviderDomain, err := promptURL("Your git host api endpoint (%s)", "https://gitlab.com")
 		if err != nil {
-			log.Fatalf("error setting gitlab endpoint: %s", err)
+			log.Fatalf("error setting git provider api endpoint: %s", err)
 		}
 
-		projectNamespace, err := promtNotEmpty("Project namespace ")
+		_, gitProvider, err := cobraUtils.PromptSelect(
+			"Select which git provider you use",
+			[]string{"gitlab", "github"},
+		)
+		if err != nil {
+			log.Fatalf("error setting git provider: %s", err)
+		}
+
+		projectNamespace, err := promtNotEmpty("Project namespace")
 		if err != nil {
 			log.Fatalf("error setting project namespace: %s", err)
 		}
 
-		projectName, err := promtNotEmpty("Project name ")
+		projectName, err := promtNotEmpty("Project name")
 		if err != nil {
 			log.Fatalf("error setting project name: %s", err)
 		}
 
-		token, err := promtNotEmpty("Git provider ci token ")
-		if err != nil {
-			log.Fatalf("error setting gitlab ci token: %s", err)
-		}
-
-		if _, err := os.Stat(configFileName); !os.IsNotExist(err) {
-			replace, err := replaceFile(configFileName)
+		if _, err := os.Stat(publicConfigFileName); !os.IsNotExist(err) {
+			replace, err := replaceFile(publicConfigFileName)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -66,18 +72,27 @@ var initCmd = &cobra.Command{
 			}
 		}
 
-		addToGitIgnore(configFileName)
-
 		var config = ConfigType{
 			Author:            author,
 			GitProviderDomain: gitProviderDomain,
+			GitProvider:       gitProvider,
 			ProjectNamespace:  projectNamespace,
 			ProjectName:       projectName,
-			Token:             token,
 		}
-		writeJSONFile(config, configFileName)
+		writeJSONFile(config, publicConfigFileName)
 
-		log.Println(config, author, gitProviderDomain, projectNamespace, projectName, token)
+		token, err := promtNotEmpty("Git provider ci token")
+		if err != nil {
+			log.Fatalf("error setting gitlab ci token: %s", err)
+		}
+		addToGitIgnore(privateConfigFileName)
+
+		config = ConfigType{
+			Token: token,
+		}
+		writeJSONFile(config, privateConfigFileName)
+
+		log.Println(config, author, gitProviderDomain, gitProvider, projectNamespace, projectName, token)
 	},
 }
 
