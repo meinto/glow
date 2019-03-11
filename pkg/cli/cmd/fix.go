@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,8 +21,8 @@ var fixCmd = &cobra.Command{
 		fix, err := glow.NewFix(viper.GetString("author"), fixName)
 		util.CheckForError(err, "NewFix")
 
-		g := git.NewGoGitService()
-		g = git.NewLoggingService(logger, g)
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
 
 		err = g.Create(fix)
 		util.CheckForError(err, "Create")

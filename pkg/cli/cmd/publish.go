@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/githost"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
@@ -18,8 +17,8 @@ var publishCmd = &cobra.Command{
 	Short: "publish a release branch",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		g := git.NewGoGitService()
-		g = git.NewLoggingService(logger, g)
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
 
 		// err := g.Fetch()
 		// util.CheckForError(err, "Fetch")
