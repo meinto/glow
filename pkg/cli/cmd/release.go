@@ -3,12 +3,16 @@ package cmd
 import (
 	"bytes"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/meinto/glow/semver"
 
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var releaseCmdOptions struct {
@@ -23,8 +27,16 @@ func init() {
 var releaseCmd = &cobra.Command{
 	Use:   "release",
 	Short: "create a release branch",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		version := args[0]
+
+		if hasSemverConfig() && isSemanticVersion(version) {
+			s := semver.NewGitSemverService(viper.GetString("gitPath"))
+			v, err := s.GetNextVersion(args[0])
+			util.CheckForError(err, "semver GetNextVersion")
+			version = v
+		}
 
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
@@ -42,6 +54,20 @@ var releaseCmd = &cobra.Command{
 			postRelease(version)
 		}
 	},
+}
+
+func hasSemverConfig() bool {
+	if _, err := os.Stat(viper.GetString("gitPath") + "/semver.config.json"); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func isSemanticVersion(version string) bool {
+	if version == "major" || version == "minor" || version == "patch" {
+		return true
+	}
+	return false
 }
 
 func postRelease(version string) {
