@@ -2,7 +2,7 @@
   "versionFileName": "VERSION",
   "versionFileType": "raw",
   "tagVersions": false,
-  "pushChanges": false,
+  "pushChanges": true,
   "author": "Tobias Meinhardt",
   "email": "tobias.meinhardt89@gmail.com"
 }
