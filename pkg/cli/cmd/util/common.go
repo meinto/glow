@@ -41,8 +41,7 @@ func GetGitProvider() (gitprovider.Service, error) {
 			viper.GetString("gitProviderDomain"),
 			viper.GetString("projectNamespace"),
 			viper.GetString("projectName"),
-			viper.GetString("clientId"),
-			viper.GetString("clientSecret"),
+			viper.GetString("token"),
 		)
 		break
 	case "gitlab":
