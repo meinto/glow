@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/meinto/glow/githost"
+	"github.com/meinto/glow/gitprovider"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,13 +26,13 @@ var publishCmd = &cobra.Command{
 		currentBranch, err := g.CurrentBranch()
 		util.CheckForError(err, "CurrentBranch")
 
-		gh := githost.NewGitlabService(
-			viper.GetString("githost"),
+		gh := gitprovider.NewGitlabService(
+			viper.GetString("gitProviderDomain"),
 			viper.GetString("projectNamespace"),
 			viper.GetString("projectName"),
 			viper.GetString("gitlabCIToken"),
 		)
-		gh = githost.NewLoggingService(logger, gh)
+		gh = gitprovider.NewLoggingService(logger, gh)
 
 		gh.Publish(currentBranch)
 		util.CheckForError(err, "Close")
