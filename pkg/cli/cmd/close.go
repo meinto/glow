@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"github.com/meinto/glow/githost"
-
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -27,15 +24,10 @@ var finishCmd = &cobra.Command{
 		currentBranch, err := g.CurrentBranch()
 		util.CheckForError(err, "CurrentBranch")
 
-		gh := githost.NewGitlabService(
-			viper.GetString("githost"),
-			viper.GetString("projectNamespace"),
-			viper.GetString("projectName"),
-			viper.GetString("gitlabCIToken"),
-		)
-		gh = githost.NewLoggingService(logger, gh)
+		gp, err := util.GetGitProvider()
+		util.CheckForError(err, "GetGitProvider")
 
-		gh.Close(currentBranch)
+		gp.Close(currentBranch)
 		util.CheckForError(err, "Close")
 	},
 }
