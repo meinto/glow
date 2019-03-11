@@ -12,6 +12,7 @@ import (
 )
 
 type gitlabAdapter struct {
+	token string
 	service
 }
 
