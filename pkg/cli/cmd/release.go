@@ -7,10 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/meinto/glow/semver"
-
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,8 +30,13 @@ var releaseCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		version := args[0]
 
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
+
 		if hasSemverConfig() && isSemanticVersion(version) {
-			s := semver.NewGitSemverService(viper.GetString("gitPath"))
+			pathToRepo, err := g.GitRepoPath()
+			util.CheckForError(err, "semver GitRepoPath")
+			s := semver.NewGitSemverService(pathToRepo, viper.GetString("gitPath"))
 			v, err := s.GetNextVersion(args[0])
 			util.CheckForError(err, "semver GetNextVersion")
 			version = v
@@ -40,9 +44,6 @@ var releaseCmd = &cobra.Command{
 
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
-
-		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
 
 		err = g.Create(release)
 		util.CheckForError(err, "Create")
