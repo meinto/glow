@@ -1,6 +1,7 @@
 glow
 build
 public
+.DS_Store
 
 node_modules
 package.json
