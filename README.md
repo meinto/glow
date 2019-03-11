@@ -77,7 +77,7 @@ glow init
 ```json
 {
   "author": "dvadar",
-  "githost": "https://gitlab.com",
+  "gitProviderDomain": "https://gitlab.com",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitlabCIToken": "abc",
