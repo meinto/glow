@@ -10,9 +10,9 @@ import (
 )
 
 var rootCmdOptions struct {
-	Author               string
-	GitPath              string
-	UseNativeGitBindings []string
+	Author                string
+	GitPath               string
+	UseBuiltInGitBindings bool
 }
 
 var logger log.Logger
@@ -26,10 +26,10 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "test", "name of the author")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
-	rootCmd.PersistentFlags().StringSliceVar(&rootCmdOptions.UseNativeGitBindings, "useNativeGitBindings", []string{}, "defines which git actions should be performed with the native git client")
+	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.UseBuiltInGitBindings, "useBuiltInGitBindings", false, "defines wether build or native in git client should be used.")
 	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
 	viper.BindPFlag("gitPath", rootCmd.PersistentFlags().Lookup("gitPath"))
-	viper.BindPFlag("useNativeGitBindings", rootCmd.PersistentFlags().Lookup("useNativeGitBindings"))
+	viper.BindPFlag("useBuiltInGitBindings", rootCmd.PersistentFlags().Lookup("useBuiltInGitBindings"))
 }
 
 func Execute() {

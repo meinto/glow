@@ -23,23 +23,27 @@ func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
 }
 
 // BranchList returns a list of avalilable branches
-func (s nativeGitAdapter) BranchList() ([]glow.Branch, error) {
+func (a nativeGitAdapter) BranchList() ([]glow.Branch, error) {
 	return nil, errors.New("not implemented yet")
 }
 
 // Fetch changes
-func (s nativeGitAdapter) Fetch() error {
-	return errors.New("not implemented yet")
+func (a nativeGitAdapter) Fetch() error {
+	cmd := exec.Command(a.gitPath, "fetch")
+	err := cmd.Run()
+	return errors.Wrap(err, "native Fetch")
 }
 
 // Create a new branch
 func (a nativeGitAdapter) Create(b glow.Branch) error {
-	return errors.New("not implemented yet")
+	cmd := exec.Command(a.gitPath, "branch", b.ShortBranchName())
+	err := cmd.Run()
+	return errors.Wrap(err, "native Create")
 }
 
 // Checkout a branch
 func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "checkout", b.ShortBranchName())
 	err := cmd.Run()
-	return errors.Wrap(err, "native checkout")
+	return errors.Wrap(err, "native Checkout")
 }
