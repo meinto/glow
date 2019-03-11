@@ -62,39 +62,6 @@ After publishing the release, you have to merge all changes made on the release 
 glow close
 ```
 
-## Commands
-
-```bash
-# feature
-glow feature <name-of-the-feature> \ 
-  --author <name-of-the-author> # optional when using config file
-
-# release
-glow release <version> \ 
-  --postRelease <name-of-script> # optional
-
-# merge request
-glow mergeRequest <source-branch> <target-branch> \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-
-# publish
-glow publish \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-
-# finish release
-glow close \
-  -e <gitlabEndpoint> \     # optional when using config file
-  -n <projectNamespace> \   # optional when using config file
-  -p <projectName> \        # optional when using config file
-  -t <gitlabCIToken>        # optional when using config file
-```
-
 ## Config
 
 For some commands you must provide information like the url of your Gitlab instance or your Gitlab ci token. These informations can be put in a `glow.json` file. Glow will lookup this json in the directory where its executed.

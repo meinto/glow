@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// IBranch interface
+// Branch interface
 type Branch interface {
 	CreationIsAllowedFrom(sourceBranch string) bool
 	CanBeClosed() bool
