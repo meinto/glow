@@ -86,7 +86,7 @@ glow init
 }
 ```
 
-## Built in git client
+## Built in git bindings
 
 glow uses the native git installation per default. The default configured path to git is `/usr/local/bin/git`. You can change the path with the flag `--gitPath` or the property `gitPath` in the config file.
 
