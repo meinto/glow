@@ -28,7 +28,7 @@ var finishCmd = &cobra.Command{
 		util.CheckForError(err, "CurrentBranch")
 
 		gh := githost.NewGitlabService(
-			viper.GetString("gitlabEndpoint"),
+			viper.GetString("githost"),
 			viper.GetString("projectNamespace"),
 			viper.GetString("projectName"),
 			viper.GetString("gitlabCIToken"),
