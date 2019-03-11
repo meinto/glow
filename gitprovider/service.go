@@ -41,3 +41,21 @@ func NewGitlabService(endpoint, namespace, project, token string) Service {
 		},
 	}
 }
+
+func NewGithubService(endpoint, namespace, project, token string) Service {
+	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+
+	g := git.NewGoGitService()
+	g = git.NewLoggingService(logger, g)
+
+	return &githubAdapter{
+		service{
+			endpoint,
+			namespace,
+			project,
+			token,
+			g,
+		},
+	}
+}
