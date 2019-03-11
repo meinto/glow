@@ -1,6 +1,8 @@
 package git
 
 import (
+	"bufio"
+	"log"
 	"os/exec"
 
 	"github.com/meinto/glow"
@@ -24,7 +26,20 @@ func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
 
 // BranchList returns a list of avalilable branches
 func (a nativeGitAdapter) BranchList() ([]glow.Branch, error) {
-	return nil, errors.New("not implemented yet")
+	cmd := exec.Command(a.gitPath, "branch", "--list")
+	stdoutReader, err := cmd.StdoutPipe()
+	if err != nil {
+		return []glow.Branch{}, err
+	}
+	err = cmd.Run()
+	if err != nil {
+		return []glow.Branch{}, err
+	}
+	scanner := bufio.NewScanner(stdoutReader)
+	for scanner.Scan() {
+		log.Println(scanner.Text())
+	}
+	return nil, errors.Wrap(err, "native Fetch")
 }
 
 // Fetch changes
