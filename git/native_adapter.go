@@ -2,6 +2,7 @@ package git
 
 import (
 	"bufio"
+	"bytes"
 	"os/exec"
 	"strings"
 
@@ -16,7 +17,11 @@ type nativeGitAdapter struct {
 
 // GitRepoPath returns the path to the root with the .git folder
 func (a nativeGitAdapter) GitRepoPath() (string, error) {
-	return "", errors.New("not implemented yet")
+	cmd := exec.Command(a.gitPath, "rev-parse", "--show-toplevel")
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+	err := cmd.Run()
+	return stdout.String(), err
 }
 
 // CurrentBranch returns the current branch name
