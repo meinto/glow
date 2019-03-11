@@ -5,4 +5,4 @@ public
 node_modules
 package.json
 
-glow.json
+glow.private.json
