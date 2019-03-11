@@ -1,8 +1,11 @@
 package util
 
 import (
+	"errors"
 	"log"
 	"os"
+
+	"github.com/meinto/glow/gitprovider"
 
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/meinto/glow/git"
@@ -27,5 +30,34 @@ func GetGitClient() (git.Service, error) {
 	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
 	s = git.NewLoggingService(logger, s)
+	return s, nil
+}
+
+func GetGitProvider() (gitprovider.Service, error) {
+	var s gitprovider.Service
+	switch viper.GetString("gitProvider") {
+	case "github":
+		s = gitprovider.NewGithubService(
+			viper.GetString("gitProviderDomain"),
+			viper.GetString("projectNamespace"),
+			viper.GetString("projectName"),
+			viper.GetString("clientId"),
+			viper.GetString("clientSecret"),
+		)
+		break
+	case "gitlab":
+		s = gitprovider.NewGitlabService(
+			viper.GetString("gitProviderDomain"),
+			viper.GetString("projectNamespace"),
+			viper.GetString("projectName"),
+			viper.GetString("gitlabCIToken"),
+		)
+		break
+	default:
+		return nil, errors.New("git provider not specified")
+	}
+	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
+	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
+	s = gitprovider.NewLoggingService(logger, s)
 	return s, nil
 }

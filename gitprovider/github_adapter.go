@@ -12,6 +12,8 @@ import (
 )
 
 type githubAdapter struct {
+	clientID     string
+	clientSecret string
 	service
 }
 
@@ -64,10 +66,12 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	body := bytes.NewReader(payloadBytes)
 
 	requestURI := fmt.Sprintf(
-		"%s/repos/%s/%s/pulls",
+		"%s/repos/%s/%s/pulls?client_id=%s&client_secret=%s",
 		a.endpoint,
 		a.namespace,
 		a.project,
+		a.clientID,
+		a.clientSecret,
 	)
 	req, err := http.NewRequest("POST", requestURI, body)
 	if err != nil {
@@ -75,7 +79,6 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Private-Token", a.token)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

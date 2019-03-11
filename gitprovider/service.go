@@ -20,7 +20,6 @@ type service struct {
 	endpoint   string
 	namespace  string
 	project    string
-	token      string
 	gitService git.Service
 }
 
@@ -32,17 +31,17 @@ func NewGitlabService(endpoint, namespace, project, token string) Service {
 	g = git.NewLoggingService(logger, g)
 
 	return &gitlabAdapter{
+		token,
 		service{
 			endpoint,
 			namespace,
 			project,
-			token,
 			g,
 		},
 	}
 }
 
-func NewGithubService(endpoint, namespace, project, token string) Service {
+func NewGithubService(endpoint, namespace, project, clientID, clientSecret string) Service {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 
@@ -50,11 +49,12 @@ func NewGithubService(endpoint, namespace, project, token string) Service {
 	g = git.NewLoggingService(logger, g)
 
 	return &githubAdapter{
+		clientID,
+		clientSecret,
 		service{
 			endpoint,
 			namespace,
 			project,
-			token,
 			g,
 		},
 	}
