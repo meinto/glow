@@ -13,11 +13,11 @@ import (
 )
 
 type ConfigType struct {
-	Author           string `json:"author,omitempty"`
-	GitlabEndpoint   string `json:"gitlabEndpoint,omitempty"`
-	ProjectNamespace string `json:"projectNamespace,omitempty"`
-	ProjectName      string `json:"projectName,omitempty"`
-	GitlabCIToken    string `json:"gitlabCIToken,omitempty"`
+	Author            string `json:"author,omitempty"`
+	GitProviderDomain string `json:"gitProviderDomain,omitempty"`
+	ProjectNamespace  string `json:"projectNamespace,omitempty"`
+	ProjectName       string `json:"projectName,omitempty"`
+	GitlabCIToken     string `json:"gitlabCIToken,omitempty"`
 }
 
 var configFileName = "glow.json"
@@ -36,7 +36,7 @@ var initCmd = &cobra.Command{
 			log.Fatalf("error setting author: %s", err)
 		}
 
-		gitlabEndpoint, err := promptURL("Your gitlab endpoint (%s) ", "https://gitlab.com")
+		gitProviderDomain, err := promptURL("Your git host endpoint (%s) ", "https://gitlab.com")
 		if err != nil {
 			log.Fatalf("error setting gitlab endpoint: %s", err)
 		}
@@ -69,15 +69,15 @@ var initCmd = &cobra.Command{
 		addToGitIgnore(configFileName)
 
 		var config = ConfigType{
-			Author:           author,
-			GitlabEndpoint:   gitlabEndpoint,
-			ProjectNamespace: projectNamespace,
-			ProjectName:      projectName,
-			GitlabCIToken:    gitlabCIToken,
+			Author:            author,
+			GitProviderDomain: gitProviderDomain,
+			ProjectNamespace:  projectNamespace,
+			ProjectName:       projectName,
+			GitlabCIToken:     gitlabCIToken,
 		}
 		writeJSONFile(config, configFileName)
 
-		log.Println(config, author, gitlabEndpoint, projectNamespace, projectName, gitlabCIToken)
+		log.Println(config, author, gitProviderDomain, projectNamespace, projectName, gitlabCIToken)
 	},
 }
 

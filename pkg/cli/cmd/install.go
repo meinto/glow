@@ -1,13 +1,17 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/manifoldco/promptui"
+	"github.com/meinto/cobra-utils"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -20,15 +24,20 @@ var installCmd = &cobra.Command{
 	Short: "install glow",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		filePath, err := pathToGlowFile()
-		if err != nil {
-			log.Fatalf("error getting path to glow file: %s", err)
-		}
+		flist, err := fileList(".")
+		util.CheckForError(err, "cannot get file list")
 
-		index, err := usageOptions()
-		if err != nil {
-			log.Fatal(err)
-		}
+		index, _, err := cobraUtils.PromptSelect(
+			"Select your downloaded glow file",
+			flist,
+		)
+		util.CheckForError(err, fmt.Sprintf("cannot get path to glow file: %s", err))
+
+		filePath, err := filepath.Abs(flist[index])
+		util.CheckForError(err, "cannot get absolute file path")
+
+		index, err = usageOptions()
+		util.CheckForError(err, "cannot get usage option")
 
 		var newFileName string
 		switch index {
@@ -116,4 +125,21 @@ func replaceFile(filePath string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func fileList(rootPath string) ([]string, error) {
+	var files []string
+
+	err := filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
+		if !strings.HasPrefix(path, "glow_") {
+			return nil
+		}
+		files = append(files, path)
+		return nil
+	})
+	if err != nil {
+		return files, errors.Wrap(err, "error creating file list")
+	}
+
+	return files, nil
 }

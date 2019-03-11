@@ -26,7 +26,7 @@ var mergeRequestCmd = &cobra.Command{
 
 		util.CheckRequiredStringField(source, "source branch")
 		util.CheckRequiredStringField(target, "target branch")
-		util.CheckRequiredStringField(util.MergeRequestFlags.GitlabEndpoint, "gitlab endpoint")
+		util.CheckRequiredStringField(util.MergeRequestFlags.GitProviderDomain, "git host endpoint")
 		util.CheckRequiredStringField(util.MergeRequestFlags.ProjectNamespace, "project namespace")
 		util.CheckRequiredStringField(util.MergeRequestFlags.ProjectName, "project name")
 		util.CheckRequiredStringField(util.MergeRequestFlags.GitlabCIToken, "gitlab ci token")
