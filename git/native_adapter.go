@@ -21,7 +21,7 @@ func (a nativeGitAdapter) GitRepoPath() (string, error) {
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
 	err := cmd.Run()
-	return stdout.String(), err
+	return strings.TrimSuffix(stdout.String(), "\n"), err
 }
 
 // CurrentBranch returns the current branch name
