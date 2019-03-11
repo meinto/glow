@@ -24,6 +24,10 @@ type branch struct {
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) (Branch, error) {
+	if !strings.HasPrefix(name, "refs/heads/") {
+		name = "refs/heads/" + name
+	}
+
 	if strings.Contains(name, "/feature/") {
 		return FeatureFromBranch(name)
 	}
@@ -41,6 +45,10 @@ func NewBranch(name string) (Branch, error) {
 
 // NewPlainBranch creates a new plain branch
 func NewPlainBranch(name string) Branch {
+	if !strings.HasPrefix(name, "refs/heads/") {
+		name = "refs/heads/" + name
+	}
+
 	return branch{name}
 }
 
