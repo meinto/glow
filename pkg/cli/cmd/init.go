@@ -17,7 +17,7 @@ type ConfigType struct {
 	GitProviderDomain string `json:"gitProviderDomain,omitempty"`
 	ProjectNamespace  string `json:"projectNamespace,omitempty"`
 	ProjectName       string `json:"projectName,omitempty"`
-	GitlabCIToken     string `json:"gitlabCIToken,omitempty"`
+	Token             string `json:"token,omitempty"`
 }
 
 var configFileName = "glow.json"
@@ -51,7 +51,7 @@ var initCmd = &cobra.Command{
 			log.Fatalf("error setting project name: %s", err)
 		}
 
-		gitlabCIToken, err := promtNotEmpty("Gitlab ci token ")
+		token, err := promtNotEmpty("Git provider ci token ")
 		if err != nil {
 			log.Fatalf("error setting gitlab ci token: %s", err)
 		}
@@ -73,11 +73,11 @@ var initCmd = &cobra.Command{
 			GitProviderDomain: gitProviderDomain,
 			ProjectNamespace:  projectNamespace,
 			ProjectName:       projectName,
-			GitlabCIToken:     gitlabCIToken,
+			Token:             token,
 		}
 		writeJSONFile(config, configFileName)
 
-		log.Println(config, author, gitProviderDomain, projectNamespace, projectName, gitlabCIToken)
+		log.Println(config, author, gitProviderDomain, projectNamespace, projectName, token)
 	},
 }
 

@@ -81,7 +81,7 @@ glow init
   "gitProvider": "gitlab",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
-  "gitlabCIToken": "abc",
+  "token": "abc",
   "gitPath": "/usr/local/bin/git",
   "useBuiltInGitBindings": false,
 }
