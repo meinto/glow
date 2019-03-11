@@ -72,6 +72,8 @@ glow init
 
 **List of all config params**
 
+*glow.config.json*
+
 ```json
 {
   "author": "dvadar",
@@ -79,9 +81,16 @@ glow init
   "gitProvider": "gitlab",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
-  "token": "abc",
   "gitPath": "/usr/local/bin/git",
   "useBuiltInGitBindings": false,
+}
+```
+
+*glow.private.json*
+
+```json
+{
+  "token": "abc"
 }
 ```
 
