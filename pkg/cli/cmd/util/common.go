@@ -49,7 +49,7 @@ func GetGitProvider() (gitprovider.Service, error) {
 			viper.GetString("gitProviderDomain"),
 			viper.GetString("projectNamespace"),
 			viper.GetString("projectName"),
-			viper.GetString("gitlabCIToken"),
+			viper.GetString("token"),
 		)
 		break
 	default:

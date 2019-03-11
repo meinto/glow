@@ -10,7 +10,7 @@ var MergeRequestFlags struct {
 	GitProvider       string
 	ProjectNamespace  string
 	ProjectName       string
-	GitlabCIToken     string
+	Token             string
 }
 
 func AddFlagsForMergeRequests(cmd *cobra.Command) {
@@ -18,10 +18,10 @@ func AddFlagsForMergeRequests(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&MergeRequestFlags.GitProvider, "gitProvider", "gitlab", "git provider e.g.: gitlab, github, bitbucket")
 	cmd.Flags().StringVarP(&MergeRequestFlags.ProjectNamespace, "namespace", "n", "", "project namespace")
 	cmd.Flags().StringVarP(&MergeRequestFlags.ProjectName, "project", "p", "", "project name")
-	cmd.Flags().StringVarP(&MergeRequestFlags.GitlabCIToken, "token", "t", "", "gitlab ci token")
+	cmd.Flags().StringVarP(&MergeRequestFlags.Token, "token", "t", "", "gitlab ci token")
 	viper.BindPFlag("gitProviderDomain", cmd.Flags().Lookup("endpoint"))
 	viper.BindPFlag("gitProvider", cmd.Flags().Lookup("gitProvider"))
 	viper.BindPFlag("projectNamespace", cmd.Flags().Lookup("namespace"))
 	viper.BindPFlag("projectName", cmd.Flags().Lookup("project"))
-	viper.BindPFlag("gitlabCIToken", cmd.Flags().Lookup("token"))
+	viper.BindPFlag("token", cmd.Flags().Lookup("token"))
 }
