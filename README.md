@@ -78,6 +78,7 @@ glow init
 {
   "author": "dvadar",
   "gitProviderDomain": "https://gitlab.com",
+  "gitProvider": "gitlab",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitlabCIToken": "abc",
