@@ -9,12 +9,14 @@ import (
 	"strings"
 
 	"github.com/manifoldco/promptui"
+	"github.com/meinto/cobra-utils"
 	"github.com/spf13/cobra"
 )
 
 type ConfigType struct {
 	Author            string `json:"author,omitempty"`
 	GitProviderDomain string `json:"gitProviderDomain,omitempty"`
+	GitProvider       string `json:"gitProvider,omitempty"`
 	ProjectNamespace  string `json:"projectNamespace,omitempty"`
 	ProjectName       string `json:"projectName,omitempty"`
 	Token             string `json:"token,omitempty"`
@@ -36,9 +38,17 @@ var initCmd = &cobra.Command{
 			log.Fatalf("error setting author: %s", err)
 		}
 
-		gitProviderDomain, err := promptURL("Your git host endpoint (%s) ", "https://gitlab.com")
+		gitProviderDomain, err := promptURL("Your git host api endpoint (%s) ", "https://gitlab.com")
 		if err != nil {
-			log.Fatalf("error setting gitlab endpoint: %s", err)
+			log.Fatalf("error setting git provider api endpoint: %s", err)
+		}
+
+		_, gitProvider, err := cobraUtils.PromptSelect(
+			"Select which git provider you use",
+			[]string{"gitlab", "github"},
+		)
+		if err != nil {
+			log.Fatalf("error setting git provider: %s", err)
 		}
 
 		projectNamespace, err := promtNotEmpty("Project namespace ")
@@ -71,13 +81,14 @@ var initCmd = &cobra.Command{
 		var config = ConfigType{
 			Author:            author,
 			GitProviderDomain: gitProviderDomain,
+			GitProvider:       gitProvider,
 			ProjectNamespace:  projectNamespace,
 			ProjectName:       projectName,
 			Token:             token,
 		}
 		writeJSONFile(config, configFileName)
 
-		log.Println(config, author, gitProviderDomain, projectNamespace, projectName, token)
+		log.Println(config, author, gitProviderDomain, gitProvider, projectNamespace, projectName, token)
 	},
 }
 
