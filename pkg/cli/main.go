@@ -22,11 +22,18 @@ func main() {
 		rootRepoPath = "."
 	}
 
-	viper.SetConfigName("glow")
+	viper.SetConfigName("glow.config")
 	viper.AddConfigPath(rootRepoPath)
-	err = viper.ReadInConfig() // Find and read the config file
-	if err != nil {            // Handle errors reading the config file
+	err = viper.ReadInConfig()
+	if err != nil {
 		log.Println("there is no glow config")
+	}
+
+	viper.SetConfigName("glow.private")
+	viper.AddConfigPath(rootRepoPath)
+	err = viper.MergeInConfig()
+	if err != nil {
+		log.Println("there is no private glow config")
 	}
 
 	cmd.Execute()

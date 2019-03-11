@@ -1,8 +1,6 @@
-# Glow - Git-Flow (for Gitlab)
+# Glow - A CLI Tool to adapt Git-Flow
 
 ![glow logo](./assets/glow-logo.svg)
-
-You can use this tool in any git project of course. But there are some commands which are bound to the Gitlab api. So therefore I promote this as a tool tailored for Gitlab.
 
 ## Installation
 
@@ -74,6 +72,8 @@ glow init
 
 **List of all config params**
 
+*glow.config.json*
+
 ```json
 {
   "author": "dvadar",
@@ -81,9 +81,16 @@ glow init
   "gitProvider": "gitlab",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
-  "token": "abc",
   "gitPath": "/usr/local/bin/git",
   "useBuiltInGitBindings": false,
+}
+```
+
+*glow.private.json*
+
+```json
+{
+  "token": "abc"
 }
 ```
 
