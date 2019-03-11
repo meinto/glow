@@ -2,8 +2,8 @@ package git
 
 import (
 	"bufio"
-	"log"
 	"os/exec"
+	"strings"
 
 	"github.com/meinto/glow"
 	"github.com/pkg/errors"
@@ -21,25 +21,33 @@ func (a nativeGitAdapter) GitRepoPath() (string, error) {
 
 // CurrentBranch returns the current branch name
 func (a nativeGitAdapter) CurrentBranch() (glow.Branch, error) {
-	return nil, errors.New("not implemented yet")
+	cmdBranchList, err := getCMDBranchList(a.gitPath)
+	if err != nil {
+		return nil, err
+	}
+	for _, b := range cmdBranchList {
+		if b.IsCurrentBranch {
+			return glow.NewBranch(b.Name)
+		}
+	}
+	return nil, errors.New("cannot detect current branch")
 }
 
 // BranchList returns a list of avalilable branches
 func (a nativeGitAdapter) BranchList() ([]glow.Branch, error) {
-	cmd := exec.Command(a.gitPath, "branch", "--list")
-	stdoutReader, err := cmd.StdoutPipe()
+	cmdBranchList, err := getCMDBranchList(a.gitPath)
 	if err != nil {
-		return []glow.Branch{}, err
+		return nil, err
 	}
-	err = cmd.Run()
-	if err != nil {
-		return []glow.Branch{}, err
+	branchList := make([]glow.Branch, 0)
+	for _, b := range cmdBranchList {
+		gb, err := glow.NewBranch(b.Name)
+		if err != nil {
+			return nil, err
+		}
+		branchList = append(branchList, gb)
 	}
-	scanner := bufio.NewScanner(stdoutReader)
-	for scanner.Scan() {
-		log.Println(scanner.Text())
-	}
-	return nil, errors.Wrap(err, "native Fetch")
+	return branchList, nil
 }
 
 // Fetch changes
@@ -61,4 +69,47 @@ func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "checkout", b.ShortBranchName())
 	err := cmd.Run()
 	return errors.Wrap(err, "native Checkout")
+}
+
+type cmdBranch struct {
+	Name            string
+	IsCurrentBranch bool
+}
+
+func getCMDBranchList(gitPath string) ([]cmdBranch, error) {
+	cmd := exec.Command(gitPath, "branch", "--list")
+	stdoutReader, err := cmd.StdoutPipe()
+	if err != nil {
+		return []cmdBranch{}, err
+	}
+	if err != nil {
+		return []cmdBranch{}, err
+	}
+
+	c := make(chan []cmdBranch)
+	go func(c chan []cmdBranch) {
+		var branchList []cmdBranch
+		scanner := bufio.NewScanner(stdoutReader)
+		for scanner.Scan() {
+			line := strings.Trim(scanner.Text(), " ")
+			parts := strings.Split(line, " ")
+
+			name := parts[0]
+			isCurrentBranch := false
+			if len(parts) > 1 {
+				name = parts[1]
+				isCurrentBranch = true
+			}
+
+			branchList = append(branchList, cmdBranch{
+				name,
+				isCurrentBranch,
+			})
+		}
+		c <- branchList
+		close(c)
+	}(c)
+	err = cmd.Run()
+	branchList := <-c
+	return branchList, err
 }
