@@ -52,11 +52,13 @@ func (s *service) GetNextVersion(versionType string) (string, error) {
 func (s *service) SetNextVersion(versionType string) error {
 	var cmd *exec.Cmd
 	if s.pathToGit != "" {
-		cmd = exec.Command(s.pathToGit, "semver", "version", versionType)
+		cmd = exec.Command(s.pathToGit, "semver", "version", versionType, "-p", s.pathToRepo)
 	}
 	if s.pathToSemver != "" {
-		cmd = exec.Command(s.pathToSemver, "version", versionType)
+		cmd = exec.Command(s.pathToSemver, "version", versionType, "-p", s.pathToRepo)
 	}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err := cmd.Run()
-	return errors.Wrap(err, "Error getting setting version; Is semver installed?")
+	return errors.Wrap(err, stderr.String())
 }
