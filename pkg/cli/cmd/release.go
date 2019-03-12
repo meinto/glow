@@ -33,10 +33,11 @@ var releaseCmd = &cobra.Command{
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
-		if hasSemverConfig() && isSemanticVersion(version) {
+		var s semver.Service
+		if hasSemverConfig() && isSemanticVersion(args[0]) {
 			pathToRepo, err := g.GitRepoPath()
 			util.CheckForError(err, "semver GitRepoPath")
-			s := semver.NewGitSemverService(pathToRepo, viper.GetString("gitPath"))
+			s = semver.NewGitSemverService(pathToRepo, viper.GetString("gitPath"))
 			v, err := s.GetNextVersion(args[0])
 			util.CheckForError(err, "semver GetNextVersion")
 			version = v
@@ -50,6 +51,11 @@ var releaseCmd = &cobra.Command{
 
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
+
+		if hasSemverConfig() && isSemanticVersion(args[0]) {
+			err = s.SetNextVersion(args[0])
+			util.CheckForError(err, "semver SetNextVersion")
+		}
 
 		if releaseCmdOptions.PostReleaseScript != "" {
 			postRelease(version)
