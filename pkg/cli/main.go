@@ -36,5 +36,8 @@ func main() {
 		log.Println("there is no private glow config")
 	}
 
+	viper.SetEnvPrefix("glow")
+	viper.BindEnv("token")
+
 	cmd.Execute()
 }
