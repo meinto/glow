@@ -76,6 +76,25 @@ func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 	return errors.Wrap(err, "native Checkout")
 }
 
+// CleanupBranches removes all unused branches
+func (a nativeGitAdapter) CleanupBranches() error {
+	cmd := exec.Command(a.gitPath, "remote", "prune", "origin")
+	err := cmd.Run()
+	if err != nil {
+		return errors.Wrap(err, "error pruning branches")
+	}
+	// git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -D
+	args := []string{
+		"-vv",
+		"|", "grep", "'origin/.*: gone]'",
+		"|", "awk", "'{print $1}'",
+		"|", "xargs", "git", "branch", "-D",
+	}
+	cmd = exec.Command(a.gitPath, args...)
+	err = cmd.Run()
+	return errors.Wrap(err, "error cleanup branches")
+}
+
 type cmdBranch struct {
 	Name            string
 	IsCurrentBranch bool
