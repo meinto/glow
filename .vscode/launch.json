@@ -47,7 +47,9 @@
       "port": 2345,
       "host": "127.0.0.1",
       "program": "${workspaceRoot}/pkg/cli",
-      "env": {},
+      "env": {
+        "GLOW_TOKEN": "debug-token",
+      },
       "args": [
         "close"
       ],
