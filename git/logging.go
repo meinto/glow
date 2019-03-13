@@ -64,3 +64,19 @@ func (s loggingService) Checkout(b glow.Branch) (err error) {
 	}(time.Now())
 	return s.next.Checkout(b)
 }
+
+// CleanupBranches removes all unused branches
+func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "CleanupBranches", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.CleanupBranches(cleanupGone, cleanupUntracked)
+}
+
+// CleanupTags removes tags from local repo
+func (s loggingService) CleanupTags(cleanupUntracked bool) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "CleanupTags", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.CleanupTags(cleanupUntracked)
+}
