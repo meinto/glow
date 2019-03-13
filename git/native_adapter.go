@@ -59,22 +59,28 @@ func (a nativeGitAdapter) BranchList() ([]glow.Branch, error) {
 // Fetch changes
 func (a nativeGitAdapter) Fetch() error {
 	cmd := exec.Command(a.gitPath, "fetch")
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err := cmd.Run()
-	return errors.Wrap(err, "native Fetch")
+	return errors.Wrap(err, stderr.String())
 }
 
 // Create a new branch
 func (a nativeGitAdapter) Create(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "branch", b.ShortBranchName())
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err := cmd.Run()
-	return errors.Wrap(err, "native Create")
+	return errors.Wrap(err, stderr.String())
 }
 
 // Checkout a branch
 func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "checkout", b.ShortBranchName())
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err := cmd.Run()
-	return errors.Wrap(err, "native Checkout")
+	return errors.Wrap(err, stderr.String())
 }
 
 // CleanupBranches removes all unused branches
@@ -86,8 +92,8 @@ func (a nativeGitAdapter) CleanupBranches() error {
 	}
 	// /usr/bin/git branch -vv | /usr/bin/grep 'origin/.*: gone]' | /usr/bin/awk '{print $1}' | /usr/bin/xargs /usr/bin/git branch -D
 	c1 := exec.Command(a.gitPath, "branch", "-vv")
-	c2 := exec.Command("/usr/bin/grep", "\"origin/.*: gone]\"")
-	c3 := exec.Command("/usr/bin/awk", "\"{print $1}\"")
+	c2 := exec.Command("/usr/bin/grep", "origin/.*: gone]")
+	c3 := exec.Command("/usr/bin/awk", "{print $1}")
 	c4 := exec.Command("/usr/bin/xargs", a.gitPath, "branch", "-D")
 
 	r1, w1, err := os.Pipe()
@@ -118,15 +124,19 @@ func (a nativeGitAdapter) CleanupBranches() error {
 	c4.Stderr = &b4
 
 	c1.Start()
+
 	c2.Start()
-	c3.Start()
-	c4.Start()
 	c1.Wait()
 	w1.Close()
+
+	c3.Start()
 	c2.Wait()
 	w2.Close()
+
+	c4.Start()
 	c3.Wait()
 	w3.Close()
+
 	c4.Wait()
 
 	errorString := b1.String() + b2.String() + b3.String() + b4.String()
