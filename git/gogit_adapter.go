@@ -153,6 +153,6 @@ func (a goGitAdapter) Checkout(b glow.Branch) error {
 }
 
 // CleanupBranches removes all unused branches
-func (a goGitAdapter) CleanupBranches() error {
+func (a goGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) error {
 	return errors.New("not implemented yet")
 }
