@@ -3,6 +3,7 @@ package git
 import (
 	"bufio"
 	"bytes"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -83,16 +84,57 @@ func (a nativeGitAdapter) CleanupBranches() error {
 	if err != nil {
 		return errors.Wrap(err, "error pruning branches")
 	}
-	// git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -D
-	args := []string{
-		"-vv",
-		"|", "grep", "'origin/.*: gone]'",
-		"|", "awk", "'{print $1}'",
-		"|", "xargs", "git", "branch", "-D",
+	// /usr/bin/git branch -vv | /usr/bin/grep 'origin/.*: gone]' | /usr/bin/awk '{print $1}' | /usr/bin/xargs /usr/bin/git branch -D
+	c1 := exec.Command(a.gitPath, "branch", "-vv")
+	c2 := exec.Command("/usr/bin/grep", "\"origin/.*: gone]\"")
+	c3 := exec.Command("/usr/bin/awk", "\"{print $1}\"")
+	c4 := exec.Command("/usr/bin/xargs", a.gitPath, "branch", "-D")
+
+	r1, w1, err := os.Pipe()
+	c1.Stdout = w1
+	c2.Stdin = r1
+	if err != nil {
+		return err
 	}
-	cmd = exec.Command(a.gitPath, args...)
-	err = cmd.Run()
-	return errors.Wrap(err, "error cleanup branches")
+
+	r2, w2, err := os.Pipe()
+	c2.Stdout = w2
+	c3.Stdin = r2
+	if err != nil {
+		return err
+	}
+
+	r3, w3, err := os.Pipe()
+	c3.Stdout = w3
+	c4.Stdin = r3
+	if err != nil {
+		return err
+	}
+
+	var b1, b2, b3, b4 bytes.Buffer
+	c1.Stderr = &b1
+	c2.Stderr = &b2
+	c3.Stderr = &b3
+	c4.Stderr = &b4
+
+	c1.Start()
+	c2.Start()
+	c3.Start()
+	c4.Start()
+	c1.Wait()
+	w1.Close()
+	c2.Wait()
+	w2.Close()
+	c3.Wait()
+	w3.Close()
+	c4.Wait()
+
+	errorString := b1.String() + b2.String() + b3.String() + b4.String()
+	if errorString != "" {
+		return errors.New(errorString)
+	}
+
+	return nil
 }
 
 type cmdBranch struct {
