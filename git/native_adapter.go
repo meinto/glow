@@ -216,6 +216,43 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 	return nil
 }
 
+// CleanupTags removes tags from local repo
+func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
+	if cleanupUntracked {
+		c1 := exec.Command(a.gitPath, "tag", "-l")
+		c2 := exec.Command("/usr/bin/xargs", a.gitPath, "tag", "-d")
+		c3 := exec.Command(a.gitPath, "fetch", "--tags")
+
+		r1, w1, err := os.Pipe()
+		c1.Stdout = w1
+		c2.Stdin = r1
+		if err != nil {
+			return err
+		}
+
+		var b1, b2, b3 bytes.Buffer
+		c1.Stderr = &b1
+		c2.Stderr = &b2
+		c3.Stderr = &b3
+
+		c1.Start()
+
+		c2.Start()
+		c1.Wait()
+		w1.Close()
+		c2.Wait()
+
+		c3.Start()
+		c3.Wait()
+
+		errorString := b1.String() + b2.String() + b3.String()
+		if errorString != "" {
+			return errors.New(errorString)
+		}
+	}
+	return nil
+}
+
 type cmdBranch struct {
 	Name            string
 	IsCurrentBranch bool
