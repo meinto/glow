@@ -10,14 +10,17 @@ builds:
   - 
     main: ./pkg/cli/main.go
     env:
-    - CGO_ENABLED=0
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
 archive:
+  name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
   replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
     386: i386
     amd64: x86_64
+  format: binary
 brew:
   github:
     owner: meinto
