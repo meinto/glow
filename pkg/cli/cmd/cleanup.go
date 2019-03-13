@@ -12,8 +12,8 @@ var cleanupCmdFlags struct {
 
 func init() {
 	rootCmd.AddCommand(cleanupCmd)
-	cleanupCmd.Flags().BoolVar(&cleanupCmdFlags.cleanupGone, "cleanupGone", false, "cleanup branches which are gone on remote")
-	cleanupCmd.Flags().BoolVar(&cleanupCmdFlags.cleanupUntracked, "cleanupUntracked", false, "cleanup branches which are gone on remote")
+	cleanupCmd.Flags().BoolVar(&cleanupCmdFlags.cleanupGone, "gone", false, "cleanup branches which are gone on remote")
+	cleanupCmd.Flags().BoolVar(&cleanupCmdFlags.cleanupUntracked, "untracked", false, "cleanup branches which are gone on remote")
 }
 
 var cleanupCmd = &cobra.Command{
