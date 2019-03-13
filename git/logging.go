@@ -66,9 +66,9 @@ func (s loggingService) Checkout(b glow.Branch) (err error) {
 }
 
 // CleanupBranches removes all unused branches
-func (s loggingService) CleanupBranches() (err error) {
+func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "CleanupBranches", "took", time.Since(begin), "err", err)
 	}(time.Now())
-	return s.next.CleanupBranches()
+	return s.next.CleanupBranches(cleanupGone, cleanupUntracked)
 }
