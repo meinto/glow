@@ -13,6 +13,7 @@ type Service interface {
 	Fetch() error
 	Create(b glow.Branch) error
 	Checkout(b glow.Branch) error
+	CleanupBranches() error
 }
 
 type service struct {

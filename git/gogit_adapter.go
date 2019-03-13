@@ -151,3 +151,8 @@ func (a goGitAdapter) Checkout(b glow.Branch) error {
 	})
 	return errors.Wrapf(err, "error while checkout branch %s", b.BranchName())
 }
+
+// CleanupBranches removes all unused branches
+func (a goGitAdapter) CleanupBranches() error {
+	return errors.New("not implemented yet")
+}
