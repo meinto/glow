@@ -37,7 +37,10 @@ func main() {
 	}
 
 	viper.SetEnvPrefix("glow")
-	viper.BindEnv("token")
+	err = viper.BindEnv("token")
+	if err != nil {
+		log.Println("env GLOW_TOKEN is missing")
+	}
 
 	cmd.Execute()
 }
