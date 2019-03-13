@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/manifoldco/promptui"
-	"github.com/meinto/cobra-utils"
+	cobraUtils "github.com/meinto/cobra-utils"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
@@ -131,6 +131,9 @@ func fileList(rootPath string) ([]string, error) {
 	var files []string
 
 	err := filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() && info.Name() != "." {
+			return filepath.SkipDir
+		}
 		if !strings.HasPrefix(path, "glow_") {
 			return nil
 		}

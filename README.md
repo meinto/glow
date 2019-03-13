@@ -4,6 +4,15 @@
 
 ## Installation
 
+**brew**
+
+```bash
+brew tap meinto/glow https://github.com/meinto/glow
+brew install meinto/glow/glow
+```
+
+**manually**
+
 Here you can find all [available Binaries](https://github.com/meinto/glow/releases). Download the binary and run the install command:
 
 ```bash

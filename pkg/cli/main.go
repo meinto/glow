@@ -36,5 +36,11 @@ func main() {
 		log.Println("there is no private glow config")
 	}
 
+	viper.SetEnvPrefix("glow")
+	err = viper.BindEnv("token")
+	if err != nil {
+		log.Println("env GLOW_TOKEN is missing")
+	}
+
 	cmd.Execute()
 }
