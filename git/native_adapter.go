@@ -149,8 +149,9 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 	if cleanupUntracked {
 		c1 := exec.Command(a.gitPath, "branch", "-vv")
 		c2 := exec.Command("/usr/bin/cut", "-c", "3-")
-		c3 := exec.Command("/usr/bin/awk", "$3 !~/\\[/ { print $1 }")
-		c4 := exec.Command("/usr/bin/xargs", a.gitPath, "branch", "-D")
+		c3 := exec.Command("/usr/bin/grep", "-v", "detached")
+		c4 := exec.Command("/usr/bin/awk", "$3 !~/\\[/ { print $1 }")
+		c5 := exec.Command("/usr/bin/xargs", a.gitPath, "branch", "-D")
 
 		r1, w1, err := os.Pipe()
 		c1.Stdout = w1
@@ -173,11 +174,19 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 			return err
 		}
 
-		var b1, b2, b3, b4 bytes.Buffer
+		r4, w4, err := os.Pipe()
+		c4.Stdout = w4
+		c5.Stdin = r4
+		if err != nil {
+			return err
+		}
+
+		var b1, b2, b3, b4, b5 bytes.Buffer
 		c1.Stderr = &b1
 		c2.Stderr = &b2
 		c3.Stderr = &b3
 		c4.Stderr = &b4
+		c5.Stderr = &b5
 
 		c1.Start()
 
@@ -193,9 +202,13 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 		c3.Wait()
 		w3.Close()
 
+		c5.Start()
 		c4.Wait()
+		w4.Close()
 
-		errorString := b1.String() + b2.String() + b3.String() + b4.String()
+		c5.Wait()
+
+		errorString := b1.String() + b2.String() + b3.String() + b4.String() + b5.String()
 		if errorString != "" {
 			return errors.New(errorString)
 		}
