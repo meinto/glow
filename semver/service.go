@@ -36,10 +36,10 @@ func NewGitSemverService(pathToRepo, pathToGit string) Service {
 func (s *service) GetNextVersion(versionType string) (string, error) {
 	var cmd *exec.Cmd
 	if s.pathToGit != "" {
-		cmd = exec.Command(s.pathToGit, "semver", "get", versionType, "-r", "-p", s.pathToRepo)
+		cmd = exec.Command(s.pathToGit, "semver", "get", versionType, "-r")
 	}
 	if s.pathToSemver != "" {
-		cmd = exec.Command(s.pathToSemver, "get", versionType, "-r", "-p", s.pathToRepo)
+		cmd = exec.Command(s.pathToSemver, "get", versionType, "-r")
 	}
 
 	var stdout, stderr bytes.Buffer
