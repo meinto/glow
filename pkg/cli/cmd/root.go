@@ -3,10 +3,13 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"log"
 
-	"github.com/go-kit/kit/log"
+	kitlog "github.com/go-kit/kit/log"
+	"github.com/gobuffalo/packr"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"github.com/spf13/viper"  
 )
 
 var rootCmdOptions struct {
@@ -15,12 +18,26 @@ var rootCmdOptions struct {
 	UseBuiltInGitBindings bool
 }
 
-var logger log.Logger
+var logger kitlog.Logger
 
 var rootCmd = &cobra.Command{
 	Use:   "glow",
 	Short: "small tool to adapt git-flow for gitlab",
-	Run:   func(cmd *cobra.Command, args []string) {},
+	Run: func(cmd *cobra.Command, args []string) {
+
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
+
+		repoPath, err := g.GitRepoPath()
+		util.CheckForError(err, "GitRepoPath")
+
+		box := packr.NewBox(repoPath + "/buildAssets")
+		version, err := box.FindString("VERSION")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Version of glow: %s\n", version)
+	},
 }
 
 func init() {
@@ -33,8 +50,8 @@ func init() {
 }
 
 func Execute() {
-	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+	logger = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
+	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
