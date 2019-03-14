@@ -3,12 +3,17 @@ version: 2
 jobs:
   release:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
+      - run:
+          name: Snapcraft login preperation
+          command: |
+            mkdir .snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode > .snapcraft/snapcraft.cfg
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
