@@ -39,6 +39,7 @@ snapcraft:
     386: i386
     amd64: x86_64
   publish: true
+  summary: git flow cli tool
   grade: stable
   confinement: strict
 checksum:
