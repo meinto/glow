@@ -47,4 +47,4 @@ workflows:
             tags:
               only: /^v.*$/
           requires:
-            - deploy
+            - release
