@@ -12,8 +12,8 @@ jobs:
       - run:
           name: Snapcraft login preperation
           command: |
-            mkdir .snapcraft
-            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode > .snapcraft/snapcraft.cfg
+            mkdir ~/.snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode > ~/.snapcraft/snapcraft.cfg
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
