@@ -10,6 +10,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install snapcraft
+          command: |
+            sudo apt update && sudo apt install -y snapd
+            sudo snap install snapcraft --edge --classic
+            /snap/bin/snapcraft
+      - run:
           name: Snapcraft login preperation
           command: |
             mkdir ~/.snapcraft
