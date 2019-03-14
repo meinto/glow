@@ -13,6 +13,7 @@ jobs:
           name: Install snapcraft
           command: |
             sudo apt update && sudo apt install -y snapd
+            systemctl start snapd.service
             sudo snap install snapcraft --edge --classic
             /snap/bin/snapcraft
       - run:
