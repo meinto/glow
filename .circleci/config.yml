@@ -9,19 +9,26 @@ jobs:
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
-      - run:
-          name: Install snapcraft
-          command: |
-            sudo apt update && sudo apt install -y snapd
-            systemctl start snapd.service
-            sudo snap install snapcraft --edge --classic
-            /snap/bin/snapcraft
-      - run:
-          name: Snapcraft login preperation
-          command: |
-            mkdir ~/.snapcraft
-            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode > ~/.snapcraft/snapcraft.cfg
       - run: curl -sL https://git.io/goreleaser | bash
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "dist"
+  snap:
+    docker:
+      - image: cibuilds/snapcraft:stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: snapcraft
+      - run:
+          name: Publish to store
+          command: |
+            # The Snapcraft login file here will expire March 1st, 2022. A new one will need to be created then.
+            mkdir .snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
+            snapcraft push *.snap --release stable
 
 workflows:
   version: 2
@@ -33,3 +40,11 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*$/
+      - snap:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*$/
+          requires:
+            - deploy
