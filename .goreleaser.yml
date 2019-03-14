@@ -33,6 +33,14 @@ brew:
   folder: formula
   dependencies:
     - git
+snapcraft:
+  name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  replacements:
+    386: i386
+    amd64: x86_64
+  publish: true
+  grade: stable
+  confinement: strict
 checksum:
   name_template: 'checksums.txt'
 snapshot:
