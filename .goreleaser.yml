@@ -33,17 +33,17 @@ brew:
   folder: formula
   dependencies:
     - git
-snapcraft:
-  name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-  replacements:
-    386: i386
-    amd64: x86_64
-  summary: git flow cli tool.
-  description: |
-    glow is a cli tool to adapt git-flow.
-    https://github.com/meinto/glow
-  grade: stable
-  confinement: strict
+# snapcraft:
+#   name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+#   replacements:
+#     386: i386
+#     amd64: x86_64
+#   summary: git flow cli tool.
+#   description: |
+#     glow is a cli tool to adapt git-flow.
+#     https://github.com/meinto/glow
+#   grade: stable
+#   confinement: strict
 checksum:
   name_template: 'checksums.txt'
 snapshot:
