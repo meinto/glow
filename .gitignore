@@ -1,5 +1,6 @@
 glow
 build
+buildAssets
 dist
 public
 .DS_Store
