@@ -245,7 +245,9 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
 		c3.Start()
 		c3.Wait()
 
-		errorString := b1.String() + b2.String() + b3.String()
+		errorString := b1.String() + b2.String()
+		// don't log error string of command 3
+		// cause standard log is put to stderr
 		if errorString != "" {
 			return errors.New(errorString)
 		}
