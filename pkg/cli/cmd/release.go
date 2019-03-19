@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -110,7 +111,7 @@ func postRelease(version string) {
 }
 
 func execute(version, command string) {
-	cmd := exec.Command("/bin/bash", "-c", command)
+	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf(command, version))
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
