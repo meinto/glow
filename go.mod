@@ -2,11 +2,10 @@ module github.com/meinto/glow
 
 require (
 	github.com/go-kit/kit v0.8.0
-	github.com/go-logfmt/logfmt v0.4.0 // indirect
-	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobuffalo/packr v1.23.0
 	github.com/manifoldco/promptui v0.3.2
 	github.com/meinto/cobra-utils v0.1.0
+	github.com/meinto/git-semver v0.0.0-20190319130324-da2b6ef3b28c
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.3.1
