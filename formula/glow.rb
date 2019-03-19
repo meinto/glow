@@ -2,9 +2,9 @@
 class Glow < Formula
   desc ""
   homepage ""
-  url "https://github.com/meinto/glow/releases/download/v1.5.14/glow_1.5.14_darwin_x86_64.tar.gz"
-  version "1.5.14"
-  sha256 "49c0599b5f163b13b755d1edfae71f32d0221d7d60d47350565d34fd5341fd6a"
+  url "https://github.com/meinto/glow/releases/download/v1.7.0/glow_1.7.0_darwin_x86_64.tar.gz"
+  version "1.7.0"
+  sha256 "a161a4f73013628b0192ac2e70d6b85e0141652915a383011f7a05fc5622c9dd"
   
   depends_on "git"
 
