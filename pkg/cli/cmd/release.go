@@ -19,6 +19,8 @@ var releaseCmdOptions struct {
 	Push               bool
 	PostReleaseScript  string
 	PostReleaseCommand []string
+	VersionFile string
+	VersionFileType string
 }
 
 func init() {
@@ -26,6 +28,9 @@ func init() {
 	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", false, "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
 	releaseCmd.Flags().StringArrayVar(&releaseCmdOptions.PostReleaseCommand, "postReleaseCommand", []string{}, "commands which should be executed after switching to release branch")
+	
+	releaseCmd.Flags().StringVar(&releaseCmdOptions.VersionFile, "versionFile", "VERSION", "name of git-semver version file")
+	releaseCmd.Flags().StringVar(&releaseCmdOptions.VersionFileType, "versionFile", "raw", "git-semver version file type")
 }
 
 var releaseCmd = &cobra.Command{
@@ -42,25 +47,25 @@ var releaseCmd = &cobra.Command{
 		if hasSemverConfig() && isSemanticVersion(args[0]) {
 			pathToRepo, err := g.GitRepoPath()
 			util.CheckForError(err, "semver GitRepoPath")
-			s = semver.NewSemverService(pathToRepo, viper.GetString("gitPath"))
+			s = semver.NewSemverService(
+				pathToRepo, 
+				viper.GetString("gitPath"),
+				releaseCmdOptions.VersionFile,
+				releaseCmdOptions.VersionFileType,
+			)
 			v, err := s.GetNextVersion(args[0])
 			util.CheckForError(err, "semver GetNextVersion")
 			version = v
 		}
 
 		release, err := glow.NewRelease(version)
-		util.CheckForError(err, "NewRelease")
+		util.CheckForError(err, "NewRelease") 
 
 		err = g.Create(release)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
-
-		if releaseCmdOptions.Push {
-			g.Push(true)
-			util.CheckForError(err, "Push")
-		}
 
 		if hasSemverConfig() && isSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])
@@ -82,7 +87,7 @@ var releaseCmd = &cobra.Command{
 			g, err := util.GetGitClient()
 			util.CheckForError(err, "GetGitClient")
 
-			g.Push(false)
+			g.Push(true)
 			util.CheckForError(err, "Push")
 		}
 	},
