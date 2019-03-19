@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
@@ -111,10 +110,7 @@ func postRelease(version string) {
 }
 
 func execute(version, command string) {
-	cmdParts := strings.Split(command, " ")
-	args := []string{"-c"}
-	args = append(args, cmdParts...)
-	cmd := exec.Command("/bin/bash", args...)
+	cmd := exec.Command("/bin/bash", "-c", command)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
