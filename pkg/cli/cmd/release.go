@@ -54,7 +54,7 @@ var releaseCmd = &cobra.Command{
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
-		if releaseCmd.Push {
+		if releaseCmdOptions.Push {
 			g.Push(true)
 			util.CheckForError(err, "Push")
 		}
