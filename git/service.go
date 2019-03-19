@@ -7,6 +7,7 @@ import (
 
 // Service describes all actions which can performed with git
 type Service interface {
+	SetCICDOrigin(origin string) error
 	GitRepoPath() (string, error)
 	CurrentBranch() (glow.Branch, error)
 	BranchList() ([]glow.Branch, error)

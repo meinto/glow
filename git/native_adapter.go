@@ -16,6 +16,15 @@ type nativeGitAdapter struct {
 	gitPath string
 }
 
+// SetCICDOrigin for pipeline
+func (a nativeGitAdapter) SetCICDOrigin(origin string) error {
+	cmd := exec.Command(a.gitPath, "config", "remote.origin.url", origin)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
 // GitRepoPath returns the path to the root with the .git folder
 func (a nativeGitAdapter) GitRepoPath() (string, error) {
 	cmd := exec.Command(a.gitPath, "rev-parse", "--show-toplevel")
