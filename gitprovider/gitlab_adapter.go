@@ -87,3 +87,16 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	log.Printf("created merge request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
 	return nil
 }
+
+func (a *gitlabAdapter) GetOrigin(args ...string) (string, error) {
+	ciUser := args[0]
+	origin := fmt.Sprintf(
+		"https://%s:%s@%s/%s/%s/", // http protocol must be variable
+		ciUser,
+		a.token,
+		a.endpoint, // this is not correct yet. put the domain in there
+		a.namespace,
+		a.project,
+	)
+	return origin, errors.New("not implemented correctly yet")
+}

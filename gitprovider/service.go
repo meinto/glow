@@ -14,6 +14,7 @@ import (
 type Service interface {
 	Close(b glow.Branch) error
 	Publish(b glow.Branch) error
+	GetOrigin(args ...string) (string, error)
 }
 
 type service struct {

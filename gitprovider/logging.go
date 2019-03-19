@@ -29,3 +29,10 @@ func (s *loggingService) Publish(b glow.Branch) (err error) {
 	}(time.Now())
 	return s.next.Publish(b)
 }
+
+func (s *loggingService) GetOrigin(args ...string) (_ string, err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "Publish", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.GetOrigin(args...)
+}

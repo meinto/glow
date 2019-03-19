@@ -86,3 +86,7 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	log.Printf("created pull request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
 	return nil
 }
+
+func (a *githubAdapter) GetOrigin(args ...string) (string, error) {
+	return "", errors.New("not implemented")
+}
