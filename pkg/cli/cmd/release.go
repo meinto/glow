@@ -19,18 +19,18 @@ var releaseCmdOptions struct {
 	Push               bool
 	PostReleaseScript  string
 	PostReleaseCommand []string
-	VersionFile string
-	VersionFileType string
+	VersionFile        string  
+	VersionFileType    string 
 }
 
 func init() {
-	rootCmd.AddCommand(releaseCmd)
+	rootCmd.AddCommand(releaseCmd) 
 	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", false, "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
 	releaseCmd.Flags().StringArrayVar(&releaseCmdOptions.PostReleaseCommand, "postReleaseCommand", []string{}, "commands which should be executed after switching to release branch")
 	
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.VersionFile, "versionFile", "VERSION", "name of git-semver version file")
-	releaseCmd.Flags().StringVar(&releaseCmdOptions.VersionFileType, "versionFile", "raw", "git-semver version file type")
+	releaseCmd.Flags().StringVar(&releaseCmdOptions.VersionFileType, "versionFileType", "raw", "git-semver version file type")
 }
 
 var releaseCmd = &cobra.Command{
