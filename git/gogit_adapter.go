@@ -16,6 +16,11 @@ import (
 // GoGitAdapter implemented with go-git
 type goGitAdapter struct{}
 
+// SetCICDOrigin for pipeline
+func (a goGitAdapter) SetCICDOrigin(origin string) error {
+	return errors.New("not implemented yet")
+}
+
 // GitRepoPath returns the path to the root with the .git folder
 func (a goGitAdapter) GitRepoPath() (string, error) {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
@@ -105,6 +110,11 @@ func (a goGitAdapter) Fetch() error {
 		return errors.Wrap(err, "error while fetching")
 	}
 	return r.Fetch(&git.FetchOptions{})
+}
+
+// Push changes
+func (a goGitAdapter) Push(setUpstream bool) error {
+	return errors.New("not implemented yet")
 }
 
 // Create a new branch

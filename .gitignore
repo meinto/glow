@@ -1,8 +1,11 @@
 glow
 build
+buildAssets
 dist
 public
 .DS_Store
+
+on/
 
 node_modules
 package.json
