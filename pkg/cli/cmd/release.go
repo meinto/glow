@@ -77,6 +77,14 @@ var releaseCmd = &cobra.Command{
 				execute(version, command)
 			}
 		}
+
+		if releaseCmdOptions.Push {
+			g, err := util.GetGitClient()
+			util.CheckForError(err, "GetGitClient")
+
+			g.Push(false)
+			util.CheckForError(err, "Push")
+		}
 	},
 }
 
