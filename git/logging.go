@@ -50,7 +50,7 @@ func (s loggingService) Fetch() (err error) {
 }
 
 // Push changes
-func (s loggingService) Push(setUpstream bool) error {
+func (s loggingService) Push(setUpstream bool) (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "Push", "took", time.Since(begin), "err", err)
 	}(time.Now())
