@@ -20,10 +20,12 @@ type service struct {
 	versionFileType string
 }
 
-func NewSemverService(pathToRepo, pathToGit string) Service {
+func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string) Service {
 	return &service{
-		pathToRepo: pathToRepo,
-		pathToGit:  pathToGit,
+		pathToRepo:      pathToRepo,
+		pathToGit:       pathToGit,
+		versionFile:     versionFile,
+		versionFileType: versionFileType,
 	}
 }
 
