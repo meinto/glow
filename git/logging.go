@@ -49,6 +49,14 @@ func (s loggingService) Fetch() (err error) {
 	return s.next.Fetch()
 }
 
+// Push changes
+func (s loggingService) Push(setUpstream bool) error {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "Push", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.Push(setUpstream)
+}
+
 // Create a new branch
 func (s loggingService) Create(b glow.Branch) (err error) {
 	defer func(begin time.Time) {
