@@ -15,11 +15,13 @@ import (
 )
 
 var releaseCmdOptions struct {
+	Push              bool
 	PostReleaseScript string
 }
 
 func init() {
 	rootCmd.AddCommand(releaseCmd)
+	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", "", "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
 }
 
@@ -51,6 +53,11 @@ var releaseCmd = &cobra.Command{
 
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
+
+		if releaseCmd.Push {
+			g.Push(true)
+			util.CheckForError(err, "Push")
+		}
 
 		if hasSemverConfig() && isSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])

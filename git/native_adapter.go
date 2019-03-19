@@ -65,6 +65,22 @@ func (a nativeGitAdapter) Fetch() error {
 	return errors.Wrap(err, stderr.String())
 }
 
+// Push changes
+func (a nativeGitAdapter) Push(setUpstream bool) error {
+	cmd := exec.Command(a.gitPath, "push")
+	if setUpstream {
+		currentBranch, err := a.CurrentBranch()
+		if err != nil {
+			return errors.Wrap(err, "error while getting current branch")
+		}
+		cmd = exec.Command(a.gitPath, "push", "-u", "origin", currentBranch.ShortBranchName())
+	}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
 // Create a new branch
 func (a nativeGitAdapter) Create(b glow.Branch) error {
 	cmd := exec.Command(a.gitPath, "branch", b.ShortBranchName())

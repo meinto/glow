@@ -107,6 +107,11 @@ func (a goGitAdapter) Fetch() error {
 	return r.Fetch(&git.FetchOptions{})
 }
 
+// Push changes
+func (a goGitAdapter) Push(setUpstream bool) error {
+	return errors.New("not implemented yet")
+}
+
 // Create a new branch
 func (a goGitAdapter) Create(b glow.Branch) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
