@@ -19,6 +19,8 @@ Depending on the conditions defined with the `only` property of a Gitlab ci job 
 
 ## Creating a relase
 
+![create release](./create-release.png)
+
 The following example shows how to trigger a release branch creation of a `patch` release. You could copy this section and addapt it for `minor` and `major` releases of course.
 
 ```yml
@@ -45,6 +47,8 @@ To make this possible, you have to make shure, that your gitlab runner have acce
 
 ## Publish a release
 
+![publish release](./publish-release.png)
+
 When you are shure that your release on your release branch is stable, trigger a publish merge request in Gitlab:
 
 ```yml
@@ -64,6 +68,8 @@ This manual trigger would create a git-tag on the corresponding commit with `git
 This trigger also applies to hotfix branches.
 
 ## Close a release
+
+![close release](./close-release.png)
 
 After creating a merge request on `master`, you could define another pipeline which provides a manual trigger to create another merge request of the release branch back into your develop branch:
 
