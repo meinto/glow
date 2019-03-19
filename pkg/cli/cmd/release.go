@@ -63,10 +63,10 @@ var releaseCmd = &cobra.Command{
 			err = s.SetNextVersion(args[0])
 			util.CheckForError(err, "semver SetNextVersion")
 		}
-
-		if releaseCmdOptions.PostReleaseScript != "" {
-			postRelease(version)
-		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		version := args[0]
+		postRelease(version)
 	},
 }
 
