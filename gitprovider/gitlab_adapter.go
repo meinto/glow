@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/meinto/glow"
 	"github.com/pkg/errors"
@@ -86,4 +87,10 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 
 	log.Printf("created merge request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
 	return nil
+}
+
+func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
+	branchName := os.Getenv("CI_COMMIT_REF_NAME")
+	branch, err := glow.NewBranch(branchName)
+	return branch, errors.Wrap(err, "error get ci branch")
 }
