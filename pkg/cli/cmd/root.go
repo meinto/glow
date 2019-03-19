@@ -24,18 +24,21 @@ var logger kitlog.Logger
 var rootCmd = &cobra.Command{
 	Use:   "glow",
 	Short: "small tool to adapt git-flow for gitlab",
-	Run: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if rootCmdOptions.CICDOrigin != "" {
+			g, err := util.GetGitClient()
+			util.CheckForError(err, "GetGitClient")
 
+			err = g.SetCICDOrigin(rootCmdOptions.CICDOrigin)
+			util.CheckForError(err, "SetCICDOrigin")
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
 		repoPath, err := g.GitRepoPath()
 		util.CheckForError(err, "GitRepoPath")
-
-		if rootCmdOptions.CICDOrigin != "" {
-			g.SetCICDOrigin(rootCmdOptions.CICDOrigin)
-			util.CheckForError(err, "SetCICDOrigin")
-		}
 
 		box := packr.NewBox(repoPath + "/buildAssets")
 		version, err := box.FindString("VERSION")
