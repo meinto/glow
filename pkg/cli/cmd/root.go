@@ -17,7 +17,7 @@ var rootCmdOptions struct {
 	GitPath               string
 	UseBuiltInGitBindings bool
 	CICDOrigin            string
-	CI                    bool
+	CI                    bool 
 }
 
 var logger kitlog.Logger
