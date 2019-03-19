@@ -17,6 +17,14 @@ func NewLoggingService(logger log.Logger, s Service) Service {
 	return &loggingService{logger, s}
 }
 
+// SetCICDOrigin for pipeline
+func (s loggingService) SetCICDOrigin(origin string) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "SetCICDOrigin", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.SetCICDOrigin(origin)
+}
+
 // GitRepoPath returns the path to the root with the .git folder
 func (s loggingService) GitRepoPath() (_ string, err error) {
 	defer func(begin time.Time) {
