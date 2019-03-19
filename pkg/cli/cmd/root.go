@@ -2,20 +2,21 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/gobuffalo/packr"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"  
+	"github.com/spf13/viper"
 )
 
 var rootCmdOptions struct {
 	Author                string
 	GitPath               string
 	UseBuiltInGitBindings bool
+	CICDOrigin            string
 }
 
 var logger kitlog.Logger
@@ -31,6 +32,11 @@ var rootCmd = &cobra.Command{
 		repoPath, err := g.GitRepoPath()
 		util.CheckForError(err, "GitRepoPath")
 
+		if rootCmdOptions.CICDOrigin != "" {
+			g.SetCICDOrigin(rootCmdOptions.CICDOrigin)
+			util.CheckForError(err, "SetCICDOrigin")
+		}
+
 		box := packr.NewBox(repoPath + "/buildAssets")
 		version, err := box.FindString("VERSION")
 		if err != nil {
@@ -44,6 +50,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.Author, "author", "a", "name of the author")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
 	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.UseBuiltInGitBindings, "useBuiltInGitBindings", false, "defines wether build or native in git client should be used.")
+	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.CICDOrigin, "cicdOrigin", "", "provide a git origin url where a pipeline can push things via token")
 	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
 	viper.BindPFlag("gitPath", rootCmd.PersistentFlags().Lookup("gitPath"))
 	viper.BindPFlag("useBuiltInGitBindings", rootCmd.PersistentFlags().Lookup("useBuiltInGitBindings"))
