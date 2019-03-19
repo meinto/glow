@@ -52,10 +52,10 @@ func (s *service) GetNextVersion(versionType string) (string, error) {
 func (s *service) SetNextVersion(versionType string) error {
 	var cmd *exec.Cmd
 	if s.pathToGit != "" {
-		cmd = exec.Command(s.pathToGit, "semver", "version", versionType, "-P", s.pathToRepo)
+		cmd = exec.Command(s.pathToGit, "semver", "version", versionType)
 	}
 	if s.pathToSemver != "" {
-		cmd = exec.Command(s.pathToSemver, "version", versionType, "-P", s.pathToRepo)
+		cmd = exec.Command(s.pathToSemver, "version", versionType)
 	}
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
