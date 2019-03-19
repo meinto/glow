@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
@@ -15,14 +16,16 @@ import (
 )
 
 var releaseCmdOptions struct {
-	Push              bool
-	PostReleaseScript string
+	Push               bool
+	PostReleaseScript  string
+	PostReleaseCommand []string
 }
 
 func init() {
 	rootCmd.AddCommand(releaseCmd)
 	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", false, "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
+	releaseCmd.Flags().StringArrayVar(&releaseCmdOptions.PostReleaseCommand, "postReleaseCommand", []string{}, "commands which should be executed after switching to release branch")
 }
 
 var releaseCmd = &cobra.Command{
@@ -66,7 +69,14 @@ var releaseCmd = &cobra.Command{
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
 		version := args[0]
-		postRelease(version)
+		if releaseCmdOptions.PostReleaseScript != "" {
+			postRelease(version)
+		}
+		if len(releaseCmdOptions.PostReleaseCommand) > 0 {
+			for _, command := range releaseCmdOptions.PostReleaseCommand {
+				execute(version, command)
+			}
+		}
 	},
 }
 
@@ -93,6 +103,21 @@ func postRelease(version string) {
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
+	if err != nil {
+		log.Println("error while executing post-release script", err)
+	}
+	log.Println("post release:")
+	log.Println(out.String())
+}
+
+func execute(version, command string) {
+	cmdParts := strings.Split(command, " ")
+	args := []string{"-c"}
+	args = append(args, cmdParts...)
+	cmd := exec.Command("/bin/bash", args...)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
 	if err != nil {
 		log.Println("error while executing post-release script", err)
 	}
