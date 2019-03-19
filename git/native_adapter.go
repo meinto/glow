@@ -16,6 +16,15 @@ type nativeGitAdapter struct {
 	gitPath string
 }
 
+// SetCICDOrigin for pipeline
+func (a nativeGitAdapter) SetCICDOrigin(origin string) error {
+	cmd := exec.Command(a.gitPath, "config", "remote.origin.url", origin)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
 // GitRepoPath returns the path to the root with the .git folder
 func (a nativeGitAdapter) GitRepoPath() (string, error) {
 	cmd := exec.Command(a.gitPath, "rev-parse", "--show-toplevel")
@@ -59,6 +68,22 @@ func (a nativeGitAdapter) BranchList() ([]glow.Branch, error) {
 // Fetch changes
 func (a nativeGitAdapter) Fetch() error {
 	cmd := exec.Command(a.gitPath, "fetch")
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
+// Push changes
+func (a nativeGitAdapter) Push(setUpstream bool) error {
+	cmd := exec.Command(a.gitPath, "push")
+	if setUpstream {
+		currentBranch, err := a.CurrentBranch()
+		if err != nil {
+			return errors.Wrap(err, "error while getting current branch")
+		}
+		cmd = exec.Command(a.gitPath, "push", "-u", "origin", currentBranch.ShortBranchName())
+	}
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	err := cmd.Run()
@@ -245,7 +270,9 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
 		c3.Start()
 		c3.Wait()
 
-		errorString := b1.String() + b2.String() + b3.String()
+		errorString := b1.String() + b2.String()
+		// don't log error string of command 3
+		// cause standard log is put to stderr
 		if errorString != "" {
 			return errors.New(errorString)
 		}

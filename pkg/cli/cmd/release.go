@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -15,12 +16,16 @@ import (
 )
 
 var releaseCmdOptions struct {
-	PostReleaseScript string
+	Push               bool
+	PostReleaseScript  string
+	PostReleaseCommand []string
 }
 
 func init() {
 	rootCmd.AddCommand(releaseCmd)
+	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", false, "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
+	releaseCmd.Flags().StringArrayVar(&releaseCmdOptions.PostReleaseCommand, "postReleaseCommand", []string{}, "commands which should be executed after switching to release branch")
 }
 
 var releaseCmd = &cobra.Command{
@@ -52,13 +57,33 @@ var releaseCmd = &cobra.Command{
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
+		if releaseCmdOptions.Push {
+			g.Push(true)
+			util.CheckForError(err, "Push")
+		}
+
 		if hasSemverConfig() && isSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])
 			util.CheckForError(err, "semver SetNextVersion")
 		}
-
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		version := args[0]
 		if releaseCmdOptions.PostReleaseScript != "" {
 			postRelease(version)
+		}
+		if len(releaseCmdOptions.PostReleaseCommand) > 0 {
+			for _, command := range releaseCmdOptions.PostReleaseCommand {
+				execute(version, command)
+			}
+		}
+
+		if releaseCmdOptions.Push {
+			g, err := util.GetGitClient()
+			util.CheckForError(err, "GetGitClient")
+
+			g.Push(false)
+			util.CheckForError(err, "Push")
 		}
 	},
 }
@@ -86,6 +111,18 @@ func postRelease(version string) {
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
+	if err != nil {
+		log.Println("error while executing post-release script", err)
+	}
+	log.Println("post release:")
+	log.Println(out.String())
+}
+
+func execute(version, command string) {
+	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf(command, version))
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
 	if err != nil {
 		log.Println("error while executing post-release script", err)
 	}
