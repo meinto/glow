@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/gobuffalo/packr"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"  
+	"github.com/spf13/viper"
 )
 
 var rootCmdOptions struct {
@@ -41,7 +41,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.Author, "author", "a", "name of the author")
+	rootCmd.PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "", "name of the author")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
 	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.UseBuiltInGitBindings, "useBuiltInGitBindings", false, "defines wether build or native in git client should be used.")
 	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
