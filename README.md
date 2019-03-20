@@ -4,14 +4,14 @@
 
 ## Installation
 
-**brew**
+**Mac OS**
 
 ```bash
 brew tap meinto/glow https://github.com/meinto/glow
 brew install meinto/glow/glow
 ```
 
-**linux**
+**Linux**
 
 ```bash
 GVERSION=$(curl https://api.github.com/repos/meinto/glow/releases/latest -s | jq .name -r | cut -c 2-)
