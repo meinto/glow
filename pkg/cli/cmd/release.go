@@ -88,6 +88,12 @@ var releaseCmd = &cobra.Command{
 			g, err := util.GetGitClient()
 			util.CheckForError(err, "GetGitClient")
 
+			err = g.AddAll()
+			util.CheckForError(err, "AddAll")
+
+			err = g.Commit("[glow] Add post release changes")
+			util.CheckForError(err, "Commit")
+
 			err = g.Push(true)
 			util.CheckForError(err, "Push")
 		}
