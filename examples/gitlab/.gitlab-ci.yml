@@ -4,51 +4,64 @@ stages:
   - build
   - glow
 
-#############
-# glow part #
-#############
-# merge feature
-# close release
-# close fix
-# close hotfix
-merge_feature:
-  stage: glow
-  script: git glow close
-  only:
-    - /^feature\/.*$/
-    - /^release\/v.*$/
-    - /^fix\/.*$/
-    - /^hotfix\/.*$/
-  when: manual
+#######################
+###### GLOW PART ######
+#######################
 
 # create a release
-create_major_release:
-  stage: glow
-  script: git glow release $(git semver get major -r)
-  only:
-    - develop
-  when: manual
+create:patch:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release patch
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
 
-create_minor_release:
-  stage: glow
-  script: git glow release $(git semver get minor -r)
-  only:
-    - develop
-  when: manual
+create:minor:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release minor
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
 
-create_patch_release:
-  stage: glow
-  script: git glow release $(git semver get patch -r)
-  only:
-    - develop
-  when: manual
+create:major:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release major
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
 
 # publish release
 # publish hotfix
-publish_release_hotfix:
-  stage: glow
-  script: git glow publish
-  only:
-    - /^release\/v.*$/
-    - /^hotfix\/.*$/
-  when: manual
+trigger:prod:release:
+ stage: glow
+ script:
+   - git semver -TP
+   - git glow publish --ci
+ only:
+   - /^release\/v.*$/
+   - /^hotfix\/.*$/
+ when: manual
+
+# merge release back into develop
+trigger:close:release:
+ stage: glow
+ script:
+   - git glow close --ci
+ only:
+   - merge_requests
+ when: manual
