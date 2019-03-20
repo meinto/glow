@@ -65,6 +65,14 @@ func (s loggingService) AddAll() (err error) {
 	return s.next.AddAll()
 }
 
+// Commit added changes
+func (s loggingService) Commit(message string) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "Commit", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.Commit(message)
+}
+
 // Push changes
 func (s loggingService) Push(setUpstream bool) (err error) {
 	defer func(begin time.Time) {

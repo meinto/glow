@@ -83,6 +83,15 @@ func (a nativeGitAdapter) AddAll() error {
 	return errors.Wrap(err, stderr.String())
 }
 
+// Commit added changes
+func (a nativeGitAdapter) Commit(message string) error {
+	cmd := exec.Command(a.gitPath, "commit", "-m", message)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
 // Push changes
 func (a nativeGitAdapter) Push(setUpstream bool) error {
 	cmd := exec.Command(a.gitPath, "push")

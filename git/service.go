@@ -13,6 +13,7 @@ type Service interface {
 	BranchList() ([]glow.Branch, error)
 	Fetch() error
 	AddAll() error
+	Commit(message string) error
 	Push(setUpstream bool) error
 	Create(b glow.Branch) error
 	Checkout(b glow.Branch) error
