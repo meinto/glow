@@ -76,7 +76,7 @@ trigger:close:release:
   script:
     - git glow close release current
     - git glow tag
-        --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@git.intern.hornbach.de/apps/emm-intents.git/
+        --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
   only:
     - master
 ```
