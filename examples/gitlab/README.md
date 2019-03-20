@@ -17,7 +17,7 @@ stage:
 
 Depending on the conditions defined with the `only` property of a Gitlab ci job definition, the corresponding job is only present on specific branches for example.
 
-## Creating a relase
+## Creating a release
 
 ![create release](./create-release.png)
 
