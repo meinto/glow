@@ -47,10 +47,9 @@ create:major:release:
 
 # publish release
 # publish hotfix
-trigger:prod:release:
+publish:release:
  stage: glow
  script:
-   - git semver -TP
    - git glow publish --ci
  only:
    - /^release\/v.*$/
@@ -58,10 +57,12 @@ trigger:prod:release:
  when: manual
 
 # merge release back into develop
-trigger:close:release:
+close:release:
  stage: glow
  script:
-   - git glow close --ci
+   - git glow close release current
+   - git glow tag
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@git.intern.hornbach.de/apps/emm-intents.git/
  only:
-   - merge_requests
+   - master
  when: manual
