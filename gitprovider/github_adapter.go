@@ -86,3 +86,7 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	log.Printf("created pull request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
 	return nil
 }
+
+func (a *githubAdapter) GetCIBranch() (glow.Branch, error) {
+	return nil, errors.New("not implemented")
+}
