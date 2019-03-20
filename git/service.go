@@ -12,6 +12,7 @@ type Service interface {
 	CurrentBranch() (glow.Branch, error)
 	BranchList() ([]glow.Branch, error)
 	Fetch() error
+	AddAll() error
 	Push(setUpstream bool) error
 	Create(b glow.Branch) error
 	Checkout(b glow.Branch) error
