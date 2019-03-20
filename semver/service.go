@@ -9,6 +9,7 @@ import (
 )
 
 type Service interface {
+	GetCurrentVersion(versionType string) (string, error)
 	GetNextVersion(versionType string) (string, error)
 	SetNextVersion(versionType string) error
 }
@@ -29,11 +30,16 @@ func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string
 	}
 }
 
-func (s *service) GetNextVersion(versionType string) (string, error) {
+func (s *service) GetCurrentVersion(versionType string) (string, error) {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
 	currentVersion, err := fs.ReadVersionFromFile(s.versionFileType)
+	return currentVersion, errors.Wrap(err, "GetCurrentVersion")
+}
+
+func (s *service) GetNextVersion(versionType string) (string, error) {
+	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
 	if err != nil {
 		return "", err
 	}
