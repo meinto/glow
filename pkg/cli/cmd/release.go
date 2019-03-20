@@ -45,7 +45,7 @@ var releaseCmd = &cobra.Command{
 		util.CheckForError(err, "GetGitClient")
 
 		var s semver.Service
-		if hasSemverConfig() && isSemanticVersion(args[0]) {
+		if isSemanticVersion(args[0]) {
 			pathToRepo, err := g.GitRepoPath()
 			util.CheckForError(err, "semver GitRepoPath")
 			s = semver.NewSemverService(
@@ -68,13 +68,31 @@ var releaseCmd = &cobra.Command{
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
-		if hasSemverConfig() && isSemanticVersion(args[0]) {
+		if isSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])
 			util.CheckForError(err, "semver SetNextVersion")
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
 		version := args[0]
+
+		g, err := util.GetGitClient()
+		util.CheckForError(err, "GetGitClient")
+
+		if isSemanticVersion(args[0]) {
+			pathToRepo, err := g.GitRepoPath()
+			util.CheckForError(err, "semver GitRepoPath")
+			s := semver.NewSemverService(
+				pathToRepo,
+				viper.GetString("gitPath"),
+				releaseCmdOptions.VersionFile,
+				releaseCmdOptions.VersionFileType,
+			)
+			v, err := s.GetCurrentVersion(args[0])
+			util.CheckForError(err, "semver GetNextVersion")
+			version = v
+		}
+
 		if releaseCmdOptions.PostReleaseScript != "" {
 			postRelease(version)
 		}
@@ -85,9 +103,6 @@ var releaseCmd = &cobra.Command{
 		}
 
 		if releaseCmdOptions.Push {
-			g, err := util.GetGitClient()
-			util.CheckForError(err, "GetGitClient")
-
 			err = g.AddAll()
 			util.CheckForError(err, "AddAll")
 
