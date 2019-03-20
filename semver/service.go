@@ -92,6 +92,6 @@ func (s *service) TagCurrentVersion() error {
 		return err
 	}
 
-	err = g.Push()
+	err = g.PushTag(currentVersion)
 	return err
 }
