@@ -57,6 +57,14 @@ func (s loggingService) Fetch() (err error) {
 	return s.next.Fetch()
 }
 
+// Add all changes
+func (s loggingService) AddAll() (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "AddAll", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.AddAll()
+}
+
 // Push changes
 func (s loggingService) Push(setUpstream bool) (err error) {
 	defer func(begin time.Time) {
