@@ -65,4 +65,3 @@ close:release:
        --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
  only:
    - master
- when: manual
