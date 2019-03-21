@@ -140,12 +140,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 		cmd.Stderr = &stderr
 		err = cmd.Run()
 		if err != nil {
-			return errors.Wrap(err, "error removing gone branches")
-		}
-
-		errorString := stderr.String()
-		if errorString != "" {
-			return errors.New(errorString)
+			return errors.Wrap(err, stderr.String())
 		}
 	}
 
@@ -155,12 +150,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 		cmd.Stderr = &stderr
 		err := cmd.Run()
 		if err != nil {
-			return errors.Wrap(err, "error removing untracked branches")
-		}
-
-		errorString := stderr.String()
-		if errorString != "" {
-			return errors.New(errorString)
+			return errors.Wrap(err, stderr.String())
 		}
 	}
 	return nil
@@ -170,17 +160,20 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
 	if cleanupUntracked {
 		cmd := exec.Command(a.shell, "-c", "git tag -l | xargs git tag -d")
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
 		err := cmd.Run()
 
 		if err != nil {
-			return errors.Wrap(err, "error deleting tags")
+			return errors.Wrap(err, stderr.String())
 		}
 
 		cmd = exec.Command(a.shell, "-c", "git fetch --tags")
+		cmd.Stderr = &stderr
 		err = cmd.Run()
 
 		if err != nil {
-			return errors.Wrap(err, "error deleting tags")
+			return errors.Wrap(err, stderr.String())
 		}
 	}
 	return nil
