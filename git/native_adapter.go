@@ -135,7 +135,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 			return errors.Wrap(err, "error pruning branches")
 		}
 
-		cmd = exec.Command(a.shell, "-c", "git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -D")
+		cmd = exec.Command(a.shell, "-c", "git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs --no-run-if-empty git branch -D")
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err = cmd.Run()
@@ -145,7 +145,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 	}
 
 	if cleanupUntracked {
-		cmd := exec.Command(a.shell, "-c", "git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[/ { print $1 }' | xargs git branch -D")
+		cmd := exec.Command(a.shell, "-c", "git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[/ { print $1 }' | xargs --no-run-if-empty git branch -D")
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err := cmd.Run()
@@ -159,7 +159,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 // CleanupTags removes tags from local repo
 func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
 	if cleanupUntracked {
-		cmd := exec.Command(a.shell, "-c", "git tag -l | xargs git tag -d")
+		cmd := exec.Command(a.shell, "-c", "git tag -l | xargs --no-run-if-empty git tag -d")
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err := cmd.Run()
