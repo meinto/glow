@@ -145,7 +145,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 	}
 
 	if cleanupUntracked {
-		cmd := exec.Command(a.shell, "-c", "git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[/ { print $1 }' | xargs --no-run-if-empty git branch -D")
+		cmd := exec.Command(a.shell, "-c", "git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[origin/ { print $1 }' | xargs --no-run-if-empty git branch -D")
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err := cmd.Run()
