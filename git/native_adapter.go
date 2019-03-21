@@ -185,11 +185,8 @@ type cmdBranch struct {
 }
 
 func getCMDBranchList(shell string) ([]cmdBranch, error) {
-	cmd := exec.Command(shell, "git branch --list")
+	cmd := exec.Command(shell, "-c", "git branch --list")
 	stdoutReader, err := cmd.StdoutPipe()
-	if err != nil {
-		return []cmdBranch{}, err
-	}
 	if err != nil {
 		return []cmdBranch{}, err
 	}
