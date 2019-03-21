@@ -1,8 +1,8 @@
 # Example Gitlab ci pipeline
 
-Here you can see how you could integrate `glow` in your ci/cd pipeline in Gitlab. The pipeline suggestion contains a bunch of manual triggers which create release branches and create merge requests for features, fixes, hotfixes and releases.
+Here you can see how you could integrate `glow` in your [ci/cd pipeline in Gitlab](https://gitlab.com/meinto/glow-example-pipeline/pipelines). The pipeline suggestion contains a bunch of manual triggers which create release branches and create merge requests for features, fixes, hotfixes and releases.
 
-For the semantiv version number handling [git-semver](https://github.com/meinto/git-semver) is required by this library.
+For the semantiv version number handling a `VERSION` files is required by this library.
 
 ## The glow stage
 
