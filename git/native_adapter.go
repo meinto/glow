@@ -85,7 +85,7 @@ func (a nativeGitAdapter) AddAll() error {
 
 // Commit added changes
 func (a nativeGitAdapter) Commit(message string) error {
-	cmd := exec.Command(a.shell, "-c", fmt.Sprintf("git commit -m %s", message))
+	cmd := exec.Command(a.shell, "-c", fmt.Sprintf("git commit -m '%s'", message))
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	err := cmd.Run()
