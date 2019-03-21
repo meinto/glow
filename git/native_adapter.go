@@ -18,7 +18,7 @@ type nativeGitAdapter struct {
 
 // SetCICDOrigin for pipeline
 func (a nativeGitAdapter) SetCICDOrigin(origin string) error {
-	cmd := exec.Command(a.shell, "-c", fmt.Sprintf("git config remote.origin.url %s", origin))
+	cmd := exec.Command(a.shell, "-c", fmt.Sprintf("git config remote.origin.url '%s'", origin))
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	err := cmd.Run()
