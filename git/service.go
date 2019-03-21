@@ -2,7 +2,6 @@ package git
 
 import (
 	"github.com/meinto/glow"
-	"github.com/pkg/errors"
 )
 
 // Service describes all actions which can performed with git
@@ -30,8 +29,6 @@ func NewGoGitService() Service {
 }
 
 func NewNativeService(gitPath string) (Service, error) {
-	if gitPath == "" {
-		return nil, errors.New("path to git not defined")
-	}
-	return service{nativeGitAdapter{gitPath}}, nil
+	shell := "/bin/bash"
+	return service{nativeGitAdapter{shell}}, nil
 }
