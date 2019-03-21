@@ -45,6 +45,8 @@ To make this possible, you have to make shure, that your Gitlab runner have acce
 
 > Of course this is not the most beautiful method. A better way would be to setup a seperate Gitlab ci user and allow this user accessing the repository. On your server you could configure your Gitlab user to access gitlab via ssh key.
 
+> Please use the flag --cicdOrigin only on trusted gitlab-runners, because to successfully handover the ENV variables, they cannot be marked as protected in Gitlab.
+
 ## Publish a release
 
 ![publish release](./publish-release.png)
