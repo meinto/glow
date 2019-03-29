@@ -5,12 +5,15 @@ import (
 
 	semver "github.com/meinto/git-semver"
 	"github.com/meinto/git-semver/file"
+	"github.com/meinto/git-semver/git"
 	"github.com/pkg/errors"
 )
 
 type Service interface {
+	GetCurrentVersion(versionType string) (string, error)
 	GetNextVersion(versionType string) (string, error)
 	SetNextVersion(versionType string) error
+	TagCurrentVersion() error
 }
 
 type service struct {
@@ -29,11 +32,16 @@ func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string
 	}
 }
 
-func (s *service) GetNextVersion(versionType string) (string, error) {
+func (s *service) GetCurrentVersion(versionType string) (string, error) {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
 	currentVersion, err := fs.ReadVersionFromFile(s.versionFileType)
+	return currentVersion, errors.Wrap(err, "GetCurrentVersion")
+}
+
+func (s *service) GetNextVersion(versionType string) (string, error) {
+	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
 	if err != nil {
 		return "", err
 	}
@@ -51,7 +59,7 @@ func (s *service) SetNextVersion(versionType string) error {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
-	currentVersion, err := fs.ReadVersionFromFile(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
 	if err != nil {
 		return err
 	}
@@ -69,5 +77,21 @@ func (s *service) SetNextVersion(versionType string) error {
 	log.Println("new version will be: ", nextVersion)
 
 	err = fs.WriteVersionFile(s.versionFileType, nextVersion)
+	return err
+}
+
+func (s *service) TagCurrentVersion() error {
+	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	if err != nil {
+		return err
+	}
+
+	g := git.NewGitService(s.pathToGit)
+	err = g.CreateTag(currentVersion)
+	if err != nil {
+		return err
+	}
+
+	err = g.PushTag(currentVersion)
 	return err
 }

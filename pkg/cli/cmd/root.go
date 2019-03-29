@@ -35,13 +35,7 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
-
-		repoPath, err := g.GitRepoPath()
-		util.CheckForError(err, "GitRepoPath")
-
-		box := packr.NewBox(repoPath + "/buildAssets")
+		box := packr.NewBox("../../../buildAssets")
 		version, err := box.FindString("VERSION")
 		if err != nil {
 			log.Fatal(err)

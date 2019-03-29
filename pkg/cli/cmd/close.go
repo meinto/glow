@@ -7,11 +7,11 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(finishCmd)
-	util.AddFlagsForMergeRequests(finishCmd)
+	rootCmd.AddCommand(closeCmd)
+	util.AddFlagsForMergeRequests(closeCmd)
 }
 
-var finishCmd = &cobra.Command{
+var closeCmd = &cobra.Command{
 	Use:   "close",
 	Short: "close a branch",
 	Run: func(cmd *cobra.Command, args []string) {

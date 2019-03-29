@@ -4,11 +4,26 @@
 
 ## Installation
 
-**brew**
+**Mac OS**
 
 ```bash
 brew tap meinto/glow https://github.com/meinto/glow
 brew install meinto/glow/glow
+```
+
+**Linux**
+
+```bash
+GVERSION=$(curl https://api.github.com/repos/meinto/glow/releases/latest -s | jq .name -r | cut -c 2-)
+
+# download i386 architecture
+curl -Lo glow.tar.gz https://github.com/meinto/glow/releases/download/v${GVERSION}/glow_${GVERSION}_linux_i386.tar.gz
+# or x86_64 architecture
+curl -Lo glow.tar.gz https://github.com/meinto/glow/releases/download/v${GVERSION}/glow_${GVERSION}_linux_x86_64.tar.gz
+
+tar -xvzf glow.tar.gz glow
+mv glow /usr/local/bin/git-glow
+rm glow.tar.gz
 ```
 
 **manually**

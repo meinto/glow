@@ -112,6 +112,16 @@ func (a goGitAdapter) Fetch() error {
 	return r.Fetch(&git.FetchOptions{})
 }
 
+// Add all changes
+func (a goGitAdapter) AddAll() error {
+	return errors.New("not implemented yet")
+}
+
+// Commit added changes
+func (a goGitAdapter) Commit(message string) error {
+	return errors.New("not implemented yet")
+}
+
 // Push changes
 func (a goGitAdapter) Push(setUpstream bool) error {
 	return errors.New("not implemented yet")
