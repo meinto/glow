@@ -65,3 +65,26 @@ func TestCurrentBranch(t *testing.T) {
 		t.Errorf("branch should be 'master' but is '%s'", b.ShortBranchName())
 	}
 }
+
+func TestBranchList(t *testing.T) {
+	local, _, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	featureBranches := []string{"test/branch", "test/branch2"}
+	for _, b := range featureBranches {
+		local.CreateBranch(b)
+	}
+
+	s := setupNativeGitService(local.Folder)
+	bs, err := s.BranchList()
+	testenv.CheckForErrors(t, err)
+
+	expectedBranches := []string{"master"}
+	expectedBranches = append(expectedBranches, featureBranches...)
+	for i, eb := range expectedBranches {
+		b := bs[i]
+		if b.ShortBranchName() != eb {
+			t.Errorf("branch should be '%s' but is '%s'", eb, b.ShortBranchName())
+		}
+	}
+}
