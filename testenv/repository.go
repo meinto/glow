@@ -1,6 +1,9 @@
 package testenv
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 type Repository struct {
 	Folder string
@@ -14,7 +17,7 @@ func NewRepository(folder string) *Repository {
 	}
 }
 
-func (r *Repository) Do(str string, args ...interface{}) {
+func (r *Repository) Do(str string, args ...interface{}) (bytes.Buffer, error) {
 	moveToDir := fmt.Sprintf("cd %s", r.Folder)
-	r.exec.Do(moveToDir+" && "+str, args...)
+	return r.exec.Do(moveToDir+" && "+str, args...)
 }
