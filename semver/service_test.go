@@ -70,6 +70,16 @@ func TestSetNextVersion(t *testing.T) {
 	}
 }
 
+// doesnt work yet
+// func TestTagCurrentVersion(t *testing.T) {
+// 	local, _, _ := testenv.SetupEnv(t)
+// 	// defer teardown()
+
+// 	s := setupSemverService(local.Folder)
+// 	err := s.TagCurrentVersion()
+// 	testenv.CheckForErrors(t, err)
+// }
+
 // helpers
 
 func setupSemverService(folder string) Service {
