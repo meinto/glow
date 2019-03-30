@@ -19,15 +19,15 @@ type Service interface {
 
 type service struct {
 	pathToRepo      string
-	pathToGit       string
+	pathToShell     string
 	versionFile     string
 	versionFileType string
 }
 
-func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string) Service {
+func NewSemverService(pathToRepo, pathToShell, versionFile, versionFileType string) Service {
 	return &service{
 		pathToRepo:      pathToRepo,
-		pathToGit:       pathToGit,
+		pathToShell:     pathToShell,
 		versionFile:     versionFile,
 		versionFileType: versionFileType,
 	}
@@ -87,7 +87,7 @@ func (s *service) TagCurrentVersion() error {
 		return err
 	}
 
-	g := git.NewGitService(s.pathToGit)
+	g := git.NewRepoPathGitService(s.pathToShell, s.pathToRepo)
 	err = g.CreateTag(currentVersion)
 	if err != nil {
 		return err

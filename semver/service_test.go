@@ -85,7 +85,7 @@ func TestSetNextVersion(t *testing.T) {
 func setupSemverService(folder string) Service {
 	return NewSemverService(
 		folder,
-		"/usr/local/bin/git",
+		"/bin/bash",
 		"VERSION",
 		"raw",
 	)
