@@ -1,6 +1,7 @@
 package semver
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/meinto/glow/testenv"
@@ -70,15 +71,19 @@ func TestSetNextVersion(t *testing.T) {
 	}
 }
 
-// doesnt work yet
-// func TestTagCurrentVersion(t *testing.T) {
-// 	local, _, _ := testenv.SetupEnv(t)
-// 	// defer teardown()
+func TestTagCurrentVersion(t *testing.T) {
+	local, bare, teardown := testenv.SetupEnv(t)
+	defer teardown()
 
-// 	s := setupSemverService(local.Folder)
-// 	err := s.TagCurrentVersion()
-// 	testenv.CheckForErrors(t, err)
-// }
+	s := setupSemverService(local.Folder)
+	err := s.TagCurrentVersion()
+	testenv.CheckForErrors(t, err)
+
+	stdout, _ := bare.Do("git tag | grep v1.2.3")
+	if strings.TrimSpace(stdout.String()) != "v1.2.3" {
+		t.Errorf("git tag 'v1.2.3' should have been pushed. Bare repo tag list: %s", stdout.String())
+	}
+}
 
 // helpers
 
