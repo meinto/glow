@@ -29,7 +29,7 @@ var closeReleaseCmd = &cobra.Command{
 
 			s := semver.NewSemverService(
 				pathToRepo,
-				viper.GetString("gitPath"),
+				"/bin/bash",
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)

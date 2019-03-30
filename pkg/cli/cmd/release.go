@@ -50,7 +50,7 @@ var releaseCmd = &cobra.Command{
 			util.CheckForError(err, "semver GitRepoPath")
 			s = semver.NewSemverService(
 				pathToRepo,
-				viper.GetString("gitPath"),
+				"/bin/bash",
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)
@@ -84,7 +84,7 @@ var releaseCmd = &cobra.Command{
 			util.CheckForError(err, "semver GitRepoPath")
 			s := semver.NewSemverService(
 				pathToRepo,
-				viper.GetString("gitPath"),
+				"/bin/bash",
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)

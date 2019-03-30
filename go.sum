@@ -348,6 +348,8 @@ github.com/meinto/git-semver v0.0.0-20190319130324-da2b6ef3b28c h1:+GSjNK5aJkZgC
 github.com/meinto/git-semver v0.0.0-20190319130324-da2b6ef3b28c/go.mod h1:ET3tmPakjbGsJJ51NVgCrHnn3dNx8qxowTJGIl53ehg=
 github.com/meinto/git-semver v0.0.0-20190320175809-89848c2ddf33 h1:+UJT+msT73IzdJG9bpOL+0BdyWMA4zI/a10d6AqH31A=
 github.com/meinto/git-semver v0.0.0-20190320175809-89848c2ddf33/go.mod h1:ET3tmPakjbGsJJ51NVgCrHnn3dNx8qxowTJGIl53ehg=
+github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f h1:7FDgx70aSgLS0/AIuavfl2Xa4GXQObbXkoG6fZw1WyE=
+github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f/go.mod h1:ET3tmPakjbGsJJ51NVgCrHnn3dNx8qxowTJGIl53ehg=
 github.com/meinto/git-semver v1.9.0 h1:OKco6CkuOOkTyf+VmbDN021edOYQ3NaNd0167MP2oGw=
 github.com/meinto/git-semver v1.9.0/go.mod h1:/XS7hcOk6wiDcHlUWKBeOByRtbWSzJIzOSC6camrS2c=
 github.com/meinto/glow v0.8.2/go.mod h1:9+v/Hpk9i20pnp662C0GDEDcFzNgs+a83jOCBYPWW1g=
