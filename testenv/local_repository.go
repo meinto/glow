@@ -3,6 +3,7 @@ package testenv
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 type LocalRepository struct {
@@ -12,6 +13,15 @@ type LocalRepository struct {
 func NewLocalRepository(folder string) *LocalRepository {
 	return &LocalRepository{
 		NewRepository(folder + "/local"),
+	}
+}
+
+func Clone(pathToBare, repoName string) *LocalRepository {
+	exec := NewCommand()
+	execDir := strings.TrimSuffix(pathToBare, "/bare.git")
+	exec.Do(fmt.Sprintf("cd %s && git clone %s %s", execDir, pathToBare, repoName))
+	return &LocalRepository{
+		NewRepository(execDir + "/" + repoName),
 	}
 }
 
@@ -33,4 +43,13 @@ func (r *LocalRepository) CreateBranch(branch string) {
 
 func (r *LocalRepository) Checkout(branch string) {
 	r.Do(fmt.Sprintf("git checkout %s", branch))
+}
+
+func (r *LocalRepository) Push(branch string) {
+	r.Do(fmt.Sprintf("git push -u origin %s", branch))
+}
+
+func (r *LocalRepository) Exists(branch string) (bool, string) {
+	stdout, _ := r.Do(fmt.Sprintf("git rev-parse --abbrev-ref %s", branch))
+	return strings.TrimSpace(stdout.String()) == branch, stdout.String()
 }
