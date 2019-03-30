@@ -2,6 +2,7 @@ package semver
 
 import (
 	"log"
+	"strings"
 
 	semver "github.com/meinto/git-semver"
 	"github.com/meinto/git-semver/file"
@@ -37,7 +38,7 @@ func (s *service) GetCurrentVersion(versionType string) (string, error) {
 	fs := file.NewVersionFileService(versionFilepath)
 
 	currentVersion, err := fs.ReadVersionFromFile(s.versionFileType)
-	return currentVersion, errors.Wrap(err, "GetCurrentVersion")
+	return strings.TrimSpace(currentVersion), errors.Wrap(err, "GetCurrentVersion")
 }
 
 func (s *service) GetNextVersion(versionType string) (string, error) {
