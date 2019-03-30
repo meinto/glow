@@ -11,7 +11,7 @@ import (
 )
 
 type Service interface {
-	GetCurrentVersion(versionType string) (string, error)
+	GetCurrentVersion() (string, error)
 	GetNextVersion(versionType string) (string, error)
 	SetNextVersion(versionType string) error
 	TagCurrentVersion() error
@@ -33,7 +33,7 @@ func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string
 	}
 }
 
-func (s *service) GetCurrentVersion(versionType string) (string, error) {
+func (s *service) GetCurrentVersion() (string, error) {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
@@ -42,7 +42,7 @@ func (s *service) GetCurrentVersion(versionType string) (string, error) {
 }
 
 func (s *service) GetNextVersion(versionType string) (string, error) {
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return "", err
 	}
@@ -60,7 +60,7 @@ func (s *service) SetNextVersion(versionType string) error {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (s *service) SetNextVersion(versionType string) error {
 }
 
 func (s *service) TagCurrentVersion() error {
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return err
 	}

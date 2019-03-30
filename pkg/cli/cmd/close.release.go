@@ -33,7 +33,7 @@ var closeReleaseCmd = &cobra.Command{
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)
-			v, err := s.GetCurrentVersion(args[0])
+			v, err := s.GetCurrentVersion()
 			util.CheckForError(err, "semver GetCurrentVersion")
 			version = v
 		}

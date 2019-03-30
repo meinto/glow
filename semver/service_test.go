@@ -19,7 +19,7 @@ func TestGetCurrentVersion(t *testing.T) {
 	defer teardown()
 
 	s := setupSemverService(local.Folder)
-	currentVersion, _ := s.GetCurrentVersion("raw")
+	currentVersion, _ := s.GetCurrentVersion()
 
 	if currentVersion != "1.2.3" {
 		t.Errorf("current version should be '1.2.3' but is '%s'", currentVersion)
