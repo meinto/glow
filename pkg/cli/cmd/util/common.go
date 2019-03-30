@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/meinto/glow/cmd"
 	"errors"
 	"log"
 	"os"
@@ -23,10 +24,8 @@ func GetGitClient() (git.Service, error) {
 	if viper.GetBool("useBuiltInGitBindings") {
 		s = git.NewGoGitService()
 	}
-	s, err := git.NewNativeService(viper.GetString("gitPath"))
-	if err != nil {
-		return nil, err
-	}
+	exec := cmd.NewCmdExecutor("/bin/bash")
+	s = git.NewNativeService(exec)
 	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
 	s = git.NewLoggingService(logger, s)
