@@ -88,3 +88,24 @@ func TestBranchList(t *testing.T) {
 		}
 	}
 }
+
+func TestFetch(t *testing.T) {
+	local, bare, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	local2 := testenv.Clone(bare.Folder, "local2")
+
+	local2Branch := "local2/branch"
+	local2.CreateBranch(local2Branch)
+	local2.Checkout(local2Branch)
+	local2.Push(local2Branch)
+
+	s := setupNativeGitService(local.Folder)
+	err := s.Fetch()
+	testenv.CheckForErrors(t, err)
+
+	exists, branchName := local.Exists(local2Branch)
+	if !exists {
+		t.Errorf("branch should be '%s' but is '%s'", local2Branch, branchName)
+	}
+}
