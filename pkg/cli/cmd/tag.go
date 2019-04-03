@@ -4,7 +4,6 @@ import (
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
