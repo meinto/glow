@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"runtime"
 	"strings"
 
 	"github.com/meinto/glow/cmd"
@@ -129,6 +130,11 @@ func (a nativeGitAdapter) Checkout(b glow.Branch) error {
 
 // CleanupBranches removes all unused branches
 func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) error {
+	xargsCmd := "xargs -r git branch -D"
+	if runtime.GOOS == "darwin" {
+		xargsCmd = "xargs git branch -D"
+	}
+
 	if cleanupGone {
 		cmd := a.exec.Command("git remote prune origin")
 		err := cmd.Run()
@@ -136,7 +142,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 			return errors.Wrap(err, "error pruning branches")
 		}
 
-		cmd = a.exec.Command("git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs --no-run-if-empty git branch -D")
+		cmd = a.exec.Command(fmt.Sprintf("git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | %s", xargsCmd))
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err = cmd.Run()
@@ -146,7 +152,7 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 	}
 
 	if cleanupUntracked {
-		cmd := a.exec.Command("git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[origin/ { print $1 }' | xargs --no-run-if-empty git branch -D")
+		cmd := a.exec.Command(fmt.Sprintf("git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[origin/ { print $1 }' | %s", xargsCmd))
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err := cmd.Run()
@@ -159,8 +165,13 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) er
 
 // CleanupTags removes tags from local repo
 func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
+	xargsCmd := "xargs -r git tag -d"
+	if runtime.GOOS == "darwin" {
+		xargsCmd = "xargs git tag -d"
+	}
+
 	if cleanupUntracked {
-		cmd := a.exec.Command("git tag -l | xargs --no-run-if-empty git tag -d")
+		cmd := a.exec.Command(fmt.Sprintf("git tag -l | %s", xargsCmd))
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err := cmd.Run()
