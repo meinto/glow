@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -13,7 +12,6 @@ import (
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var releaseCmdOptions struct {
@@ -45,7 +43,7 @@ var releaseCmd = &cobra.Command{
 		util.CheckForError(err, "GetGitClient")
 
 		var s semver.Service
-		if isSemanticVersion(args[0]) {
+		if util.IsSemanticVersion(args[0]) {
 			pathToRepo, err := g.GitRepoPath()
 			util.CheckForError(err, "semver GitRepoPath")
 			s = semver.NewSemverService(
@@ -68,7 +66,7 @@ var releaseCmd = &cobra.Command{
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
-		if isSemanticVersion(args[0]) {
+		if util.IsSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])
 			util.CheckForError(err, "semver SetNextVersion")
 		}
@@ -79,7 +77,7 @@ var releaseCmd = &cobra.Command{
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
-		if isSemanticVersion(args[0]) {
+		if util.IsSemanticVersion(args[0]) {
 			pathToRepo, err := g.GitRepoPath()
 			util.CheckForError(err, "semver GitRepoPath")
 			s := semver.NewSemverService(
@@ -113,20 +111,6 @@ var releaseCmd = &cobra.Command{
 			util.CheckForError(err, "Push")
 		}
 	},
-}
-
-func hasSemverConfig() bool {
-	if _, err := os.Stat(viper.GetString("gitPath") + "/semver.config.json"); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
-func isSemanticVersion(version string) bool {
-	if version == "major" || version == "minor" || version == "patch" {
-		return true
-	}
-	return false
 }
 
 func postRelease(version string) {
