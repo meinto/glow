@@ -1,6 +1,7 @@
 package glow
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -8,22 +9,31 @@ import (
 
 // Hotfix definition
 type Hotfix struct {
-	AuthoredBranch
+	version string
+	Branch
 }
 
 // NewHotfix creates a new hotfix definition
-func NewHotfix(author, name string) (Hotfix, error) {
-	ab, err := NewAuthoredBranch("refs/heads/hotfix/%s/%s", author, name)
-	return Hotfix{ab}, errors.Wrap(err, "error while creating hotfix definition")
+func NewHotfix(version string) (Hotfix, error) {
+	branchName := fmt.Sprintf("refs/heads/hotfix/v%s", version)
+	b := NewPlainBranch(branchName)
+	return Hotfix{version, b}, nil
 }
 
 // HotfixFromBranch extracts a fix definition from branch name
 func HotfixFromBranch(branchName string) (Hotfix, error) {
-	if !strings.Contains(branchName, "/hotfix/") {
+	if !strings.Contains(branchName, "/hotfix/v") {
 		return Hotfix{}, errors.New("no valid hotfix branch")
 	}
-	ab, err := AuthoredBranchFromBranchName(branchName)
-	return Hotfix{ab}, errors.Wrap(err, "error while creating hotfix definition from branch name")
+	b := NewPlainBranch(branchName)
+	parts := strings.Split(branchName, "/")
+	if len(parts) < 1 {
+		return Hotfix{}, errors.New("invalid branch name " + branchName)
+	}
+	version := parts[len(parts)-1]
+	version = strings.TrimPrefix(version, "v")
+
+	return Hotfix{version, b}, nil
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
