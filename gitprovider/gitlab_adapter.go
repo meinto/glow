@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/meinto/glow"
@@ -65,11 +66,9 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	body := bytes.NewReader(payloadBytes)
 
 	requestURI := fmt.Sprintf(
-		"%s/api/v4/projects/%s%s%s/merge_requests",
+		"%s/api/v4/projects/%s/merge_requests",
 		a.endpoint,
-		a.namespace,
-		"%2F",
-		a.project,
+		url.QueryEscape(a.namespace+"/"+a.project),
 	)
 	req, err := http.NewRequest("POST", requestURI, body)
 	if err != nil {

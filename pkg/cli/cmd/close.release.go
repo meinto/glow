@@ -5,7 +5,6 @@ import (
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -29,11 +28,11 @@ var closeReleaseCmd = &cobra.Command{
 
 			s := semver.NewSemverService(
 				pathToRepo,
-				viper.GetString("gitPath"),
+				"/bin/bash",
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)
-			v, err := s.GetCurrentVersion(args[0])
+			v, err := s.GetCurrentVersion()
 			util.CheckForError(err, "semver GetCurrentVersion")
 			version = v
 		}
