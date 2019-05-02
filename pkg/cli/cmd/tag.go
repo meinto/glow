@@ -4,7 +4,6 @@ import (
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -23,7 +22,7 @@ var tagCmd = &cobra.Command{
 
 		s := semver.NewSemverService(
 			pathToRepo,
-			viper.GetString("gitPath"),
+			"/bin/bash",
 			releaseCmdOptions.VersionFile,
 			releaseCmdOptions.VersionFileType,
 		)

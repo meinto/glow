@@ -2,6 +2,7 @@ package git
 
 import (
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/cmd"
 )
 
 // Service describes all actions which can performed with git
@@ -28,7 +29,6 @@ func NewGoGitService() Service {
 	return service{goGitAdapter{}}
 }
 
-func NewNativeService(gitPath string) (Service, error) {
-	shell := "/bin/bash"
-	return service{nativeGitAdapter{shell}}, nil
+func NewNativeService(cmdExecutor cmd.CmdExecutor) Service {
+	return service{nativeGitAdapter{cmdExecutor}}
 }

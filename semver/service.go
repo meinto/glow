@@ -2,6 +2,7 @@ package semver
 
 import (
 	"log"
+	"strings"
 
 	semver "github.com/meinto/git-semver"
 	"github.com/meinto/git-semver/file"
@@ -10,7 +11,7 @@ import (
 )
 
 type Service interface {
-	GetCurrentVersion(versionType string) (string, error)
+	GetCurrentVersion() (string, error)
 	GetNextVersion(versionType string) (string, error)
 	SetNextVersion(versionType string) error
 	TagCurrentVersion() error
@@ -18,30 +19,30 @@ type Service interface {
 
 type service struct {
 	pathToRepo      string
-	pathToGit       string
+	pathToShell     string
 	versionFile     string
 	versionFileType string
 }
 
-func NewSemverService(pathToRepo, pathToGit, versionFile, versionFileType string) Service {
+func NewSemverService(pathToRepo, pathToShell, versionFile, versionFileType string) Service {
 	return &service{
 		pathToRepo:      pathToRepo,
-		pathToGit:       pathToGit,
+		pathToShell:     pathToShell,
 		versionFile:     versionFile,
 		versionFileType: versionFileType,
 	}
 }
 
-func (s *service) GetCurrentVersion(versionType string) (string, error) {
+func (s *service) GetCurrentVersion() (string, error) {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
 	currentVersion, err := fs.ReadVersionFromFile(s.versionFileType)
-	return currentVersion, errors.Wrap(err, "GetCurrentVersion")
+	return strings.TrimSpace(currentVersion), errors.Wrap(err, "GetCurrentVersion")
 }
 
 func (s *service) GetNextVersion(versionType string) (string, error) {
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return "", err
 	}
@@ -59,7 +60,7 @@ func (s *service) SetNextVersion(versionType string) error {
 	versionFilepath := s.pathToRepo + "/" + s.versionFile
 	fs := file.NewVersionFileService(versionFilepath)
 
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return err
 	}
@@ -81,12 +82,12 @@ func (s *service) SetNextVersion(versionType string) error {
 }
 
 func (s *service) TagCurrentVersion() error {
-	currentVersion, err := s.GetCurrentVersion(s.versionFileType)
+	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return err
 	}
 
-	g := git.NewGitService(s.pathToGit)
+	g := git.NewRepoPathGitService(s.pathToShell, s.pathToRepo)
 	err = g.CreateTag(currentVersion)
 	if err != nil {
 		return err
