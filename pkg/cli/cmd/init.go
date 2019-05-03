@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/manifoldco/promptui"
-	"github.com/meinto/cobra-utils"
+	cobraUtils "github.com/meinto/cobra-utils"
 	"github.com/spf13/cobra"
 )
 

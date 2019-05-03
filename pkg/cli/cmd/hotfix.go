@@ -42,7 +42,7 @@ var hotfixCmd = &cobra.Command{
 		hotfix, err := glow.NewHotfix(version)
 		util.CheckForError(err, "NewHotfix")
 
-		err = g.Create(hotfix)
+		err = g.Create(hotfix, rootCmdOptions.SkipChecks)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(hotfix)
