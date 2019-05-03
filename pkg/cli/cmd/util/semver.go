@@ -14,16 +14,17 @@ func ProcessVersion(versionArg, versionFile, versionFileType string) (string, se
 	g, err := GetGitClient()
 	CheckForError(err, "GetGitClient")
 
-	var s semver.Service
+	pathToRepo, err := g.GitRepoPath()
+	CheckForError(err, "semver GitRepoPath")
+
+	s := semver.NewSemverService(
+		pathToRepo,
+		"/bin/bash",
+		versionFile,
+		versionFileType,
+	)
+
 	if IsSemanticVersion(version) {
-		pathToRepo, err := g.GitRepoPath()
-		CheckForError(err, "semver GitRepoPath")
-		s = semver.NewSemverService(
-			pathToRepo,
-			"/bin/bash",
-			versionFile,
-			versionFileType,
-		)
 		v, err := s.GetCurrentVersion()
 		CheckForError(err, "semver GetNextVersion")
 		version = v

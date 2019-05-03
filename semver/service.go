@@ -14,6 +14,7 @@ type Service interface {
 	GetCurrentVersion() (string, error)
 	GetNextVersion(versionType string) (string, error)
 	SetNextVersion(versionType string) error
+	SetVersion(version string) error
 	TagCurrentVersion() error
 }
 
@@ -57,9 +58,6 @@ func (s *service) GetNextVersion(versionType string) (string, error) {
 }
 
 func (s *service) SetNextVersion(versionType string) error {
-	versionFilepath := s.pathToRepo + "/" + s.versionFile
-	fs := file.NewVersionFileService(versionFilepath)
-
 	currentVersion, err := s.GetCurrentVersion()
 	if err != nil {
 		return err
@@ -77,7 +75,14 @@ func (s *service) SetNextVersion(versionType string) error {
 
 	log.Println("new version will be: ", nextVersion)
 
-	err = fs.WriteVersionFile(s.versionFileType, nextVersion)
+	return s.SetVersion(nextVersion)
+}
+
+func (s *service) SetVersion(version string) error {
+	versionFilepath := s.pathToRepo + "/" + s.versionFile
+	fs := file.NewVersionFileService(versionFilepath)
+
+	err := fs.WriteVersionFile(s.versionFileType, version)
 	return err
 }
 
