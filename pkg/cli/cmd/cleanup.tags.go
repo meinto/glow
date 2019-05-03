@@ -18,6 +18,6 @@ var cleanupTagsCmd = &cobra.Command{
 		util.CheckForError(err, "GetGitClient")
 
 		err = g.CleanupTags(cleanupCmdFlags.cleanupUntracked)
-		util.CheckForError(err, "Close")
+		util.CheckForError(err, "CleanupTags")
 	},
 }

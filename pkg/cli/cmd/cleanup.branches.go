@@ -18,6 +18,6 @@ var cleanupBranchesCmd = &cobra.Command{
 		util.CheckForError(err, "GetGitClient")
 
 		err = g.CleanupBranches(cleanupCmdFlags.cleanupGone, cleanupCmdFlags.cleanupUntracked)
-		util.CheckForError(err, "Close")
+		util.CheckForError(err, "CleanupBranches")
 	},
 }
