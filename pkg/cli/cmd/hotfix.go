@@ -57,10 +57,7 @@ var hotfixCmd = &cobra.Command{
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		version := args[0]
-
-		util.PostRunWithVersion(
-			version,
+		util.PostRunWithCurrentVersion(
 			hotfixCmdOptions.VersionFile,
 			hotfixCmdOptions.VersionFileType,
 			hotfixCmdOptions.PostHotfixScript,

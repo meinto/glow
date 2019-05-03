@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-func PostRunWithVersion(
-	versionArg, versionFile, versionFileType, postReleaseScript string,
+func PostRunWithCurrentVersion(
+	versionFile, versionFileType, postReleaseScript string,
 	postReleaseCommand []string,
 	push bool,
 ) {
 	g, err := GetGitClient()
 	CheckForError(err, "GetGitClient")
 
-	version, _ := ProcessVersion(versionArg, versionFile, versionFileType)
+	version, _ := ProcessVersion("current", versionFile, versionFileType)
 
 	if postReleaseScript != "" {
 		postRelease(version, postReleaseScript)
