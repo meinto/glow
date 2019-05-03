@@ -18,7 +18,7 @@ type gitlabAdapter struct {
 }
 
 func (a *gitlabAdapter) Close(b glow.Branch) error {
-	if b.CanBeClosed() {
+	if b.CanBeClosed() && a.gitService.RemoteBranchExists(b.ShortBranchName()) == nil {
 		branchList, err := a.gitService.BranchList()
 		if err != nil {
 			return errors.Wrap(err, "error getting branch list")
@@ -37,7 +37,7 @@ func (a *gitlabAdapter) Close(b glow.Branch) error {
 }
 
 func (a *gitlabAdapter) Publish(b glow.Branch) error {
-	if b.CanBePublished() {
+	if b.CanBePublished() && a.gitService.RemoteBranchExists(b.ShortBranchName()) == nil {
 		t := b.PublishBranch()
 		return a.createMergeRequest(b, t)
 	}

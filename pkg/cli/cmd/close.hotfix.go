@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
@@ -43,7 +45,11 @@ var closeHotfixCmd = &cobra.Command{
 		currentBranch, err := glow.NewHotfix(version)
 		util.CheckForError(err, "NewHotfix")
 
-		gp.Close(currentBranch)
-		util.CheckForError(err, "Close")
+		err = gp.Close(currentBranch)
+		if !util.MergeRequestFlags.Gracefully {
+			util.CheckForError(err, "Close")
+		} else {
+			log.Println(err)
+		}
 	},
 }
