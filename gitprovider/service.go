@@ -6,6 +6,7 @@ import (
 	"github.com/go-kit/kit/log"
 
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
 )
 
@@ -29,7 +30,8 @@ func NewGitlabService(endpoint, namespace, project, token string) Service {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 
-	g := git.NewGoGitService()
+	exec := cmd.NewCmdExecutor("/bin/bash")
+	g := git.NewNativeService(exec)
 	g = git.NewLoggingService(logger, g)
 
 	return &gitlabAdapter{
@@ -47,7 +49,8 @@ func NewGithubService(endpoint, namespace, project, token string) Service {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 
-	g := git.NewGoGitService()
+	exec := cmd.NewCmdExecutor("/bin/bash")
+	g := git.NewNativeService(exec)
 	g = git.NewLoggingService(logger, g)
 
 	return &githubAdapter{
