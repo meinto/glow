@@ -112,6 +112,9 @@ func (a nativeGitAdapter) Push(setUpstream bool) error {
 
 // Create a new branch
 func (a nativeGitAdapter) Create(b glow.Branch) error {
+	if !b.CreationIsAllowedFrom(b.BranchName()) {
+		return errors.New("creation not allowed from this branch")
+	}
 	cmd := a.exec.Command(fmt.Sprintf("git branch %s", b.ShortBranchName()))
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
