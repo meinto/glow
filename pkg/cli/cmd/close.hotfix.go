@@ -15,7 +15,7 @@ func init() {
 }
 
 var closeHotfixCmd = &cobra.Command{
-	Use:   "hofix",
+	Use:   "hotfix",
 	Short: "close a release branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
