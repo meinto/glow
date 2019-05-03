@@ -56,10 +56,7 @@ var releaseCmd = &cobra.Command{
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		version := args[0]
-
-		util.PostRunWithVersion(
-			version,
+		util.PostRunWithCurrentVersion(
 			releaseCmdOptions.VersionFile,
 			releaseCmdOptions.VersionFileType,
 			releaseCmdOptions.PostReleaseScript,
