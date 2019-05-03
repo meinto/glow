@@ -181,3 +181,7 @@ func (a goGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) error 
 func (a goGitAdapter) CleanupTags(cleanupUntracked bool) error {
 	return errors.New("not implemented yet")
 }
+
+func (a goGitAdapter) RemoteBranchExists(branchName string) error {
+	return errors.New("not implemented")
+}

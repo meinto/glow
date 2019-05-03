@@ -112,3 +112,10 @@ func (s loggingService) CleanupTags(cleanupUntracked bool) (err error) {
 	}(time.Now())
 	return s.next.CleanupTags(cleanupUntracked)
 }
+
+func (s loggingService) RemoteBranchExists(branchName string) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "CleanupTags", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.RemoteBranchExists(branchName)
+}

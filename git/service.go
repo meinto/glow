@@ -19,6 +19,7 @@ type Service interface {
 	Checkout(b glow.Branch) error
 	CleanupBranches(cleanupGone, cleanupUntracked bool) error
 	CleanupTags(cleanupUntracked bool) error
+	RemoteBranchExists(branchName string) error
 }
 
 type service struct {
