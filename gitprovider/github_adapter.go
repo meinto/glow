@@ -16,7 +16,7 @@ type githubAdapter struct {
 }
 
 func (a *githubAdapter) Close(b glow.Branch) error {
-	if b.CanBeClosed() {
+	if b.CanBeClosed() && a.gitService.RemoteBranchExists(b.ShortBranchName()) == nil {
 		branchList, err := a.gitService.BranchList()
 		if err != nil {
 			return errors.Wrap(err, "error getting branch list")
@@ -35,7 +35,7 @@ func (a *githubAdapter) Close(b glow.Branch) error {
 }
 
 func (a *githubAdapter) Publish(b glow.Branch) error {
-	if b.CanBePublished() {
+	if b.CanBePublished() && a.gitService.RemoteBranchExists(b.ShortBranchName()) == nil {
 		t := b.PublishBranch()
 		return a.createPullRequest(b, t)
 	}
