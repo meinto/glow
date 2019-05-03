@@ -41,7 +41,7 @@ var releaseCmd = &cobra.Command{
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
 
-		err = g.Create(release)
+		err = g.Create(release, rootCmdOptions.SkipChecks)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(release)

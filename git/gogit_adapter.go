@@ -128,7 +128,7 @@ func (a goGitAdapter) Push(setUpstream bool) error {
 }
 
 // Create a new branch
-func (a goGitAdapter) Create(b glow.Branch) error {
+func (a goGitAdapter) Create(b glow.Branch, skipChecks bool) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
