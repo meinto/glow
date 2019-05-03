@@ -25,7 +25,7 @@ func ProcessVersion(versionArg, versionFile, versionFileType string) (string, se
 	)
 
 	if IsSemanticVersion(version) {
-		v, err := s.GetCurrentVersion()
+		v, err := s.GetNextVersion(version)
 		CheckForError(err, "semver GetNextVersion")
 		version = v
 	}
