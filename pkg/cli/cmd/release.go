@@ -47,10 +47,8 @@ var releaseCmd = &cobra.Command{
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
-		if util.IsSemanticVersion(args[0]) {
-			err = s.SetNextVersion(args[0])
-			util.CheckForError(err, "semver SetNextVersion")
-		}
+		s.SetVersion(version)
+		util.CheckForError(err, "semver SetVersion")
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
 		version := args[0]

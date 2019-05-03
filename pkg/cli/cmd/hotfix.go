@@ -18,7 +18,7 @@ func init() {
 	rootCmd.AddCommand(hotfixCmd)
 
 	hotfixCmd.Flags().BoolVar(&hotfixCmdOptions.Push, "push", false, "push created hotfix branch")
-	hotfixCmd.Flags().StringVar(&hotfixCmdOptions.PostHotfixScript, "postHofix", "", "script that executes after switching to hotfix branch")
+	hotfixCmd.Flags().StringVar(&hotfixCmdOptions.PostHotfixScript, "postHotfix", "", "script that executes after switching to hotfix branch")
 	hotfixCmd.Flags().StringArrayVar(&hotfixCmdOptions.PostHotfixCommand, "postHotfixCommand", []string{}, "commands which should be executed after switching to hotfix branch")
 
 	hotfixCmd.Flags().StringVar(&hotfixCmdOptions.VersionFile, "versionFile", "VERSION", "name of git-semver version file")
@@ -48,10 +48,8 @@ var hotfixCmd = &cobra.Command{
 		g.Checkout(hotfix)
 		util.CheckForError(err, "Checkout")
 
-		if util.IsSemanticVersion(args[0]) {
-			err = s.SetNextVersion(args[0])
-			util.CheckForError(err, "semver SetNextVersion")
-		}
+		err = s.SetVersion(version)
+		util.CheckForError(err, "semver SetVersion")
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
 		version := args[0]
