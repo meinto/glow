@@ -23,16 +23,17 @@ archive:
   format_overrides:
     - goos: windows
       format: zip
-brew:
-  github:
-    owner: meinto
-    name: glow
-  commit_author:
-    name: Tobias Meinhardt
-    email: tobias.meinhardt89@gmail.com
-  folder: formula
-  dependencies:
-    - git
+brews:
+  -
+    github:
+      owner: meinto
+      name: glow
+    commit_author:
+      name: Tobias Meinhardt
+      email: tobias.meinhardt89@gmail.com
+    folder: formula
+    dependencies:
+      - git
 # snapcraft:
 #   name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 #   replacements:
