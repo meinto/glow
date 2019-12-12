@@ -111,7 +111,16 @@ func (a nativeGitAdapter) Push(setUpstream bool) error {
 }
 
 // Create a new branch
-func (a nativeGitAdapter) Create(b glow.Branch) error {
+func (a nativeGitAdapter) Create(b glow.Branch, skipChecks bool) error {
+	if !skipChecks {
+		sourceBranch, err := a.CurrentBranch()
+		if err != nil {
+			return err
+		}
+		if !b.CreationIsAllowedFrom(sourceBranch.BranchName()) {
+			return errors.New("creation not allowed from this branch")
+		}
+	}
 	cmd := a.exec.Command(fmt.Sprintf("git branch %s", b.ShortBranchName()))
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -189,6 +198,24 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) error {
 		}
 	}
 	return nil
+}
+
+func (a nativeGitAdapter) RemoteBranchExists(branchName string) error {
+	cmd := a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l", branchName))
+	var stderr, stdout bytes.Buffer
+	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
+	err := cmd.Run()
+
+	if err != nil {
+		return errors.Wrap(err, stderr.String())
+	}
+
+	branchCount := strings.TrimSpace(stdout.String())
+	if branchCount == "1" {
+		return nil
+	}
+	return errors.New("Remote Branch does not exist")
 }
 
 type cmdBranch struct {

@@ -128,7 +128,7 @@ func (a goGitAdapter) Push(setUpstream bool) error {
 }
 
 // Create a new branch
-func (a goGitAdapter) Create(b glow.Branch) error {
+func (a goGitAdapter) Create(b glow.Branch, skipChecks bool) error {
 	r, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
@@ -180,4 +180,8 @@ func (a goGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) error 
 // CleanupTags removes tags from local repo
 func (a goGitAdapter) CleanupTags(cleanupUntracked bool) error {
 	return errors.New("not implemented yet")
+}
+
+func (a goGitAdapter) RemoteBranchExists(branchName string) error {
+	return errors.New("not implemented")
 }

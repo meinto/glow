@@ -10,12 +10,12 @@ import (
 )
 
 func init() {
-	closeCmd.AddCommand(closeReleaseCmd)
-	util.AddFlagsForMergeRequests(closeReleaseCmd)
+	closeCmd.AddCommand(closeHotfixCmd)
+	util.AddFlagsForMergeRequests(closeHotfixCmd)
 }
 
-var closeReleaseCmd = &cobra.Command{
-	Use:   "release",
+var closeHotfixCmd = &cobra.Command{
+	Use:   "hotfix",
 	Short: "close a release branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -42,8 +42,8 @@ var closeReleaseCmd = &cobra.Command{
 		gp, err := util.GetGitProvider()
 		util.CheckForError(err, "GetGitProvider")
 
-		currentBranch, err := glow.NewRelease(version)
-		util.CheckForError(err, "NewRelease")
+		currentBranch, err := glow.NewHotfix(version)
+		util.CheckForError(err, "NewHotfix")
 
 		err = gp.Close(currentBranch)
 		if !util.MergeRequestFlags.Gracefully {

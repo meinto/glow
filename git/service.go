@@ -15,10 +15,11 @@ type Service interface {
 	AddAll() error
 	Commit(message string) error
 	Push(setUpstream bool) error
-	Create(b glow.Branch) error
+	Create(b glow.Branch, skipChecks bool) error
 	Checkout(b glow.Branch) error
 	CleanupBranches(cleanupGone, cleanupUntracked bool) error
 	CleanupTags(cleanupUntracked bool) error
+	RemoteBranchExists(branchName string) error
 }
 
 type service struct {
