@@ -1,19 +1,9 @@
 package cmd
 
 import (
-	"bytes"
-	"fmt"
-	"log"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
-
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
-	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var releaseCmdOptions struct {
@@ -39,125 +29,39 @@ var releaseCmd = &cobra.Command{
 	Short: "create a release branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		version := args[0]
-
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
-		var s semver.Service
-		if isSemanticVersion(args[0]) {
-			pathToRepo, err := g.GitRepoPath()
-			util.CheckForError(err, "semver GitRepoPath")
-			s = semver.NewSemverService(
-				pathToRepo,
-				"/bin/bash",
-				releaseCmdOptions.VersionFile,
-				releaseCmdOptions.VersionFileType,
-			)
-			v, err := s.GetNextVersion(args[0])
-			util.CheckForError(err, "semver GetNextVersion")
-			version = v
-		}
+		version, s := util.ProcessVersion(
+			args[0],
+			releaseCmdOptions.VersionFile,
+			releaseCmdOptions.VersionFileType,
+		)
 
 		release, err := glow.NewRelease(version)
 		util.CheckForError(err, "NewRelease")
 
-		err = g.Create(release)
+		err = g.Create(release, rootCmdOptions.SkipChecks)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(release)
 		util.CheckForError(err, "Checkout")
 
-		if isSemanticVersion(args[0]) {
+		if util.IsSemanticVersion(args[0]) {
 			err = s.SetNextVersion(args[0])
 			util.CheckForError(err, "semver SetNextVersion")
+		} else {
+			err = s.SetVersion(version)
+			util.CheckForError(err, "semver SetVersion")
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		version := args[0]
-
-		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
-
-		if isSemanticVersion(args[0]) {
-			pathToRepo, err := g.GitRepoPath()
-			util.CheckForError(err, "semver GitRepoPath")
-			s := semver.NewSemverService(
-				pathToRepo,
-				"/bin/bash",
-				releaseCmdOptions.VersionFile,
-				releaseCmdOptions.VersionFileType,
-			)
-			v, err := s.GetCurrentVersion()
-			util.CheckForError(err, "semver GetNextVersion")
-			version = v
-		}
-
-		if releaseCmdOptions.PostReleaseScript != "" {
-			postRelease(version)
-		}
-		if len(releaseCmdOptions.PostReleaseCommand) > 0 {
-			for _, command := range releaseCmdOptions.PostReleaseCommand {
-				execute(version, command)
-			}
-		}
-
-		if releaseCmdOptions.Push {
-			err = g.AddAll()
-			util.CheckForError(err, "AddAll")
-
-			err = g.Commit("[glow] Add post release changes")
-			util.CheckForError(err, "Commit")
-
-			err = g.Push(true)
-			util.CheckForError(err, "Push")
-		}
+		util.PostRunWithCurrentVersion(
+			releaseCmdOptions.VersionFile,
+			releaseCmdOptions.VersionFileType,
+			releaseCmdOptions.PostReleaseScript,
+			releaseCmdOptions.PostReleaseCommand,
+			releaseCmdOptions.Push,
+		)
 	},
-}
-
-func hasSemverConfig() bool {
-	if _, err := os.Stat(viper.GetString("gitPath") + "/semver.config.json"); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
-func isSemanticVersion(version string) bool {
-	if version == "major" || version == "minor" || version == "patch" {
-		return true
-	}
-	return false
-}
-
-func postRelease(version string) {
-	pathToFile, err := filepath.Abs(releaseCmdOptions.PostReleaseScript)
-	if err != nil {
-		log.Println("cannot find post-release script", err)
-	}
-	cmd := exec.Command(pathToFile, version)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err = cmd.Run()
-	if err != nil {
-		log.Println("error while executing post-release script", err)
-	}
-	log.Println("post release:")
-	log.Println(out.String())
-}
-
-func execute(version, command string) {
-	cmdString := string(command)
-	if strings.Contains(command, "%s") {
-		cmdString = fmt.Sprintf(command, version)
-	}
-	cmd := exec.Command("/bin/bash", "-c", cmdString)
-	var stdout, stderr bytes.Buffer
-	cmd.Stderr = &stderr
-	cmd.Stdout = &stdout
-	err := cmd.Run()
-	if err != nil {
-		log.Println("error while executing post-release script", err.Error(), stderr.String())
-	}
-	log.Println("post release:")
-	log.Println(stdout.String())
 }

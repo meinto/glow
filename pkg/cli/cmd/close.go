@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
@@ -36,7 +38,11 @@ var closeCmd = &cobra.Command{
 			currentBranch = cb
 		}
 
-		gp.Close(currentBranch)
-		util.CheckForError(err, "Close")
+		err = gp.Close(currentBranch)
+		if !util.MergeRequestFlags.Gracefully {
+			util.CheckForError(err, "Close")
+		} else {
+			log.Println(err)
+		}
 	},
 }

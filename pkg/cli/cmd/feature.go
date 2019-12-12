@@ -25,7 +25,7 @@ var featureCmd = &cobra.Command{
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
-		err = g.Create(feature)
+		err = g.Create(feature, rootCmdOptions.SkipChecks)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(feature)

@@ -24,7 +24,7 @@ var fixCmd = &cobra.Command{
 		g, err := util.GetGitClient()
 		util.CheckForError(err, "GetGitClient")
 
-		err = g.Create(fix)
+		err = g.Create(fix, rootCmdOptions.SkipChecks)
 		util.CheckForError(err, "Create")
 
 		g.Checkout(fix)

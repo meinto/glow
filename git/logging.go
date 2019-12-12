@@ -82,11 +82,11 @@ func (s loggingService) Push(setUpstream bool) (err error) {
 }
 
 // Create a new branch
-func (s loggingService) Create(b glow.Branch) (err error) {
+func (s loggingService) Create(b glow.Branch, skipChecks bool) (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "Create", "took", time.Since(begin), "err", err)
 	}(time.Now())
-	return s.next.Create(b)
+	return s.next.Create(b, skipChecks)
 }
 
 // Checkout a branch
@@ -111,4 +111,11 @@ func (s loggingService) CleanupTags(cleanupUntracked bool) (err error) {
 		s.logger.Log("method", "CleanupTags", "took", time.Since(begin), "err", err)
 	}(time.Now())
 	return s.next.CleanupTags(cleanupUntracked)
+}
+
+func (s loggingService) RemoteBranchExists(branchName string) (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "CleanupTags", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.RemoteBranchExists(branchName)
 }
