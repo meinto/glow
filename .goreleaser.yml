@@ -27,7 +27,7 @@ brews:
   -
     github:
       owner: meinto
-      name: glow
+      name: "glow@{{ .Version }}"
     commit_author:
       name: Tobias Meinhardt
       email: tobias.meinhardt89@gmail.com
