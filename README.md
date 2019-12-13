@@ -107,6 +107,7 @@ glow init
   "projectName": "my-project",
   "gitPath": "/usr/local/bin/git",
   "useBuiltInGitBindings": false,
+  "mergeRequest.squashCommits": true
 }
 ```
 

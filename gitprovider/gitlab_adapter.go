@@ -11,6 +11,7 @@ import (
 
 	"github.com/meinto/glow"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 type gitlabAdapter struct {
@@ -27,7 +28,7 @@ func (a *gitlabAdapter) Close(b glow.Branch) error {
 		targets := b.CloseBranches(branchList)
 
 		for _, t := range targets {
-			err := a.createMergeRequest(b, t)
+			err := a.createMergeRequest(b, t, true)
 			if err != nil {
 				return errors.Wrap(err, "error creating merge request")
 			}
@@ -41,24 +42,26 @@ func (a *gitlabAdapter) Publish(b glow.Branch) error {
 	remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
 	if b.CanBePublished() && remoteBranchExists == nil {
 		t := b.PublishBranch()
-		return a.createMergeRequest(b, t)
+		return a.createMergeRequest(b, t, false)
 	}
 	return errors.Wrap(remoteBranchExists, "cannot be published")
 }
 
-func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branch) error {
+func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branch, removeSourceBranch bool) error {
 	type Payload struct {
 		SourceBranch       string `json:"source_branch"`
 		TargetBranch       string `json:"target_branch"`
 		Title              string `json:"title"`
 		RemoveSourceBranch bool   `json:"remove_source_branch"`
+		Squash             bool   `json:"squash"`
 	}
 
 	data := Payload{
 		SourceBranch:       source.ShortBranchName(),
 		TargetBranch:       target.ShortBranchName(),
 		Title:              fmt.Sprintf("Merge %s in %s", source.ShortBranchName(), target.ShortBranchName()),
-		RemoveSourceBranch: false,
+		RemoveSourceBranch: removeSourceBranch,
+		Squash:             viper.GetBool("mergeRequest.squashCommits"),
 	}
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
