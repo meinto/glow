@@ -78,7 +78,7 @@ func (a nativeGitAdapter) Fetch() error {
 
 // Add all changes
 func (a nativeGitAdapter) AddAll() error {
-	cmd := a.exec.Command("git add .")
+	cmd := a.exec.Command("git add -A")
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	err := cmd.Run()
@@ -90,7 +90,11 @@ func (a nativeGitAdapter) Stash() error {
 	cmd := a.exec.Command("git stash")
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
-	err := cmd.Run()
+	err := cmd.Start()
+	if err != nil {
+		errors.Wrap(err, stderr.String())
+	}
+	err = cmd.Wait()
 	return errors.Wrap(err, stderr.String())
 }
 

@@ -1,10 +1,11 @@
 package util
 
 import (
-	"github.com/meinto/glow/cmd"
 	"errors"
 	"log"
 	"os"
+
+	"github.com/meinto/glow/cmd"
 
 	"github.com/meinto/glow/gitprovider"
 

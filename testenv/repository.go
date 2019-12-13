@@ -17,7 +17,7 @@ func NewRepository(folder string) *Repository {
 	}
 }
 
-func (r *Repository) Do(str string, args ...interface{}) (bytes.Buffer, error) {
+func (r *Repository) Do(str string, args ...interface{}) (stdout, stderr bytes.Buffer, err error) {
 	moveToDir := fmt.Sprintf("cd %s", r.Folder)
 	return r.exec.Do(moveToDir+" && "+str, args...)
 }

@@ -40,18 +40,18 @@ var pushCmd = &cobra.Command{
 			currentBranch = cb
 		}
 
-		err = g.Stash()
-		util.CheckForError(err, "Stash")
-
-		err = g.Checkout(currentBranch)
-		util.CheckForError(err, "Checkout")
-
-		err = g.StashPop()
-		util.CheckForError(err, "StashPop")
-
 		if pushCmdOptions.AddAll {
 			err = g.AddAll()
 			util.CheckForError(err, "AddAll")
+
+			err = g.Stash()
+			util.CheckForError(err, "Stash")
+
+			err = g.Checkout(currentBranch)
+			util.CheckForError(err, "Checkout")
+
+			err = g.StashPop()
+			util.CheckForError(err, "StashPop")
 
 			if pushCmdOptions.CommitMessage != "" {
 				err = g.Commit(pushCmdOptions.CommitMessage)

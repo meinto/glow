@@ -24,7 +24,7 @@ func TestSetCICDOrigin(t *testing.T) {
 	err := s.SetCICDOrigin(newOrigin)
 	testenv.CheckForErrors(t, err)
 
-	stdout, err := local.Do("git remote get-url origin")
+	stdout, _, err := local.Do("git remote get-url origin")
 	testenv.CheckForErrors(t, err)
 	if strings.TrimSpace(stdout.String()) != newOrigin {
 		t.Errorf("origin should be %s but is %s", newOrigin, stdout.String())
@@ -107,5 +107,52 @@ func TestFetch(t *testing.T) {
 	exists, branchName := local.Exists(local2Branch)
 	if !exists {
 		t.Errorf("branch should be '%s' but is '%s'", local2Branch, branchName)
+	}
+}
+
+func TestStash(t *testing.T) {
+	local, _, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	s := setupNativeGitService(local.Folder)
+	local.Do("touch test.file")
+	stdout, _, _ := local.Do("git status | grep test.file")
+	if stdout.String() == "" {
+		t.Errorf("testfile lookup should NOT be empty")
+	}
+
+	s.AddAll()
+	s.Stash()
+
+	stdout, _, _ = local.Do("git status | grep test.file")
+	if stdout.String() != "" {
+		t.Errorf("testfile lookup should be empty")
+	}
+}
+
+func TestStashPop(t *testing.T) {
+	local, _, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	s := setupNativeGitService(local.Folder)
+	local.Do("touch test.file")
+	stdout, _, _ := local.Do("git status | grep test.file")
+	if stdout.String() == "" {
+		t.Errorf("testfile lookup should NOT be empty")
+	}
+
+	s.AddAll()
+	s.Stash()
+
+	stdout, _, _ = local.Do("git status | grep test.file")
+	if stdout.String() != "" {
+		t.Errorf("testfile lookup should be empty")
+	}
+
+	s.StashPop()
+
+	stdout, _, _ = local.Do("git status | grep test.file")
+	if stdout.String() == "" {
+		t.Errorf("testfile lookup should NOT be empty")
 	}
 }
