@@ -11,5 +11,5 @@ node_modules
 package.json
 
 glow.private.json
-packrbin
-packr2
+packrd
+pkg/cli/cmd/cmd-packr.go
