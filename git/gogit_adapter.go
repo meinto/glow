@@ -117,6 +117,16 @@ func (a goGitAdapter) AddAll() error {
 	return errors.New("not implemented yet")
 }
 
+// Stash all changes
+func (a goGitAdapter) Stash() error {
+	return errors.New("not implemented yet")
+}
+
+// Pop all stashed changes
+func (a goGitAdapter) StashPop() error {
+	return errors.New("not implemented yet")
+}
+
 // Commit added changes
 func (a goGitAdapter) Commit(message string) error {
 	return errors.New("not implemented yet")

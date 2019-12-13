@@ -85,6 +85,24 @@ func (a nativeGitAdapter) AddAll() error {
 	return errors.Wrap(err, stderr.String())
 }
 
+// Stash all changes
+func (a nativeGitAdapter) Stash() error {
+	cmd := a.exec.Command("git stash")
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
+// Pop all stashed changes
+func (a nativeGitAdapter) StashPop() error {
+	cmd := a.exec.Command("git stash pop")
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return errors.Wrap(err, stderr.String())
+}
+
 // Commit added changes
 func (a nativeGitAdapter) Commit(message string) error {
 	cmd := a.exec.Command(fmt.Sprintf("git commit -m '%s'", message))
