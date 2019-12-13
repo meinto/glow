@@ -18,7 +18,7 @@ type Service interface {
 	Stash() error
 	StashPop() (stdout, stderr bytes.Buffer, err error)
 	Commit(message string) error
-	Push(setUpstream bool) error
+	Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error)
 	Create(b glow.Branch, skipChecks bool) error
 	Checkout(b glow.Branch) error
 	CleanupBranches(cleanupGone, cleanupUntracked bool) error

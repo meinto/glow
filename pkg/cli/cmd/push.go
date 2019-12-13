@@ -62,7 +62,7 @@ var pushCmd = &cobra.Command{
 			}
 		}
 
-		err = g.Push(false)
+		g.Push(false)
 		util.CheckForError(err, "Push")
 	},
 }
