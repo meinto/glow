@@ -134,8 +134,8 @@ func (a goGitAdapter) Commit(message string) error {
 }
 
 // Push changes
-func (a goGitAdapter) Push(setUpstream bool) error {
-	return errors.New("not implemented yet")
+func (a goGitAdapter) Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error) {
+	return bytes.Buffer{}, bytes.Buffer{}, errors.New("not implemented yet")
 }
 
 // Create a new branch

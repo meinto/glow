@@ -35,7 +35,7 @@ func PostRunWithCurrentVersion(
 		err = g.Commit("[glow] Add post release changes")
 		CheckForError(err, "Commit")
 
-		err = g.Push(true)
+		_, _, err = g.Push(true)
 		CheckForError(err, "Push")
 	}
 }

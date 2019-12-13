@@ -116,19 +116,18 @@ func (a nativeGitAdapter) Commit(message string) error {
 }
 
 // Push changes
-func (a nativeGitAdapter) Push(setUpstream bool) error {
+func (a nativeGitAdapter) Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error) {
 	cmd := a.exec.Command("git push")
 	if setUpstream {
 		currentBranch, err := a.CurrentBranch()
 		if err != nil {
-			return errors.Wrap(err, "error while getting current branch")
+			return bytes.Buffer{}, bytes.Buffer{}, errors.Wrap(err, "error while getting current branch")
 		}
 		cmd = a.exec.Command(fmt.Sprintf("git push -u origin %s", currentBranch.ShortBranchName()))
 	}
-	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	err := cmd.Run()
-	return errors.Wrap(err, stderr.String())
+	return stdout, stderr, cmd.Run()
 }
 
 // Create a new branch

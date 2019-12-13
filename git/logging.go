@@ -92,8 +92,10 @@ func (s loggingService) Commit(message string) (err error) {
 }
 
 // Push changes
-func (s loggingService) Push(setUpstream bool) (err error) {
+func (s loggingService) Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error) {
 	defer func(begin time.Time) {
+		s.logger.Log("stdout", stdout)
+		s.logger.Log("stderr", stderr)
 		s.logger.Log("method", "Push", "took", time.Since(begin), "err", err)
 	}(time.Now())
 	return s.next.Push(setUpstream)
