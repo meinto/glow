@@ -3,5 +3,6 @@
   "gitProviderDomain": "https://api.github.com",
   "gitProvider": "github",
   "projectNamespace": "meinto",
-  "projectName": "glow"
+  "projectName": "glow",
+  "mergeRequest.squashCommits": true
 }
