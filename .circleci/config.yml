@@ -9,9 +9,14 @@ jobs:
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
-      - run: mkdir packrbin && cd packrbin
-      - run: curl -SLO https://github.com/gobuffalo/packr/releases/download/v2.7.1/packr_2.7.1_linux_amd64.tar.gz
-      - run: tar -xzf packr_2.7.1_linux_amd64.tar.gz && cd ..
+      - run:
+          name: Setup packr
+          command: |
+            mkdir /packr
+            cd /packr 
+            curl -SLO https://github.com/gobuffalo/packr/releases/download/v2.7.1/packr_2.7.1_linux_amd64.tar.gz
+            tar -xzf packr_2.7.1_linux_amd64.tar.gz
+            cd /go/src/github.com/meinto/glow
       - run: curl -sL https://git.io/goreleaser | bash
   #     - persist_to_workspace:
   #         root: .
