@@ -2,6 +2,7 @@ module github.com/meinto/glow
 
 require (
 	github.com/go-kit/kit v0.8.0
+	github.com/gobuffalo/logger v1.0.1
 	github.com/gobuffalo/packr v1.23.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/manifoldco/promptui v0.3.2
@@ -9,6 +10,7 @@ require (
 	github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f
 	github.com/nathany/looper v0.3.3 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
 	gopkg.in/src-d/go-billy.v3 v3.1.0

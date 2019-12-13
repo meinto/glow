@@ -12,6 +12,7 @@ import (
 func setupNativeGitService(pathToRepo string) Service {
 	exec := cmd.NewCmdExecutorInDir("/bin/bash", pathToRepo)
 	s := NewNativeService(exec)
+	s = NewLoggingService(s)
 	return s
 }
 
