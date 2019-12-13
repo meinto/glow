@@ -24,9 +24,7 @@ func GetGitClient() (git.Service, error) {
 	var s git.Service
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	s = git.NewNativeService(exec)
-	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
-	s = git.NewLoggingService(logger, s)
+	s = git.NewLoggingService(s)
 	return s, nil
 }
 
