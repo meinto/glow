@@ -22,9 +22,6 @@ func CheckRequiredStringField(val, fieldName string) {
 
 func GetGitClient() (git.Service, error) {
 	var s git.Service
-	if viper.GetBool("useBuiltInGitBindings") {
-		s = git.NewGoGitService()
-	}
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	s = git.NewNativeService(exec)
 	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))

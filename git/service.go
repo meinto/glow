@@ -33,10 +33,6 @@ type NativeService interface {
 
 type service struct{ Service }
 
-func NewGoGitService() Service {
-	return service{goGitAdapter{}}
-}
-
 func NewNativeService(cmdExecutor cmd.CmdExecutor) Service {
 	return service{nativeGitAdapter{cmdExecutor}}
 }
