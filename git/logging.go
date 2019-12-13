@@ -20,6 +20,7 @@ func NewLoggingService(logger log.Logger, s Service) Service {
 
 // SetCICDOrigin for pipeline
 func (s loggingService) SetCICDOrigin(origin string) (err error) {
+	s.logger.Log("set origin to", origin)
 	defer func(begin time.Time) {
 		s.logger.Log("method", "SetCICDOrigin", "took", time.Since(begin), "err", err)
 	}(time.Now())
