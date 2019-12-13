@@ -24,8 +24,9 @@ var rootCmdOptions struct {
 var logger kitlog.Logger
 
 var rootCmd = &cobra.Command{
-	Use:   "glow",
-	Short: "small tool to adapt git-flow for gitlab",
+	Use:     "glow",
+	Short:   "small tool to adapt git-flow for gitlab",
+	Version: "0.0.0", // needed to set the version dynamically
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if rootCmdOptions.CICDOrigin != "" {
 			g, err := util.GetGitClient()
@@ -35,17 +36,16 @@ var rootCmd = &cobra.Command{
 			util.CheckForError(err, "SetCICDOrigin")
 		}
 	},
-	Run: func(cmd *cobra.Command, args []string) {
-		box := packr.NewBox("../../../buildAssets")
-		version, err := box.FindString("VERSION")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("Version of glow: %s\n", version)
-	},
 }
 
 func init() {
+	box := packr.NewBox("../../../buildAssets")
+	version, err := box.FindString("VERSION")
+	if err != nil {
+		log.Fatal(err)
+	}
+	rootCmd.SetVersionTemplate(version)
+
 	rootCmd.PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "", "name of the author")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
 	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.UseBuiltInGitBindings, "useBuiltInGitBindings", false, "defines wether build or native in git client should be used.")
