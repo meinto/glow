@@ -1,6 +1,8 @@
 package git
 
 import (
+	"bytes"
+
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/cmd"
 )
@@ -14,7 +16,7 @@ type Service interface {
 	Fetch() error
 	AddAll() error
 	Stash() error
-	StashPop() error
+	StashPop() (stdout, stderr bytes.Buffer, err error)
 	Commit(message string) error
 	Push(setUpstream bool) error
 	Create(b glow.Branch, skipChecks bool) error

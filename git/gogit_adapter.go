@@ -1,6 +1,7 @@
 package git
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -123,8 +124,8 @@ func (a goGitAdapter) Stash() error {
 }
 
 // Pop all stashed changes
-func (a goGitAdapter) StashPop() error {
-	return errors.New("not implemented yet")
+func (a goGitAdapter) StashPop() (stdout, stderr bytes.Buffer, err error) {
+	return bytes.Buffer{}, bytes.Buffer{}, errors.New("not implemented yet")
 }
 
 // Commit added changes

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
@@ -50,7 +52,9 @@ var pushCmd = &cobra.Command{
 			err = g.Checkout(currentBranch)
 			util.CheckForError(err, "Checkout")
 
-			err = g.StashPop()
+			stdout, stderr, err := g.StashPop()
+			log.Println(stdout.String())
+			log.Println(stderr.String())
 			util.CheckForError(err, "StashPop")
 
 			if pushCmdOptions.CommitMessage != "" {

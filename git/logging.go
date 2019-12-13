@@ -1,6 +1,7 @@
 package git
 
 import (
+	"bytes"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -74,7 +75,7 @@ func (s loggingService) Stash() (err error) {
 }
 
 // Pop all stashed changes
-func (s loggingService) StashPop() (err error) {
+func (s loggingService) StashPop() (stdout, stderr bytes.Buffer, err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "StashPop", "took", time.Since(begin), "err", err)
 	}(time.Now())
