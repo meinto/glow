@@ -6,7 +6,7 @@ import (
 	"os"
 
 	kitlog "github.com/go-kit/kit/log"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -39,10 +39,11 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	box := packr.NewBox("../../../buildAssets")
+	box := packr.New("build-assets", "../../../buildAssets")
 	version, err := box.FindString("VERSION")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		version = "0.0.0"
 	}
 	rootCmd.SetVersionTemplate(version)
 
