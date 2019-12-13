@@ -11,3 +11,5 @@ node_modules
 package.json
 
 glow.private.json
+packrbin
+packr2
