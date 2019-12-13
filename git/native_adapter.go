@@ -99,12 +99,11 @@ func (a nativeGitAdapter) Stash() error {
 }
 
 // Pop all stashed changes
-func (a nativeGitAdapter) StashPop() error {
+func (a nativeGitAdapter) StashPop() (stdout, stderr bytes.Buffer, err error) {
 	cmd := a.exec.Command("git stash pop")
-	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	err := cmd.Run()
-	return errors.Wrap(err, stderr.String())
+	return stdout, stderr, cmd.Run()
 }
 
 // Commit added changes
