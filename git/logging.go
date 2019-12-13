@@ -65,6 +65,22 @@ func (s loggingService) AddAll() (err error) {
 	return s.next.AddAll()
 }
 
+// Stash all changes
+func (s loggingService) Stash() (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "Stash", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.Stash()
+}
+
+// Pop all stashed changes
+func (s loggingService) StashPop() (err error) {
+	defer func(begin time.Time) {
+		s.logger.Log("method", "StashPop", "took", time.Since(begin), "err", err)
+	}(time.Now())
+	return s.next.Stash()
+}
+
 // Commit added changes
 func (s loggingService) Commit(message string) (err error) {
 	defer func(begin time.Time) {
