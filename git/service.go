@@ -24,9 +24,12 @@ type Service interface {
 	RemoteBranchExists(branchName string) error
 }
 
-type service struct {
+type NativeService interface {
 	Service
+	CMDExecutor() cmd.CmdExecutor
 }
+
+type service struct{ Service }
 
 func NewGoGitService() Service {
 	return service{goGitAdapter{}}

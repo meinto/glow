@@ -78,7 +78,7 @@ func (s loggingService) StashPop() (err error) {
 	defer func(begin time.Time) {
 		s.logger.Log("method", "StashPop", "took", time.Since(begin), "err", err)
 	}(time.Now())
-	return s.next.Stash()
+	return s.next.StashPop()
 }
 
 // Commit added changes
