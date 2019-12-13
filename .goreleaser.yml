@@ -3,7 +3,7 @@
 before:
   hooks:
     - go generate ./...
-    - ./packr2
+    - ../packr/packr2
 builds:
   - 
     main: ./pkg/cli/main.go
