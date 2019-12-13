@@ -106,7 +106,6 @@ glow init
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitPath": "/usr/local/bin/git",
-  "useBuiltInGitBindings": false,
   "mergeRequest.squashCommits": true
 }
 ```
@@ -119,8 +118,6 @@ glow init
 }
 ```
 
-## Built in git bindings
+## Git bindings
 
 glow uses the native git installation per default. The default configured path to git is `/usr/local/bin/git`. You can change the path with the flag `--gitPath` or the property `gitPath` in the config file.
-
-You also can use the built in git client by setting the property "useBuiltInGitBindings" in the config file to `true`. The built in git client uses the library [go-git](https://github.com/src-d/go-git) which unforunately has some perfomance problems. Therefore this tool tries to use a native git installation first.
