@@ -51,21 +51,21 @@ func TestSetNextVersion(t *testing.T) {
 	s := setupSemverService(local.Folder)
 	err := s.SetNextVersion("major")
 	testenv.CheckForErrors(t, err)
-	stdout, _ := local.Do("cat VERSION")
+	stdout, _, _ := local.Do("cat VERSION")
 	if stdout.String() != "2.0.0" {
 		t.Errorf("version should be '2.0.0' but is '%s'", stdout.String())
 	}
 
 	err = s.SetNextVersion("minor")
 	testenv.CheckForErrors(t, err)
-	stdout, _ = local.Do("cat VERSION")
+	stdout, _, _ = local.Do("cat VERSION")
 	if stdout.String() != "2.1.0" {
 		t.Errorf("version should be '2.1.0' but is '%s'", stdout.String())
 	}
 
 	err = s.SetNextVersion("patch")
 	testenv.CheckForErrors(t, err)
-	stdout, _ = local.Do("cat VERSION")
+	stdout, _, _ = local.Do("cat VERSION")
 	if stdout.String() != "2.1.1" {
 		t.Errorf("version should be '2.1.1' but is '%s'", stdout.String())
 	}
@@ -79,7 +79,7 @@ func TestTagCurrentVersion(t *testing.T) {
 	err := s.TagCurrentVersion()
 	testenv.CheckForErrors(t, err)
 
-	stdout, _ := bare.Do("git tag | grep v1.2.3")
+	stdout, _, _ := bare.Do("git tag | grep v1.2.3")
 	if strings.TrimSpace(stdout.String()) != "v1.2.3" {
 		t.Errorf("git tag 'v1.2.3' should have been pushed. Bare repo tag list: %s", stdout.String())
 	}

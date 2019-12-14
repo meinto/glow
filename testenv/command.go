@@ -27,5 +27,6 @@ func (c *Command) Do(str string, args ...interface{}) (stdout, stderr bytes.Buff
 	if err != nil {
 		return bytes.Buffer{}, bytes.Buffer{}, err
 	}
-	return stdout, stderr, cmd.Wait()
+	err = cmd.Wait()
+	return stdout, stderr, err
 }
