@@ -31,7 +31,7 @@ var hotfixCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
 		version, s := util.ProcessVersion(
 			args[0],
@@ -40,20 +40,15 @@ var hotfixCmd = &cobra.Command{
 		)
 
 		hotfix, err := glow.NewHotfix(version)
-		util.CheckForError(err, "NewHotfix")
+		util.ExitOnError(err)
 
-		err = g.Create(hotfix, rootCmdOptions.SkipChecks)
-		util.CheckForError(err, "Create")
-
-		g.Checkout(hotfix)
-		util.CheckForError(err, "Checkout")
+		util.ExitOnError(g.Create(hotfix, rootCmdOptions.SkipChecks))
+		util.ExitOnError(g.Checkout(hotfix))
 
 		if util.IsSemanticVersion(args[0]) {
-			err = s.SetNextVersion(args[0])
-			util.CheckForError(err, "semver SetNextVersion")
+			util.ExitOnError(s.SetNextVersion(args[0]))
 		} else {
-			err = s.SetVersion(version)
-			util.CheckForError(err, "semver SetVersion")
+			util.ExitOnError(s.SetVersion(version))
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {

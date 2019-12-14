@@ -29,10 +29,9 @@ var rootCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if rootCmdOptions.CICDOrigin != "" {
 			g, err := util.GetGitClient()
-			util.CheckForError(err, "GetGitClient")
+			util.ExitOnError(err)
 
-			err = g.SetCICDOrigin(rootCmdOptions.CICDOrigin)
-			util.CheckForError(err, "SetCICDOrigin")
+			util.ExitOnError(g.SetCICDOrigin(rootCmdOptions.CICDOrigin))
 		}
 	},
 }

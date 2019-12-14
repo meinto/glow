@@ -9,21 +9,21 @@ import (
 
 // Service describes all actions which can performed with git
 type Service interface {
-	SetCICDOrigin(origin string) error
-	GitRepoPath() (string, error)
-	CurrentBranch() (glow.Branch, error)
-	BranchList() ([]glow.Branch, error)
-	Fetch() error
-	AddAll() error
-	Stash() error
+	SetCICDOrigin(origin string) (stdout, stderr bytes.Buffer, err error)
+	GitRepoPath() (path string, stdout, stderr bytes.Buffer, err error)
+	CurrentBranch() (branch glow.Branch, stdout, stderr bytes.Buffer, err error)
+	BranchList() (branchList []glow.Branch, stdout, stderr bytes.Buffer, err error)
+	Fetch() (stdout, stderr bytes.Buffer, err error)
+	AddAll() (stdout, stderr bytes.Buffer, err error)
+	Stash() (stdout, stderr bytes.Buffer, err error)
 	StashPop() (stdout, stderr bytes.Buffer, err error)
-	Commit(message string) error
+	Commit(message string) (stdout, stderr bytes.Buffer, err error)
 	Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error)
-	Create(b glow.Branch, skipChecks bool) error
-	Checkout(b glow.Branch) error
-	CleanupBranches(cleanupGone, cleanupUntracked bool) error
-	CleanupTags(cleanupUntracked bool) error
-	RemoteBranchExists(branchName string) error
+	Create(b glow.Branch, skipChecks bool) (stdout, stderr bytes.Buffer, err error)
+	Checkout(b glow.Branch) (stdout, stderr bytes.Buffer, err error)
+	CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr bytes.Buffer, err error)
+	CleanupTags(cleanupUntracked bool) (stdout, stderr bytes.Buffer, err error)
+	RemoteBranchExists(branchName string) (stdout, stderr bytes.Buffer, err error)
 }
 
 type NativeService interface {

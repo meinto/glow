@@ -4,22 +4,18 @@ package main
 
 import (
 	"log"
-	"os"
 
-	kitlog "github.com/go-kit/kit/log"
-
+	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
-	"github.com/meinto/glow/pkg/cli/cmd"
+	clicmd "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/spf13/viper"
 )
 
 func main() {
-	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
-
-	g := git.NewGoGitService()
-	g = git.NewLoggingService(logger, g)
-	rootRepoPath, err := g.GitRepoPath()
+	exec := cmd.NewCmdExecutor("/bin/bash")
+	g := git.NewNativeService(exec)
+	g = git.NewLoggingService(g)
+	rootRepoPath, _, _, err := g.GitRepoPath()
 	if err != nil {
 		rootRepoPath = "."
 	}
@@ -44,5 +40,5 @@ func main() {
 		log.Println("env GLOW_TOKEN is missing")
 	}
 
-	cmd.Execute()
+	clicmd.Execute()
 }

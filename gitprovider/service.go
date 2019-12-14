@@ -1,10 +1,6 @@
 package gitprovider
 
 import (
-	"os"
-
-	"github.com/go-kit/kit/log"
-
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
@@ -27,12 +23,9 @@ type service struct {
 }
 
 func NewGitlabService(endpoint, namespace, project, token string) Service {
-	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
-	g = git.NewLoggingService(logger, g)
+	g = git.NewLoggingService(g)
 
 	return &gitlabAdapter{
 		service{
@@ -46,12 +39,9 @@ func NewGitlabService(endpoint, namespace, project, token string) Service {
 }
 
 func NewGithubService(endpoint, namespace, project, token string) Service {
-	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
-	g = git.NewLoggingService(logger, g)
+	g = git.NewLoggingService(g)
 
 	return &githubAdapter{
 		service{
