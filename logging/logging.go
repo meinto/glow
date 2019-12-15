@@ -16,6 +16,6 @@ func Log() *logrus.Entry {
 	name := strings.Split(nameFull, "/")[len(parts)-1]
 
 	return l.WithFields(logrus.Fields{
-		"packageinfo": name,
+		"caller": name,
 	})
 }
