@@ -167,13 +167,38 @@ func TestCommit(t *testing.T) {
 	local.Do("touch test.file")
 
 	s.AddAll()
-	s.Commit("Commit test.file")
+	_, _, err := s.Commit("Commit test.file")
+	if err != nil {
+		t.Error(err)
+	}
 
-	stdout, _, err := local.Do(`git status | grep "%s"`, branchIsAhead)
+	stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsAhead)
 	if stdout.String() == "" {
 		t.Errorf("Branch should be 1 commit ahead")
 	}
+}
+
+func TestPushU(t *testing.T) {
+	local, _, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	branchIsUpToDate := "Your branch is up to date with 'origin/master'"
+	s := setupNativeGitService(local.Folder)
+	local.Do("touch test.file")
+	s.AddAll()
+	s.Commit("Commit test.file")
+	stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsUpToDate)
+	if stdout.String() != "" {
+		t.Error("Branch should NOT be up to date")
+	}
+
+	_, _, err := s.Push(false)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
+	}
+
+	stdout, _, _ = local.Do(`git status | grep "%s"`, branchIsUpToDate)
+	if stdout.String() == "" {
+		t.Error("Branch should be up to date")
 	}
 }
