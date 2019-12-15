@@ -3,13 +3,11 @@ package util
 import (
 	"errors"
 	"log"
-	"os"
 
 	"github.com/meinto/glow/cmd"
 
 	"github.com/meinto/glow/gitprovider"
 
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/meinto/glow/git"
 	"github.com/spf13/viper"
 )
@@ -50,8 +48,6 @@ func GetGitProvider() (gitprovider.Service, error) {
 	default:
 		return nil, errors.New("git provider not specified")
 	}
-	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
-	s = gitprovider.NewLoggingService(logger, s)
+	s = gitprovider.NewLoggingService(s)
 	return s, nil
 }
