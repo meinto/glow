@@ -162,6 +162,18 @@ func TestCommit(t *testing.T) {
 	local, _, teardown := testenv.SetupEnv(t)
 	defer teardown()
 
+	branchIsAhead := "Your branch is ahead of 'origin/master' by 1 commit"
 	s := setupNativeGitService(local.Folder)
 	local.Do("touch test.file")
+
+	s.AddAll()
+	s.Commit("Commit test.file")
+
+	stdout, _, err := local.Do(`git status | grep "%s"`, branchIsAhead)
+	if stdout.String() == "" {
+		t.Errorf("Branch should be 1 commit ahead")
+	}
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 }
