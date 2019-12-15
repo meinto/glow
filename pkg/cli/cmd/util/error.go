@@ -22,7 +22,7 @@ func ExitOnErrorWithMessage(msg string) func(args ...interface{}) {
 
 func hasError(args ...interface{}) bool {
 	last := args[len(args)-1]
-	if last.(error) != nil {
+	if last != nil {
 		return true
 	}
 	return false
