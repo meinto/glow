@@ -157,3 +157,11 @@ func TestStashPop(t *testing.T) {
 		t.Errorf("testfile lookup should NOT be empty")
 	}
 }
+
+func TestCommit(t *testing.T) {
+	local, _, teardown := testenv.SetupEnv(t)
+	defer teardown()
+
+	s := setupNativeGitService(local.Folder)
+	local.Do("touch test.file")
+}
