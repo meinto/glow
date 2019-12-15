@@ -2,7 +2,6 @@ package git
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"runtime"
 	"strings"
@@ -19,25 +18,19 @@ type nativeGitAdapter struct {
 }
 
 // SetCICDOrigin for pipeline
-func (a nativeGitAdapter) SetCICDOrigin(origin string) (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command(fmt.Sprintf("git remote set-url origin %s", origin))
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) SetCICDOrigin(origin string) (stdout, stderr string, err error) {
+	return a.exec.Command(fmt.Sprintf("git remote set-url origin %s", origin)).Run()
 }
 
 // GitRepoPath returns the path to the root with the .git folder
-func (a nativeGitAdapter) GitRepoPath() (repoPath string, stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) GitRepoPath() (repoPath string, stdout, stderr string, err error) {
 	cmd := a.exec.Command("git rev-parse --show-toplevel")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return strings.TrimSuffix(stdout.String(), "\n"), stdout, stderr, err
+	stdout, stderr, err = cmd.Run()
+	return strings.TrimSuffix(stdout, "\n"), stdout, stderr, err
 }
 
 // CurrentBranch returns the current branch name
-func (a nativeGitAdapter) CurrentBranch() (branch glow.Branch, stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) CurrentBranch() (branch glow.Branch, stdout, stderr string, err error) {
 	cmdBranchList, stdout, stderr, err := getCMDBranchList(a.exec)
 	if err != nil {
 		return nil, stdout, stderr, err
@@ -52,7 +45,7 @@ func (a nativeGitAdapter) CurrentBranch() (branch glow.Branch, stdout, stderr by
 }
 
 // BranchList returns a list of avalilable branches
-func (a nativeGitAdapter) BranchList() (branchList []glow.Branch, stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) BranchList() (branchList []glow.Branch, stdout, stderr string, err error) {
 	cmdBranchList, stdout, stderr, err := getCMDBranchList(a.exec)
 	if err != nil {
 		return nil, stdout, stderr, err
@@ -69,52 +62,32 @@ func (a nativeGitAdapter) BranchList() (branchList []glow.Branch, stdout, stderr
 }
 
 // Fetch changes
-func (a nativeGitAdapter) Fetch() (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command("git fetch")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) Fetch() (stdout, stderr string, err error) {
+	return a.exec.Command("git fetch").Run()
 }
 
 // Add all changes
-func (a nativeGitAdapter) AddAll() (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command("git add -A")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) AddAll() (stdout, stderr string, err error) {
+	return a.exec.Command("git add -A").Run()
 }
 
 // Stash all changes
-func (a nativeGitAdapter) Stash() (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command("git stash")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return bytes.Buffer{}, bytes.Buffer{}, err
+func (a nativeGitAdapter) Stash() (stdout, stderr string, err error) {
+	return a.exec.Command("git stash").Run()
 }
 
 // Pop all stashed changes
-func (a nativeGitAdapter) StashPop() (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command("git stash pop")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) StashPop() (stdout, stderr string, err error) {
+	return a.exec.Command("git stash pop").Run()
 }
 
 // Commit added changes
-func (a nativeGitAdapter) Commit(message string) (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command(fmt.Sprintf("git commit -m '%s'", message))
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) Commit(message string) (stdout, stderr string, err error) {
+	return a.exec.Command(fmt.Sprintf("git commit -m '%s'", message)).Run()
 }
 
 // Push changes
-func (a nativeGitAdapter) Push(setUpstream bool) (stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) Push(setUpstream bool) (stdout, stderr string, err error) {
 	cmd := a.exec.Command("git push")
 	if setUpstream {
 		currentBranch, stdout, stderr, err := a.CurrentBranch()
@@ -123,14 +96,11 @@ func (a nativeGitAdapter) Push(setUpstream bool) (stdout, stderr bytes.Buffer, e
 		}
 		cmd = a.exec.Command(fmt.Sprintf("git push -u origin %s", currentBranch.ShortBranchName()))
 	}
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+	return cmd.Run()
 }
 
 // Create a new branch
-func (a nativeGitAdapter) Create(b glow.Branch, skipChecks bool) (stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) Create(b glow.Branch, skipChecks bool) (stdout, stderr string, err error) {
 	if !skipChecks {
 		sourceBranch, stdout, stderr, err := a.CurrentBranch()
 		if err != nil {
@@ -140,52 +110,35 @@ func (a nativeGitAdapter) Create(b glow.Branch, skipChecks bool) (stdout, stderr
 			return stdout, stderr, errors.New("creation not allowed from this branch")
 		}
 	}
-	cmd := a.exec.Command(fmt.Sprintf("git branch %s", b.ShortBranchName()))
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+	return a.exec.Command(fmt.Sprintf("git branch %s", b.ShortBranchName())).Run()
 }
 
 // Checkout a branch
-func (a nativeGitAdapter) Checkout(b glow.Branch) (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command(fmt.Sprintf("git checkout %s", b.ShortBranchName()))
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	return stdout, stderr, err
+func (a nativeGitAdapter) Checkout(b glow.Branch) (stdout, stderr string, err error) {
+	return a.exec.Command(fmt.Sprintf("git checkout %s", b.ShortBranchName())).Run()
 }
 
 // CleanupBranches removes all unused branches
-func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr string, err error) {
 	xargsCmd := "xargs -r git branch -D"
 	if runtime.GOOS == "darwin" {
 		xargsCmd = "xargs git branch -D"
 	}
 
 	if cleanupGone {
-		cmd := a.exec.Command("git remote prune origin")
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err := cmd.Run()
+		stdout, stderr, err = a.exec.Command("git remote prune origin").Run()
 		if err != nil {
 			return stdout, stderr, err
 		}
 
-		cmd = a.exec.Command(fmt.Sprintf("git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | %s", xargsCmd))
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err = cmd.Run()
+		stdout, stderr, err = a.exec.Command(fmt.Sprintf("git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | %s", xargsCmd)).Run()
 		if err != nil {
 			return stdout, stderr, err
 		}
 	}
 
 	if cleanupUntracked {
-		cmd := a.exec.Command(fmt.Sprintf("git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[origin/ { print $1 }' | %s", xargsCmd))
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err := cmd.Run()
+		stdout, stderr, err = a.exec.Command(fmt.Sprintf("git branch -vv | cut -c 3- | grep -v detached | awk '$3 !~/\\[origin/ { print $1 }' | %s", xargsCmd)).Run()
 		if err != nil {
 			return stdout, stderr, err
 		}
@@ -194,27 +147,19 @@ func (a nativeGitAdapter) CleanupBranches(cleanupGone, cleanupUntracked bool) (s
 }
 
 // CleanupTags removes tags from local repo
-func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) (stdout, stderr bytes.Buffer, err error) {
+func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) (stdout, stderr string, err error) {
 	xargsCmd := "xargs -r git tag -d"
 	if runtime.GOOS == "darwin" {
 		xargsCmd = "xargs git tag -d"
 	}
 
 	if cleanupUntracked {
-		cmd := a.exec.Command(fmt.Sprintf("git tag -l | %s", xargsCmd))
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err := cmd.Run()
-
+		stdout, stderr, err = a.exec.Command(fmt.Sprintf("git tag -l | %s", xargsCmd)).Run()
 		if err != nil {
 			return stdout, stderr, err
 		}
 
-		cmd = a.exec.Command("git fetch --tags")
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err = cmd.Run()
-
+		stdout, stderr, err = a.exec.Command("git fetch --tags").Run()
 		if err != nil {
 			return stdout, stderr, err
 		}
@@ -222,17 +167,13 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) (stdout, stderr byt
 	return stdout, stderr, err
 }
 
-func (a nativeGitAdapter) RemoteBranchExists(branchName string) (stdout, stderr bytes.Buffer, err error) {
-	cmd := a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l", branchName))
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-
+func (a nativeGitAdapter) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
+	stdout, stderr, err = a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l", branchName)).Run()
 	if err != nil {
 		return stdout, stderr, err
 	}
 
-	branchCount := strings.TrimSpace(stdout.String())
+	branchCount := strings.TrimSpace(stdout)
 	if branchCount == "1" {
 		return stdout, stderr, err
 	}
@@ -244,12 +185,11 @@ type cmdBranch struct {
 	IsCurrentBranch bool
 }
 
-func getCMDBranchList(exec cmd.CmdExecutor) (branch []cmdBranch, stdout, stderr bytes.Buffer, err error) {
-	cmd := exec.Command("git branch --list")
-	cmd.Stderr = &stderr
+func getCMDBranchList(exec cmd.CmdExecutor) (branch []cmdBranch, stdout, stderr string, err error) {
+	cmd := exec.Command("git branch --list").Get()
 	stdoutReader, err := cmd.StdoutPipe()
 	if err != nil {
-		return []cmdBranch{}, bytes.Buffer{}, stderr, err
+		return []cmdBranch{}, "", "", err
 	}
 
 	c := make(chan []cmdBranch)
@@ -277,5 +217,5 @@ func getCMDBranchList(exec cmd.CmdExecutor) (branch []cmdBranch, stdout, stderr 
 	}(c)
 	err = cmd.Run()
 	branchList := <-c
-	return branchList, bytes.Buffer{}, bytes.Buffer{}, err
+	return branchList, "", "", err
 }
