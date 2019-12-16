@@ -19,28 +19,25 @@ var publishCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
-
-		// err := g.Fetch()
-		// util.CheckForError(err, "Fetch")
+		util.ExitOnError(err)
 
 		gp, err := util.GetGitProvider()
-		util.CheckForError(err, "GetGitProvider")
+		util.ExitOnError(err)
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
 			cb, err := gp.GetCIBranch()
-			util.CheckForError(err, "CurrentBranch")
+			util.ExitOnError(err)
 			currentBranch = cb
 		} else {
-			cb, err := g.CurrentBranch()
-			util.CheckForError(err, "CurrentBranch")
+			cb, _, _, err := g.CurrentBranch()
+			util.ExitOnError(err)
 			currentBranch = cb
 		}
 
 		err = gp.Publish(currentBranch)
 		if !util.MergeRequestFlags.Gracefully {
-			util.CheckForError(err, "Close")
+			util.ExitOnError(err)
 		} else {
 			log.Println(err)
 		}

@@ -1,38 +1,45 @@
 package gitprovider
 
 import (
-	"time"
-
-	"github.com/go-kit/kit/log"
 	"github.com/meinto/glow"
+	l "github.com/meinto/glow/logging"
+	"github.com/sirupsen/logrus"
 )
 
 type loggingService struct {
-	logger log.Logger
-	next   Service
+	next Service
 }
 
-func NewLoggingService(l log.Logger, s Service) Service {
-	return &loggingService{l, s}
+func NewLoggingService(s Service) Service {
+	return &loggingService{s}
 }
 
 func (s *loggingService) Close(b glow.Branch) (err error) {
-	defer func(begin time.Time) {
-		s.logger.Log("method", "Close", "took", time.Since(begin), "err", err)
-	}(time.Now())
+	defer func() {
+		l.Log().WithFields(logrus.Fields{
+			"branch": b.BranchName(),
+			"error":  err,
+		}).Info()
+	}()
 	return s.next.Close(b)
 }
 
 func (s *loggingService) Publish(b glow.Branch) (err error) {
-	defer func(begin time.Time) {
-		s.logger.Log("method", "Publish", "took", time.Since(begin), "err", err)
-	}(time.Now())
+	defer func() {
+		l.Log().WithFields(logrus.Fields{
+			"branch": b.BranchName(),
+			"error":  err,
+		}).Info()
+	}()
 	return s.next.Publish(b)
 }
 
-func (s *loggingService) GetCIBranch() (_ glow.Branch, err error) {
-	defer func(begin time.Time) {
-		s.logger.Log("method", "GetCIBranch", "took", time.Since(begin), "err", err)
-	}(time.Now())
+func (s *loggingService) GetCIBranch() (branch glow.Branch, err error) {
+	defer func() {
+		l.Log().WithFields(logrus.Fields{
+			"branch": branch.BranchName(),
+			"error":  err,
+		}).Info()
+	}()
 	return s.next.GetCIBranch()
 }

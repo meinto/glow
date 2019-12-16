@@ -15,7 +15,7 @@ func PostRunWithCurrentVersion(
 	push bool,
 ) {
 	g, err := GetGitClient()
-	CheckForError(err, "GetGitClient")
+	ExitOnError(err, "GetGitClient")
 
 	version, _ := ProcessVersion("current", versionFile, versionFileType)
 
@@ -29,14 +29,9 @@ func PostRunWithCurrentVersion(
 	}
 
 	if push {
-		err = g.AddAll()
-		CheckForError(err, "AddAll")
-
-		err = g.Commit("[glow] Add post release changes")
-		CheckForError(err, "Commit")
-
-		err = g.Push(true)
-		CheckForError(err, "Push")
+		ExitOnError(g.AddAll())
+		ExitOnError(g.Commit("[glow] Add post release changes"))
+		ExitOnError(g.Push(true))
 	}
 }
 

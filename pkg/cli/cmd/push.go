@@ -24,42 +24,35 @@ var pushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
 		gp, err := util.GetGitProvider()
-		util.CheckForError(err, "GetGitProvider")
+		util.ExitOnError(err)
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
 			cb, err := gp.GetCIBranch()
-			util.CheckForError(err, "CurrentBranch")
+			util.ExitOnError(err)
 			currentBranch = cb
 		} else {
-			cb, err := g.CurrentBranch()
-			util.CheckForError(err, "CurrentBranch")
+			cb, _, _, err := g.CurrentBranch()
+			util.ExitOnError(err)
 			currentBranch = cb
 		}
 
-		err = g.Stash()
-		util.CheckForError(err, "Stash")
-
-		err = g.Checkout(currentBranch)
-		util.CheckForError(err, "Checkout")
-
-		err = g.StashPop()
-		util.CheckForError(err, "StashPop")
-
 		if pushCmdOptions.AddAll {
-			err = g.AddAll()
-			util.CheckForError(err, "AddAll")
+			util.ExitOnError(g.AddAll())
+			util.ExitOnError(g.Stash())
+			util.ExitOnError(g.Checkout(currentBranch))
+			util.ExitOnError(g.StashPop())
+			util.ExitOnError(g.AddAll())
 
 			if pushCmdOptions.CommitMessage != "" {
-				err = g.Commit(pushCmdOptions.CommitMessage)
-				util.CheckForError(err, "Commit")
+				util.ExitOnError(g.Commit(pushCmdOptions.CommitMessage))
 			}
 		}
 
-		err = g.Push(false)
-		util.CheckForError(err, "Push")
+		g.Push(false)
+		util.ExitOnError(err)
 	},
 }

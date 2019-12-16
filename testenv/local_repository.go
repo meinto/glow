@@ -50,6 +50,6 @@ func (r *LocalRepository) Push(branch string) {
 }
 
 func (r *LocalRepository) Exists(branch string) (bool, string) {
-	stdout, _ := r.Do(fmt.Sprintf("git rev-parse --abbrev-ref %s", branch))
+	stdout, _, _ := r.Do(fmt.Sprintf("git rev-parse --abbrev-ref %s", branch))
 	return strings.TrimSpace(stdout.String()) == branch, stdout.String()
 }

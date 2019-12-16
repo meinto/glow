@@ -30,7 +30,7 @@ var releaseCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
 		version, s := util.ProcessVersion(
 			args[0],
@@ -39,20 +39,17 @@ var releaseCmd = &cobra.Command{
 		)
 
 		release, err := glow.NewRelease(version)
-		util.CheckForError(err, "NewRelease")
+		util.ExitOnError(err)
 
-		err = g.Create(release, rootCmdOptions.SkipChecks)
-		util.CheckForError(err, "Create")
+		util.ExitOnError(g.Create(release, rootCmdOptions.SkipChecks))
 
 		g.Checkout(release)
-		util.CheckForError(err, "Checkout")
+		util.ExitOnError(err)
 
 		if util.IsSemanticVersion(args[0]) {
-			err = s.SetNextVersion(args[0])
-			util.CheckForError(err, "semver SetNextVersion")
+			util.ExitOnError(s.SetNextVersion(args[0]))
 		} else {
-			err = s.SetVersion(version)
-			util.CheckForError(err, "semver SetVersion")
+			util.ExitOnError(s.SetVersion(version))
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {

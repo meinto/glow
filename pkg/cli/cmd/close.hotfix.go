@@ -23,10 +23,10 @@ var closeHotfixCmd = &cobra.Command{
 
 		if version == "current" {
 			g, err := util.GetGitClient()
-			util.CheckForError(err, "GetGitClient")
+			util.ExitOnError(err)
 
-			pathToRepo, err := g.GitRepoPath()
-			util.CheckForError(err, "semver GitRepoPath")
+			pathToRepo, _, _, err := g.GitRepoPath()
+			util.ExitOnError(err)
 
 			s := semver.NewSemverService(
 				pathToRepo,
@@ -35,19 +35,19 @@ var closeHotfixCmd = &cobra.Command{
 				releaseCmdOptions.VersionFileType,
 			)
 			v, err := s.GetCurrentVersion()
-			util.CheckForError(err, "semver GetCurrentVersion")
+			util.ExitOnError(err)
 			version = v
 		}
 
 		gp, err := util.GetGitProvider()
-		util.CheckForError(err, "GetGitProvider")
+		util.ExitOnError(err)
 
 		currentBranch, err := glow.NewHotfix(version)
-		util.CheckForError(err, "NewHotfix")
+		util.ExitOnError(err)
 
 		err = gp.Close(currentBranch)
 		if !util.MergeRequestFlags.Gracefully {
-			util.CheckForError(err, "Close")
+			util.ExitOnError(err)
 		} else {
 			log.Println(err)
 		}
