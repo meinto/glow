@@ -15,10 +15,10 @@ var tagCmd = &cobra.Command{
 	Short: "create a tag of current version",
 	Run: func(cmd *cobra.Command, args []string) {
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
-		pathToRepo, err := g.GitRepoPath()
-		util.CheckForError(err, "semver GitRepoPath")
+		pathToRepo, _, _, err := g.GitRepoPath()
+		util.ExitOnError(err)
 
 		s := semver.NewSemverService(
 			pathToRepo,
@@ -27,7 +27,6 @@ var tagCmd = &cobra.Command{
 			releaseCmdOptions.VersionFileType,
 		)
 
-		err = s.TagCurrentVersion()
-		util.CheckForError(err, "TagCurrentVersion")
+		util.ExitOnError(s.TagCurrentVersion())
 	},
 }

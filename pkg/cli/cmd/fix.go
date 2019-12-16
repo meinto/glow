@@ -19,15 +19,12 @@ var fixCmd = &cobra.Command{
 		fixName := args[0]
 
 		fix, err := glow.NewFix(viper.GetString("author"), fixName)
-		util.CheckForError(err, "NewFix")
+		util.ExitOnError(err)
 
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
-		err = g.Create(fix, rootCmdOptions.SkipChecks)
-		util.CheckForError(err, "Create")
-
-		g.Checkout(fix)
-		util.CheckForError(err, "Checkout")
+		util.ExitOnError(g.Create(fix, rootCmdOptions.SkipChecks))
+		util.ExitOnError(g.Checkout(fix))
 	},
 }

@@ -15,9 +15,8 @@ var cleanupTagsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
+		util.ExitOnError(err)
 
-		err = g.CleanupTags(cleanupCmdFlags.cleanupUntracked)
-		util.CheckForError(err, "CleanupTags")
+		util.ExitOnError(g.CleanupTags(cleanupCmdFlags.cleanupUntracked))
 	},
 }

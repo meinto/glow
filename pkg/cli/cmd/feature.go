@@ -20,15 +20,10 @@ var featureCmd = &cobra.Command{
 		featureName := args[0]
 
 		feature, err := glow.NewFeature(viper.GetString("author"), featureName)
-		util.CheckForError(err, "NewFeature")
+		util.ExitOnError(err)
 
 		g, err := util.GetGitClient()
-		util.CheckForError(err, "GetGitClient")
-
-		err = g.Create(feature, rootCmdOptions.SkipChecks)
-		util.CheckForError(err, "Create")
-
-		g.Checkout(feature)
-		util.CheckForError(err, "Checkout")
+		util.ExitOnError(g.Create(feature, rootCmdOptions.SkipChecks))
+		util.ExitOnError(g.Checkout(feature))
 	},
 }

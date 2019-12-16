@@ -15,14 +15,18 @@ func NewCommand() *Command {
 	return &Command{"/bin/bash"}
 }
 
-func (c *Command) Do(str string, args ...interface{}) (bytes.Buffer, error) {
+func (c *Command) Do(str string, args ...interface{}) (stdout, stderr bytes.Buffer, err error) {
 	formattedStr := str
 	if strings.Contains(str, "%") {
 		formattedStr = fmt.Sprintf(str, args...)
 	}
 	cmd := exec.Command(c.shell, "-c", formattedStr)
-	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	return stdout, cmd.Run()
+	err = cmd.Start()
+	if err != nil {
+		return bytes.Buffer{}, bytes.Buffer{}, err
+	}
+	err = cmd.Wait()
+	return stdout, stderr, err
 }
