@@ -12,6 +12,7 @@ func TestGetCurrentVersion(t *testing.T) {
 	defer teardown()
 
 	s := setupSemverService(local.Folder)
+	s = NewLoggingService(s)
 	currentVersion, err := s.GetCurrentVersion()
 	testenv.CheckForErrors(t, err)
 
