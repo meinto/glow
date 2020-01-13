@@ -29,7 +29,7 @@ brews:
       name: glow
     commit_author:
       name: Tobias Meinhardt
-      email: tobias.meinhardt89@gmail.com
+      email: tobias.meinhardt@mailbox.org
     folder: formula
     dependencies:
       - git
