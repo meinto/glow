@@ -43,7 +43,7 @@ var releaseCmd = &cobra.Command{
 
 		util.ExitOnError(g.Create(release, rootCmdOptions.SkipChecks))
 
-		g.Checkout(release)
+		_, _, err = g.Checkout(release)
 		util.ExitOnError(err)
 
 		if util.IsSemanticVersion(args[0]) {

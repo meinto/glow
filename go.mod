@@ -2,6 +2,7 @@ module github.com/meinto/glow
 
 require (
 	github.com/go-kit/kit v0.8.0
+	github.com/go-logfmt/logfmt v0.5.0 // indirect
 	github.com/gobuffalo/logger v1.0.1
 	github.com/gobuffalo/packr v1.23.0
 	github.com/gobuffalo/packr/v2 v2.7.1
