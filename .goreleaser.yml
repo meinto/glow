@@ -13,14 +13,15 @@ builds:
       - darwin
       - linux
       - windows
-archive:
-  name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-  replacements:
-    386: i386
-    amd64: x86_64
-  format_overrides:
-    - goos: windows
-      format: zip
+archives:
+  -
+    name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
 brews:
   -
     github:
