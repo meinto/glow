@@ -15,7 +15,7 @@ func PostRunWithCurrentVersion(
 	push bool,
 ) {
 	g, err := GetGitClient()
-	ExitOnError(err, "GetGitClient")
+	ExitOnError(err)
 
 	version, _ := ProcessVersion("current", versionFile, versionFileType)
 
