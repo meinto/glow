@@ -118,9 +118,10 @@ func (s loggingService) StashPop() (stdout, stderr string, err error) {
 func (s loggingService) Commit(message string) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"message": message,
+			"stdout":  stdout,
+			"stderr":  stderr,
+			"error":   err,
 		}).Info()
 	}()
 	return s.next.Commit(message)
@@ -130,9 +131,10 @@ func (s loggingService) Commit(message string) (stdout, stderr string, err error
 func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"setUpstream": setUpstream,
+			"stdout":      stdout,
+			"stderr":      stderr,
+			"error":       err,
 		}).Info()
 	}()
 	return s.next.Push(setUpstream)
@@ -142,9 +144,11 @@ func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error
 func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"branchName": b.BranchName(),
+			"skipChecks": skipChecks,
+			"stdout":     stdout,
+			"stderr":     stderr,
+			"error":      err,
 		}).Info()
 	}()
 	return s.next.Create(b, skipChecks)
@@ -154,9 +158,10 @@ func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr s
 func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"branchName": b.BranchName(),
+			"stdout":     stdout,
+			"stderr":     stderr,
+			"error":      err,
 		}).Info()
 	}()
 	return s.next.Checkout(b)
@@ -166,9 +171,11 @@ func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err erro
 func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"cleanupGone":      cleanupGone,
+			"cleanupUntracked": cleanupUntracked,
+			"stdout":           stdout,
+			"stderr":           stderr,
+			"error":            err,
 		}).Info()
 	}()
 	return s.next.CleanupBranches(cleanupGone, cleanupUntracked)
@@ -178,9 +185,10 @@ func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (std
 func (s loggingService) CleanupTags(cleanupUntracked bool) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"cleanupUntracked": cleanupUntracked,
+			"stdout":           stdout,
+			"stderr":           stderr,
+			"error":            err,
 		}).Info()
 	}()
 	return s.next.CleanupTags(cleanupUntracked)
@@ -189,9 +197,10 @@ func (s loggingService) CleanupTags(cleanupUntracked bool) (stdout, stderr strin
 func (s loggingService) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
 	defer func() {
 		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
+			"branchName": branchName,
+			"stdout":     stdout,
+			"stderr":     stderr,
+			"error":      err,
 		}).Info()
 	}()
 	return s.next.RemoteBranchExists(branchName)

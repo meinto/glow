@@ -25,7 +25,7 @@ var closeReleaseCmd = &cobra.Command{
 			g, err := util.GetGitClient()
 			util.ExitOnError(err)
 
-			pathToRepo, _,_, err := g.GitRepoPath()
+			pathToRepo, _, _, err := g.GitRepoPath()
 			util.ExitOnError(err)
 
 			s := semver.NewSemverService(
@@ -34,6 +34,7 @@ var closeReleaseCmd = &cobra.Command{
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)
+			s = semver.NewLoggingService(s)
 			v, err := s.GetCurrentVersion()
 			util.ExitOnError(err)
 			version = v
