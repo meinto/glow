@@ -13,14 +13,15 @@ builds:
       - darwin
       - linux
       - windows
-archive:
-  name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-  replacements:
-    386: i386
-    amd64: x86_64
-  format_overrides:
-    - goos: windows
-      format: zip
+archives:
+  -
+    name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
 brews:
   -
     github:
@@ -28,7 +29,7 @@ brews:
       name: glow
     commit_author:
       name: Tobias Meinhardt
-      email: tobias.meinhardt89@gmail.com
+      email: tobias.meinhardt@mailbox.org
     folder: formula
     dependencies:
       - git
