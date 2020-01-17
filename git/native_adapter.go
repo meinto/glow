@@ -177,6 +177,8 @@ func (a nativeGitAdapter) RemoteBranchExists(branchName string) (stdout, stderr 
 	if branchCount == "1" {
 		return stdout, stderr, err
 	}
+
+	err = errors.New(fmt.Sprintf("Remote Branch %s does not exist", branchName))
 	return stdout, stderr, err
 }
 
