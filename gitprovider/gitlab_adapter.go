@@ -100,43 +100,24 @@ func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
 }
 
 func (a *gitlabAdapter) DetectCICDOrigin() (string, error) {
-	gitProviderDomain := viper.GetString("gitProviderDomain")
-	if gitProviderDomain == "" {
-		return "", errors.Errorf("%s not specified", "gitProviderDomain")
-	}
-
-	projectNamespace := viper.GetString("projectNamespace")
-	if projectNamespace == "" {
-		return "", errors.Errorf("%s not specified", "projectNamespace")
-	}
-
-	projectName := viper.GetString("projectName")
-	if projectName == "" {
-		return "", errors.Errorf("%s not specified", "projectName")
-	}
-
+	gitProviderURL := a.endpoint
 	gitUser := os.Getenv("CI_GIT_USER")
 	gitToken := os.Getenv("CI_GIT_TOKEN")
 
 	if gitUser != "" && gitToken != "" {
-		gitProviderURL, err := url.Parse(gitProviderDomain)
+		endpointURL, err := url.Parse(a.endpoint)
 		if err != nil {
-			return "", errors.Wrap(err, "couldn't parse gitProviderDomain")
+			return "", errors.Wrap(err, "couldn't parse gitLab endpoint")
 		}
 
-		originURL := fmt.Sprintf(
-			"%s/%s/%s.git",
-			gitProviderURL.Host, projectNamespace, projectName,
-		)
-
-		return fmt.Sprintf(
+		gitProviderURL = fmt.Sprintf(
 			"%s://%s:%s@%s",
-			gitProviderURL.Scheme, gitUser, gitToken, originURL,
-		), nil
+			endpointURL.Scheme, gitUser, gitToken, endpointURL.Host,
+		)
 	}
 
 	return fmt.Sprintf(
 		"%s/%s/%s.git",
-		gitProviderDomain, projectNamespace, projectName,
+		gitProviderURL, a.namespace, a.project,
 	), nil
 }
