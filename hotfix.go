@@ -8,37 +8,37 @@ import (
 )
 
 // Hotfix definition
-type Hotfix struct {
+type hotfix struct {
 	version string
 	Branch
 }
 
 // NewHotfix creates a new hotfix definition
-func NewHotfix(version string) (Hotfix, error) {
+func NewHotfix(version string) (Branch, error) {
 	branchName := fmt.Sprintf("refs/heads/hotfix/v%s", version)
 	b := NewPlainBranch(branchName)
-	return Hotfix{version, b}, nil
+	return hotfix{version, b}, nil
 }
 
 // HotfixFromBranch extracts a fix definition from branch name
-func HotfixFromBranch(branchName string) (Hotfix, error) {
+func HotfixFromBranch(branchName string) (Branch, error) {
 	if !strings.Contains(branchName, "/hotfix/v") {
-		return Hotfix{}, errors.New("no valid hotfix branch")
+		return hotfix{}, errors.New("no valid hotfix branch")
 	}
 	b := NewPlainBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
-		return Hotfix{}, errors.New("invalid branch name " + branchName)
+		return hotfix{}, errors.New("invalid branch name " + branchName)
 	}
 	version := parts[len(parts)-1]
 	version = strings.TrimPrefix(version, "v")
 
-	return Hotfix{version, b}, nil
+	return hotfix{version, b}, nil
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f Hotfix) CreationIsAllowedFrom(sourceBranch string) bool {
+func (f hotfix) CreationIsAllowedFrom(sourceBranch string) bool {
 	if strings.Contains(sourceBranch, "master") {
 		return true
 	}
@@ -46,17 +46,17 @@ func (f Hotfix) CreationIsAllowedFrom(sourceBranch string) bool {
 }
 
 // CanBeClosed checks if the branch name is a valid
-func (f Hotfix) CanBeClosed() bool {
+func (f hotfix) CanBeClosed() bool {
 	return true
 }
 
 // CanBePublished checks if the branch can be published directly to production
-func (f Hotfix) CanBePublished() bool {
+func (f hotfix) CanBePublished() bool {
 	return true
 }
 
 // CloseBranches returns all branches which this branch have to be merged with
-func (f Hotfix) CloseBranches(availableBranches []Branch) []Branch {
+func (f hotfix) CloseBranches(availableBranches []Branch) []Branch {
 	branches := make([]Branch, 0)
 	for _, b := range availableBranches {
 		if strings.Contains(b.BranchName(), "/release/v") {
@@ -68,6 +68,6 @@ func (f Hotfix) CloseBranches(availableBranches []Branch) []Branch {
 }
 
 // PublishBranch returns the publish branch if available
-func (f Hotfix) PublishBranch() Branch {
+func (f hotfix) PublishBranch() Branch {
 	return NewPlainBranch("master")
 }
