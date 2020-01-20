@@ -12,7 +12,7 @@ type Service interface {
 	Close(b glow.Branch) error
 	Publish(b glow.Branch) error
 	DetectCICDOrigin() (string, error)
-	GetCIBranch() (glow.Branch, error)
+	GetCIBranch() glow.Branch
 }
 
 type service struct {

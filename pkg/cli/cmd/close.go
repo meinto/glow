@@ -29,7 +29,7 @@ var closeCmd = &cobra.Command{
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
-			cb, err := gp.GetCIBranch()
+			cb := gp.GetCIBranch()
 			util.ExitOnError(err)
 			currentBranch = cb
 		} else {

@@ -93,10 +93,10 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	return nil
 }
 
-func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
+func (a *gitlabAdapter) GetCIBranch() glow.Branch {
 	branchName := os.Getenv("CI_COMMIT_REF_NAME")
-	branch, err := glow.NewBranch(branchName)
-	return branch, errors.Wrap(err, "error get ci branch")
+	branch := glow.NewBranch(branchName)
+	return branch
 }
 
 func (a *gitlabAdapter) DetectCICDOrigin() (string, error) {
