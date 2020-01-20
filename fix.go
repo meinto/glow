@@ -28,10 +28,7 @@ func FixFromBranch(branchName string) (Fix, error) {
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (f Fix) CreationIsAllowedFrom(sourceBranch string) bool {
-	if strings.Contains(sourceBranch, "release/v") {
-		return true
-	}
-	return false
+	return strings.Contains(sourceBranch, "release/v")
 }
 
 // CanBeClosed checks if the branch name is a valid
