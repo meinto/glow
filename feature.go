@@ -13,7 +13,7 @@ type feature struct {
 
 // NewFeature creates a new feature definition
 func NewFeature(author, name string) (AuthoredBranch, error) {
-	ab, err := NewAuthoredBranch(BRANCH_NAME_PREFIX+"feature/%s/%s", author, name)
+	ab, err := NewAuthoredBranch(AUTHORED_BRANCH_TYPE_FEATURE, author, name)
 	return feature{ab}, errors.Wrap(err, "error while creating feature definition")
 }
 

@@ -74,18 +74,26 @@ type AuthoredBranch interface {
 }
 
 type authoredBranch struct {
-	author string
-	name   string
+	author      string
+	featureName string
 	Branch
 }
 
+const (
+	AUTHORED_BRANCH_TYPE_FEATURE = "feature"
+	AUTHORED_BRANCH_TYPE_FIX     = "fix"
+)
+
 // NewAuthoredBranch creates a new branch definition
-func NewAuthoredBranch(branchTemplate, author, name string) (AuthoredBranch, error) {
-	branchName := fmt.Sprintf(branchTemplate, author, name)
+func NewAuthoredBranch(branchType, author, featureName string) (AuthoredBranch, error) {
+	if branchType != AUTHORED_BRANCH_TYPE_FEATURE && branchType != AUTHORED_BRANCH_TYPE_FIX {
+		return nil, fmt.Errorf("branch type '%s' is not valid for an authored branch", branchType)
+	}
+	branchName := fmt.Sprintf("%s/%s/%s", branchType, author, featureName)
 	branch := NewBranch(branchName)
 	return authoredBranch{
 		author,
-		name,
+		featureName,
 		branch,
 	}, nil
 }
@@ -98,7 +106,7 @@ func AuthoredBranchFromBranchName(branchName string) (AuthoredBranch, error) {
 	}
 	branchType := parts[len(parts)-3]
 	author := parts[len(parts)-2]
-	name := parts[len(parts)-1]
+	featureName := parts[len(parts)-1]
 
-	return NewAuthoredBranch(branchType+"/%s/%s", author, name)
+	return NewAuthoredBranch(branchType, author, featureName)
 }

@@ -12,7 +12,7 @@ type fix struct {
 
 // NewFix creates a new fix definition
 func NewFix(author, name string) (AuthoredBranch, error) {
-	ab, err := NewAuthoredBranch(BRANCH_NAME_PREFIX+"fix/%s/%s", author, name)
+	ab, err := NewAuthoredBranch(AUTHORED_BRANCH_TYPE_FIX, author, name)
 	return fix{ab}, errors.Wrap(err, "error while creating fix definition")
 }
 
