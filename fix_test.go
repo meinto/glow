@@ -8,35 +8,35 @@ import (
 	. "github.com/meinto/glow/testutil"
 )
 
-var _ = Describe("Feature", func() {
-	var features []Feature
+var _ = Describe("Fix", func() {
+	var features []Fix
 
 	BeforeEach(func() {
-		f1, _ := NewFeature("luke", "falcon")
-		f2, _ := FeatureFromBranch("feature/luke/falcon")
-		features = []Feature{f1, f2}
+		f1, _ := NewFix("luke", "falcon")
+		f2, _ := FixFromBranch("fix/luke/falcon")
+		features = []Fix{f1, f2}
 	})
 
 	It("can be closed", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			Expect(feature.(Feature).CanBeClosed()).To(Equal(true))
+			Expect(feature.(Fix).CanBeClosed()).To(Equal(true))
 		})
 	})
 
-	It("only closes on develop", func() {
+	It("only closes on release branch", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			closeBanches := feature.(Feature).CloseBranches([]Branch{})
+			closeBanches := feature.(Fix).CloseBranches(MockBranchCollection())
 			Expect(len(closeBanches)).To(Equal(1))
-			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEVELOP_BRANCH))
+			Expect(closeBanches[0].ShortBranchName()).To(Equal(RELEASE_BRANCH))
 		})
 	})
 
-	It("is only allowed to create from develop branch", func() {
+	It("is only allowed to create from release branch", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			f := feature.(Feature)
+			f := feature.(Fix)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
-				if testBranchName == DEVELOP_BRANCH {
+				if testBranchName == RELEASE_BRANCH {
 					Expect(f.CreationIsAllowedFrom(testBranchName)).To(BeTrue())
 				} else {
 					Expect(f.CreationIsAllowedFrom(testBranchName)).To(BeFalse())
