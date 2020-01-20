@@ -10,6 +10,8 @@ require (
 	github.com/meinto/cobra-utils v0.1.0
 	github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f
 	github.com/nathany/looper v0.3.3 // indirect
+	github.com/onsi/ginkgo v1.11.0
+	github.com/onsi/gomega v1.8.1
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
