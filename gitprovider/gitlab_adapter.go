@@ -98,3 +98,45 @@ func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
 	branch, err := glow.NewBranch(branchName)
 	return branch, errors.Wrap(err, "error get ci branch")
 }
+
+func (a *gitlabAdapter) DetectCICDOrigin() (string, error) {
+	gitProviderDomain := viper.GetString("gitProviderDomain")
+	if gitProviderDomain == "" {
+		return "", errors.Errorf("%s not specified", "gitProviderDomain")
+	}
+
+	projectNamespace := viper.GetString("projectNamespace")
+	if projectNamespace == "" {
+		return "", errors.Errorf("%s not specified", "projectNamespace")
+	}
+
+	projectName := viper.GetString("projectName")
+	if projectName == "" {
+		return "", errors.Errorf("%s not specified", "projectName")
+	}
+
+	gitUser := os.Getenv("CI_GIT_USER")
+	gitToken := os.Getenv("CI_GIT_TOKEN")
+
+	if gitUser != "" && gitToken != "" {
+		gitProviderURL, err := url.Parse(gitProviderDomain)
+		if err != nil {
+			return "", errors.Wrap(err, "couldn't parse gitProviderDomain")
+		}
+
+		originURL := fmt.Sprintf(
+			"%s/%s/%s.git",
+			gitProviderURL.Host, projectNamespace, projectName,
+		)
+
+		return fmt.Sprintf(
+			"%s://%s:%s@%s",
+			gitProviderURL.Scheme, gitUser, gitToken, originURL,
+		), nil
+	}
+
+	return fmt.Sprintf(
+		"%s/%s/%s.git",
+		gitProviderDomain, projectNamespace, projectName,
+	), nil
+}

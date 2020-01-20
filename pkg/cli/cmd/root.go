@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 
-	"net/url"
-
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/gobuffalo/packr/v2"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
@@ -39,44 +37,15 @@ var rootCmd = &cobra.Command{
 			g, err := util.GetGitClient()
 			util.ExitOnError(err)
 
-			cicdOrigin := detectCICDOrigin()
+			gp, err := util.GetGitProvider()
+			util.ExitOnError(err)
+
+			cicdOrigin, err := gp.DetectCICDOrigin()
+			util.ExitOnError(err)
+
 			util.ExitOnError(g.SetCICDOrigin(cicdOrigin))
 		}
 	},
-}
-
-func detectCICDOrigin() string {
-	gitProviderDomain := viper.GetString("gitProviderDomain")
-	util.CheckRequiredStringField(gitProviderDomain, "gitProviderDomain")
-
-	projectNamespace := viper.GetString("projectNamespace")
-	util.CheckRequiredStringField(projectNamespace, "projectNamespace")
-
-	projectName := viper.GetString("projectName")
-	util.CheckRequiredStringField(projectName, "projectName")
-
-	gitUser := os.Getenv("CI_GIT_USER")
-	gitToken := os.Getenv("CI_GIT_TOKEN")
-
-	if gitUser != "" && gitToken != "" {
-		gitProviderURL, err := url.Parse(gitProviderDomain)
-		util.ExitOnErrorWithMessage("couldn't parse gitProviderDomain")(err)
-
-		originURL := fmt.Sprintf(
-			"%s/%s/%s.git",
-			gitProviderURL.Host, projectNamespace, projectName,
-		)
-
-		return fmt.Sprintf(
-			"%s://%s:%s@%s",
-			gitProviderURL.Scheme, gitUser, gitToken, originURL,
-		)
-	}
-
-	return fmt.Sprintf(
-		"%s/%s/%s.git",
-		gitProviderDomain, projectNamespace, projectName,
-	)
 }
 
 func init() {
