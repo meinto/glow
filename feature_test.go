@@ -9,23 +9,23 @@ import (
 )
 
 var _ = Describe("Feature", func() {
-	var features []Feature
+	var features []AuthoredBranch
 
 	BeforeEach(func() {
 		f1, _ := NewFeature("luke", "falcon")
-		f2, _ := FeatureFromBranch("feature/luke/falcon")
-		features = []Feature{f1, f2}
+		f2, _ := FeatureFromBranch("refs/heads/feature/luke/falcon")
+		features = []AuthoredBranch{f1, f2}
 	})
 
 	It("can be closed", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			Expect(feature.(Feature).CanBeClosed()).To(Equal(true))
+			Expect(feature.(AuthoredBranch).CanBeClosed()).To(Equal(true))
 		})
 	})
 
 	It("only closes on develop", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			closeBanches := feature.(Feature).CloseBranches([]Branch{})
+			closeBanches := feature.(AuthoredBranch).CloseBranches([]Branch{})
 			Expect(len(closeBanches)).To(Equal(1))
 			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEVELOP_BRANCH))
 		})
@@ -33,7 +33,7 @@ var _ = Describe("Feature", func() {
 
 	It("is only allowed to create from develop branch", func() {
 		ForEachTestSet(features, func(feature interface{}) {
-			f := feature.(Feature)
+			f := feature.(AuthoredBranch)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
 				if testBranchName == DEVELOP_BRANCH {
@@ -42,6 +42,35 @@ var _ = Describe("Feature", func() {
 					Expect(f.CreationIsAllowedFrom(testBranchName)).To(BeFalse())
 				}
 			}
+		})
+	})
+
+	// settings like default branch
+	// ----------------------------
+	It("cannot be published", func() {
+		ForEachTestSet(features, func(feature interface{}) {
+			Expect(feature.(AuthoredBranch).CanBePublished()).To(BeFalse())
+		})
+	})
+
+	It("has no publish branch", func() {
+		ForEachTestSet(features, func(feature interface{}) {
+			publishBranch := feature.(AuthoredBranch).PublishBranch()
+			Expect(publishBranch).To(BeNil())
+		})
+	})
+
+	It("has a branch name", func() {
+		ForEachTestSet(features, func(feature interface{}) {
+			branchName := feature.(AuthoredBranch).BranchName()
+			Expect(branchName).To(Equal("refs/heads/" + FEAUTURE_BRANCH))
+		})
+	})
+
+	It("has a short branch name", func() {
+		ForEachTestSet(features, func(feature interface{}) {
+			branchName := feature.(AuthoredBranch).ShortBranchName()
+			Expect(branchName).To(Equal(FEAUTURE_BRANCH))
 		})
 	})
 })
