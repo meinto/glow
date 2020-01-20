@@ -19,7 +19,7 @@ const (
 	RELEASE_BRANCH  = "release/v1.2.3"
 	FEAUTURE_BRANCH = "feature/luke/falcon"
 	HOTFIX_BRANCH   = "hotfix/v0.0.1"
-	FIX_BRANCH      = "fix/luke/fix-falcon"
+	FIX_BRANCH      = "fix/luke/falcon"
 	ANOTHER_BRANCH  = "another-branch"
 )
 

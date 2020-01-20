@@ -8,37 +8,37 @@ import (
 )
 
 // Release definition
-type Release struct {
+type release struct {
 	version string
 	Branch
 }
 
 // NewRelease creates a new release definition
-func NewRelease(version string) (Release, error) {
+func NewRelease(version string) (Branch, error) {
 	branchName := fmt.Sprintf("refs/heads/release/v%s", version)
 	b := NewPlainBranch(branchName)
-	return Release{version, b}, nil
+	return release{version, b}, nil
 }
 
 // ReleaseFromBranch extracts a release definition from branch name
-func ReleaseFromBranch(branchName string) (Release, error) {
+func ReleaseFromBranch(branchName string) (Branch, error) {
 	if !strings.Contains(branchName, "/release/v") {
-		return Release{}, errors.New("no valid release branch")
+		return release{}, errors.New("no valid release branch")
 	}
 	b := NewPlainBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
-		return Release{}, errors.New("invalid branch name " + branchName)
+		return release{}, errors.New("invalid branch name " + branchName)
 	}
 	version := parts[len(parts)-1]
 	version = strings.TrimPrefix(version, "v")
 
-	return Release{version, b}, nil
+	return release{version, b}, nil
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f Release) CreationIsAllowedFrom(sourceBranch string) bool {
+func (f release) CreationIsAllowedFrom(sourceBranch string) bool {
 	if strings.Contains(sourceBranch, "develop") {
 		return true
 	}
@@ -46,23 +46,23 @@ func (f Release) CreationIsAllowedFrom(sourceBranch string) bool {
 }
 
 // CanBeClosed checks if the branch name is a valid
-func (f Release) CanBeClosed() bool {
+func (f release) CanBeClosed() bool {
 	return true
 }
 
 // CanBePublished checks if the branch can be published directly to production
-func (f Release) CanBePublished() bool {
+func (f release) CanBePublished() bool {
 	return true
 }
 
 // CloseBranches returns all branches which this branch have to be merged with
-func (f Release) CloseBranches(availableBranches []Branch) []Branch {
+func (f release) CloseBranches(availableBranches []Branch) []Branch {
 	return []Branch{
 		NewPlainBranch("develop"),
 	}
 }
 
 // PublishBranch returns the publish branch if available
-func (f Release) PublishBranch() Branch {
+func (f release) PublishBranch() Branch {
 	return NewPlainBranch("master")
 }

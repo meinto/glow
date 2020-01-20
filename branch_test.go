@@ -12,9 +12,10 @@ var _ = Describe("Branch", func() {
 	var branches []Branch
 
 	BeforeEach(func() {
-		b1, _ := NewBranch("branch-name")
-		b2 := NewPlainBranch("branch-name")
-		branches = []Branch{b1, b2}
+		b1, _ := NewBranch("type/author/feature")
+		b2 := NewPlainBranch("type/author/feature")
+		b3, _ := NewAuthoredBranch("type/%s/%s", "author", "feature")
+		branches = []Branch{b1, b2, b3}
 	})
 
 	It("is not allowed to be created from another branch", func() {
@@ -52,14 +53,14 @@ var _ = Describe("Branch", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(Branch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/branch-name"))
+			Expect(branchName).To(Equal("refs/heads/type/author/feature"))
 		})
 	})
 
 	It("has a short branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(Branch).ShortBranchName()
-			Expect(branchName).To(Equal("branch-name"))
+			Expect(branchName).To(Equal("type/author/feature"))
 		})
 	})
 })

@@ -27,19 +27,6 @@ func NewBranch(name string) (Branch, error) {
 	if !strings.HasPrefix(name, "refs/heads/") {
 		name = "refs/heads/" + name
 	}
-
-	if strings.Contains(name, "/feature/") {
-		return FeatureFromBranch(name)
-	}
-	if strings.Contains(name, "/fix/") {
-		return FixFromBranch(name)
-	}
-	if strings.Contains(name, "/hotfix/") {
-		return HotfixFromBranch(name)
-	}
-	if strings.Contains(name, "/release/v") {
-		return ReleaseFromBranch(name)
-	}
 	return NewPlainBranch(name), nil
 }
 
@@ -89,7 +76,11 @@ func (b branch) ShortBranchName() string {
 }
 
 // AuthoredBranch definition
-type AuthoredBranch struct {
+type AuthoredBranch interface {
+	Branch
+}
+
+type authoredBranch struct {
 	author string
 	name   string
 	Branch
@@ -98,25 +89,23 @@ type AuthoredBranch struct {
 // NewAuthoredBranch creates a new branch definition
 func NewAuthoredBranch(branchTemplate, author, name string) (AuthoredBranch, error) {
 	branchName := fmt.Sprintf(branchTemplate, author, name)
-	return AuthoredBranch{
+	branch, _ := NewBranch(branchName)
+	return authoredBranch{
 		author,
 		name,
-		branch{branchName},
+		branch,
 	}, nil
 }
 
 // AuthoredBranchFromBranchName extracts a feature definition from branch name
 func AuthoredBranchFromBranchName(branchName string) (AuthoredBranch, error) {
 	parts := strings.Split(branchName, "/")
-	if len(parts) < 2 {
-		return AuthoredBranch{}, errors.New("invalid branch name " + branchName)
+	if len(parts) < 3 {
+		return authoredBranch{}, errors.New("invalid branch name " + branchName)
 	}
+	branchType := parts[len(parts)-3]
 	author := parts[len(parts)-2]
 	name := parts[len(parts)-1]
 
-	return AuthoredBranch{
-		author,
-		name,
-		branch{branchName},
-	}, nil
+	return NewAuthoredBranch(branchType+"/%s/%s", author, name)
 }
