@@ -89,8 +89,8 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	return nil
 }
 
-func (a *githubAdapter) GetCIBranch() (glow.Branch, error) {
-	return nil, errors.New("not implemented")
+func (a *githubAdapter) GetCIBranch() glow.Branch {
+	return nil
 }
 
 func (a *githubAdapter) DetectCICDOrigin() (string, error) {

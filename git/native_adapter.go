@@ -37,7 +37,7 @@ func (a nativeGitAdapter) CurrentBranch() (branch glow.Branch, stdout, stderr st
 	}
 	for _, b := range cmdBranchList {
 		if b.IsCurrentBranch {
-			branch, err := glow.NewBranch(b.Name)
+			branch := glow.NewBranch(b.Name)
 			return branch, stdout, stderr, err
 		}
 	}
@@ -52,7 +52,7 @@ func (a nativeGitAdapter) BranchList() (branchList []glow.Branch, stdout, stderr
 	}
 	branchList = make([]glow.Branch, 0)
 	for _, b := range cmdBranchList {
-		gb, err := glow.NewBranch(b.Name)
+		gb := glow.NewBranch(b.Name)
 		if err != nil {
 			return nil, stdout, stderr, err
 		}
