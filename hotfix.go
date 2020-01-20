@@ -38,8 +38,8 @@ func HotfixFromBranch(branchName string) (Branch, error) {
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f hotfix) CreationIsAllowedFrom(sourceBranch string) bool {
-	if strings.Contains(sourceBranch, "master") {
+func (f hotfix) CreationIsAllowedFrom(sourceBranch Branch) bool {
+	if strings.Contains(sourceBranch.ShortBranchName(), "master") {
 		return true
 	}
 	return false

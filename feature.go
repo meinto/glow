@@ -28,8 +28,8 @@ func FeatureFromBranch(branchName string) (AuthoredBranch, error) {
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f feature) CreationIsAllowedFrom(sourceBranch string) bool {
-	return strings.Contains(sourceBranch, "develop")
+func (f feature) CreationIsAllowedFrom(sourceBranch Branch) bool {
+	return strings.Contains(sourceBranch.ShortBranchName(), "develop")
 }
 
 // CanBeClosed checks if the branch name is a valid

@@ -37,9 +37,9 @@ var _ = Describe("Fix", func() {
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
 				if testBranchName == RELEASE_BRANCH {
-					Expect(f.CreationIsAllowedFrom(testBranchName)).To(BeTrue())
+					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeTrue())
 				} else {
-					Expect(f.CreationIsAllowedFrom(testBranchName)).To(BeFalse())
+					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeFalse())
 				}
 			}
 		})

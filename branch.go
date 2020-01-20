@@ -8,7 +8,7 @@ import (
 
 // Branch interface
 type Branch interface {
-	CreationIsAllowedFrom(sourceBranch string) bool
+	CreationIsAllowedFrom(sourceBranch Branch) bool
 	CanBeClosed() bool
 	CanBePublished() bool
 	CloseBranches(availableBranches []Branch) []Branch
@@ -32,7 +32,7 @@ func NewBranch(name string) Branch {
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (b branch) CreationIsAllowedFrom(sourceBranch string) bool {
+func (b branch) CreationIsAllowedFrom(sourceBranch Branch) bool {
 	return false
 }
 
