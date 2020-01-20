@@ -20,7 +20,7 @@ var _ = Describe("Branch", func() {
 
 	It("is not allowed to be created from another branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
-			Expect(branch.(Branch).CreationIsAllowedFrom("another-branch")).To(BeFalse())
+			Expect(branch.(Branch).CreationIsAllowedFrom(NewBranch("another-branch"))).To(BeFalse())
 		})
 	})
 

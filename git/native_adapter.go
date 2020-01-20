@@ -106,7 +106,7 @@ func (a nativeGitAdapter) Create(b glow.Branch, skipChecks bool) (stdout, stderr
 		if err != nil {
 			return stdout, stderr, err
 		}
-		if !b.CreationIsAllowedFrom(sourceBranch.BranchName()) {
+		if !b.CreationIsAllowedFrom(sourceBranch) {
 			return stdout, stderr, errors.New("creation not allowed from this branch")
 		}
 	}

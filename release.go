@@ -38,8 +38,8 @@ func ReleaseFromBranch(branchName string) (Branch, error) {
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
-func (f release) CreationIsAllowedFrom(sourceBranch string) bool {
-	if strings.Contains(sourceBranch, "develop") {
+func (f release) CreationIsAllowedFrom(sourceBranch Branch) bool {
+	if strings.Contains(sourceBranch.ShortBranchName(), "develop") {
 		return true
 	}
 	return false
