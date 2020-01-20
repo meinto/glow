@@ -75,7 +75,7 @@ func (b branch) CloseBranches(availableBranches []Branch) []Branch {
 
 // PublishBranch returns the publish branch if available
 func (b branch) PublishBranch() Branch {
-	return branch{}
+	return nil
 }
 
 // BranchName is a getter for the branch name
