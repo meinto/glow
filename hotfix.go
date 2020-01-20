@@ -16,7 +16,7 @@ type hotfix struct {
 // NewHotfix creates a new hotfix definition
 func NewHotfix(version string) (Branch, error) {
 	branchName := fmt.Sprintf("refs/heads/hotfix/v%s", version)
-	b := NewPlainBranch(branchName)
+	b := NewBranch(branchName)
 	return hotfix{version, b}, nil
 }
 
@@ -25,7 +25,7 @@ func HotfixFromBranch(branchName string) (Branch, error) {
 	if !strings.Contains(branchName, "/hotfix/v") {
 		return hotfix{}, errors.New("no valid hotfix branch")
 	}
-	b := NewPlainBranch(branchName)
+	b := NewBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
 		return hotfix{}, errors.New("invalid branch name " + branchName)
@@ -63,11 +63,11 @@ func (f hotfix) CloseBranches(availableBranches []Branch) []Branch {
 			branches = append(branches, b)
 		}
 	}
-	branches = append(branches, NewPlainBranch("develop"))
+	branches = append(branches, NewBranch("develop"))
 	return branches
 }
 
 // PublishBranch returns the publish branch if available
 func (f hotfix) PublishBranch() Branch {
-	return NewPlainBranch("master")
+	return NewBranch("master")
 }

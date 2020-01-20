@@ -16,7 +16,7 @@ type release struct {
 // NewRelease creates a new release definition
 func NewRelease(version string) (Branch, error) {
 	branchName := fmt.Sprintf("refs/heads/release/v%s", version)
-	b := NewPlainBranch(branchName)
+	b := NewBranch(branchName)
 	return release{version, b}, nil
 }
 
@@ -25,7 +25,7 @@ func ReleaseFromBranch(branchName string) (Branch, error) {
 	if !strings.Contains(branchName, "/release/v") {
 		return release{}, errors.New("no valid release branch")
 	}
-	b := NewPlainBranch(branchName)
+	b := NewBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
 		return release{}, errors.New("invalid branch name " + branchName)
@@ -58,11 +58,11 @@ func (f release) CanBePublished() bool {
 // CloseBranches returns all branches which this branch have to be merged with
 func (f release) CloseBranches(availableBranches []Branch) []Branch {
 	return []Branch{
-		NewPlainBranch("develop"),
+		NewBranch("develop"),
 	}
 }
 
 // PublishBranch returns the publish branch if available
 func (f release) PublishBranch() Branch {
-	return NewPlainBranch("master")
+	return NewBranch("master")
 }

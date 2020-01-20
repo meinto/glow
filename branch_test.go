@@ -12,11 +12,10 @@ var _ = Describe("Branch", func() {
 	var branches []Branch
 
 	BeforeEach(func() {
-		b1, _ := NewBranch("type/author/feature")
-		b2 := NewPlainBranch("type/author/feature")
+		b1 := NewBranch("type/author/feature")
 		b3, _ := NewAuthoredBranch("type/%s/%s", "author", "feature")
 		b4, _ := AuthoredBranchFromBranchName("refs/heads/type/author/feature")
-		branches = []Branch{b1, b2, b3, b4}
+		branches = []Branch{b1, b3, b4}
 	})
 
 	It("is not allowed to be created from another branch", func() {

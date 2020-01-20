@@ -23,19 +23,10 @@ type branch struct {
 }
 
 // NewBranch creates a new branch definition
-func NewBranch(name string) (Branch, error) {
+func NewBranch(name string) Branch {
 	if !strings.HasPrefix(name, "refs/heads/") {
 		name = "refs/heads/" + name
 	}
-	return NewPlainBranch(name), nil
-}
-
-// NewPlainBranch creates a new plain branch
-func NewPlainBranch(name string) Branch {
-	if !strings.HasPrefix(name, "refs/heads/") {
-		name = "refs/heads/" + name
-	}
-
 	return branch{name}
 }
 
@@ -89,7 +80,7 @@ type authoredBranch struct {
 // NewAuthoredBranch creates a new branch definition
 func NewAuthoredBranch(branchTemplate, author, name string) (AuthoredBranch, error) {
 	branchName := fmt.Sprintf(branchTemplate, author, name)
-	branch, _ := NewBranch(branchName)
+	branch := NewBranch(branchName)
 	return authoredBranch{
 		author,
 		name,
