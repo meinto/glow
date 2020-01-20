@@ -43,3 +43,13 @@ func (s *loggingService) GetCIBranch() (branch glow.Branch, err error) {
 	}()
 	return s.next.GetCIBranch()
 }
+
+func (s *loggingService) DetectCICDOrigin() (cicdOrigin string, err error) {
+	defer func() {
+		l.Log().WithFields(logrus.Fields{
+			"cicdOrigin": cicdOrigin,
+			"error":      err,
+		}).Info()
+	}()
+	return s.next.DetectCICDOrigin()
+}

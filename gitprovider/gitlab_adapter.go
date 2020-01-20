@@ -98,3 +98,26 @@ func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
 	branch, err := glow.NewBranch(branchName)
 	return branch, errors.Wrap(err, "error get ci branch")
 }
+
+func (a *gitlabAdapter) DetectCICDOrigin() (string, error) {
+	gitProviderURL := a.endpoint
+	gitUser := os.Getenv("CI_GIT_USER")
+	gitToken := os.Getenv("CI_GIT_TOKEN")
+
+	if gitUser != "" && gitToken != "" {
+		endpointURL, err := url.Parse(a.endpoint)
+		if err != nil {
+			return "", errors.Wrap(err, "couldn't parse gitLab endpoint")
+		}
+
+		gitProviderURL = fmt.Sprintf(
+			"%s://%s:%s@%s",
+			endpointURL.Scheme, gitUser, gitToken, endpointURL.Host,
+		)
+	}
+
+	return fmt.Sprintf(
+		"%s/%s/%s.git",
+		gitProviderURL, a.namespace, a.project,
+	), nil
+}

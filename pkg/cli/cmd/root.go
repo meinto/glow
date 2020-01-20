@@ -13,11 +13,12 @@ import (
 )
 
 var rootCmdOptions struct {
-	Author     string
-	GitPath    string
-	CICDOrigin string
-	CI         bool
-	SkipChecks bool
+	Author           string
+	GitPath          string
+	CICDOrigin       string
+	DetectCICDOrigin bool
+	CI               bool
+	SkipChecks       bool
 }
 
 var logger kitlog.Logger
@@ -32,6 +33,17 @@ var rootCmd = &cobra.Command{
 			util.ExitOnError(err)
 
 			util.ExitOnError(g.SetCICDOrigin(rootCmdOptions.CICDOrigin))
+		} else if rootCmdOptions.DetectCICDOrigin {
+			g, err := util.GetGitClient()
+			util.ExitOnError(err)
+
+			gp, err := util.GetGitProvider()
+			util.ExitOnError(err)
+
+			cicdOrigin, err := gp.DetectCICDOrigin()
+			util.ExitOnError(err)
+
+			util.ExitOnError(g.SetCICDOrigin(cicdOrigin))
 		}
 	},
 }
@@ -48,6 +60,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "", "name of the author")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
 	rootCmd.PersistentFlags().StringVar(&rootCmdOptions.CICDOrigin, "cicdOrigin", "", "provide a git origin url where a pipeline can push things via token")
+	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.DetectCICDOrigin, "detectCicdOrigin", false, "auto detect a git origin url where a pipeline can push things via token")
 	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.CI, "ci", false, "detects if command is running in a ci")
 	rootCmd.PersistentFlags().BoolVar(&rootCmdOptions.SkipChecks, "skipChecks", false, "skip checks like accidentally creating git-flow branches from wrong source branch")
 	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
