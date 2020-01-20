@@ -40,6 +40,6 @@ func (f feature) CanBeClosed() bool {
 // CloseBranches returns all branches which this branch have to be merged with
 func (f feature) CloseBranches(availableBranches []Branch) []Branch {
 	return []Branch{
-		NewPlainBranch("develop"),
+		NewBranch("develop"),
 	}
 }

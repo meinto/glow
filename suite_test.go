@@ -24,12 +24,12 @@ const (
 )
 
 func MockBranchCollection() []Branch {
-	b1, _ := NewBranch(MASTER_BRANCH)
-	b2, _ := NewBranch(DEVELOP_BRANCH)
-	b3, _ := NewBranch(RELEASE_BRANCH)
-	b4, _ := NewBranch(FEAUTURE_BRANCH)
-	b5, _ := NewBranch(HOTFIX_BRANCH)
-	b6, _ := NewBranch(FIX_BRANCH)
-	b7, _ := NewBranch(ANOTHER_BRANCH)
+	b1 := NewBranch(MASTER_BRANCH)
+	b2 := NewBranch(DEVELOP_BRANCH)
+	b3 := NewBranch(RELEASE_BRANCH)
+	b4 := NewBranch(FEAUTURE_BRANCH)
+	b5 := NewBranch(HOTFIX_BRANCH)
+	b6 := NewBranch(FIX_BRANCH)
+	b7 := NewBranch(ANOTHER_BRANCH)
 	return []Branch{b1, b2, b3, b4, b5, b6, b7}
 }
