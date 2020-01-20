@@ -15,7 +15,7 @@ type hotfix struct {
 
 // NewHotfix creates a new hotfix definition
 func NewHotfix(version string) (Branch, error) {
-	branchName := fmt.Sprintf("refs/heads/hotfix/v%s", version)
+	branchName := fmt.Sprintf(BRANCH_NAME_PREFIX+"hotfix/v%s", version)
 	b := NewBranch(branchName)
 	return hotfix{version, b}, nil
 }

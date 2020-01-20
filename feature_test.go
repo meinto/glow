@@ -13,7 +13,7 @@ var _ = Describe("Feature", func() {
 
 	BeforeEach(func() {
 		f1, _ := NewFeature("luke", "falcon")
-		f2, _ := FeatureFromBranch("refs/heads/feature/luke/falcon")
+		f2, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon")
 		branches = []AuthoredBranch{f1, f2}
 	})
 
@@ -63,7 +63,7 @@ var _ = Describe("Feature", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(AuthoredBranch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/" + FEAUTURE_BRANCH))
+			Expect(branchName).To(Equal(BRANCH_NAME_PREFIX + FEAUTURE_BRANCH))
 		})
 	})
 
