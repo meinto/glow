@@ -13,7 +13,7 @@ var _ = Describe("Release", func() {
 
 	BeforeEach(func() {
 		f1, _ := NewRelease("1.2.3")
-		f2, _ := ReleaseFromBranch("refs/heads/release/v1.2.3")
+		f2, _ := ReleaseFromBranch(BRANCH_NAME_PREFIX + "release/v1.2.3")
 		branches = []Branch{f1, f2}
 	})
 
@@ -63,7 +63,7 @@ var _ = Describe("Release", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(Branch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/" + RELEASE_BRANCH))
+			Expect(branchName).To(Equal(BRANCH_NAME_PREFIX + RELEASE_BRANCH))
 		})
 	})
 

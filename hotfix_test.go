@@ -13,7 +13,7 @@ var _ = Describe("Hotfix", func() {
 
 	BeforeEach(func() {
 		f1, _ := NewHotfix("0.0.1")
-		f2, _ := HotfixFromBranch("refs/heads/hotfix/v0.0.1")
+		f2, _ := HotfixFromBranch(BRANCH_NAME_PREFIX + "hotfix/v0.0.1")
 		branches = []Branch{f1, f2}
 	})
 
@@ -64,7 +64,7 @@ var _ = Describe("Hotfix", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(Branch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/" + HOTFIX_BRANCH))
+			Expect(branchName).To(Equal(BRANCH_NAME_PREFIX + HOTFIX_BRANCH))
 		})
 	})
 

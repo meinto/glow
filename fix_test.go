@@ -13,7 +13,7 @@ var _ = Describe("Fix", func() {
 
 	BeforeEach(func() {
 		f1, _ := NewFix("luke", "falcon")
-		f2, _ := FixFromBranch("refs/heads/fix/luke/falcon")
+		f2, _ := FixFromBranch(BRANCH_NAME_PREFIX + "fix/luke/falcon")
 		branches = []AuthoredBranch{f1, f2}
 	})
 
@@ -63,7 +63,7 @@ var _ = Describe("Fix", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(AuthoredBranch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/" + FIX_BRANCH))
+			Expect(branchName).To(Equal(BRANCH_NAME_PREFIX + FIX_BRANCH))
 		})
 	})
 

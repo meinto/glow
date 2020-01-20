@@ -22,10 +22,12 @@ type branch struct {
 	name string
 }
 
+const BRANCH_NAME_PREFIX = "refs/heads/"
+
 // NewBranch creates a new branch definition
 func NewBranch(name string) Branch {
-	if !strings.HasPrefix(name, "refs/heads/") {
-		name = "refs/heads/" + name
+	if !strings.HasPrefix(name, BRANCH_NAME_PREFIX) {
+		name = BRANCH_NAME_PREFIX + name
 	}
 	return branch{name}
 }
@@ -63,7 +65,7 @@ func (b branch) BranchName() string {
 
 // ShortBranchName is a getter for the short version of the branch name
 func (b branch) ShortBranchName() string {
-	return strings.TrimPrefix(b.name, "refs/heads/")
+	return strings.TrimPrefix(b.name, BRANCH_NAME_PREFIX)
 }
 
 // AuthoredBranch definition

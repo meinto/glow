@@ -14,7 +14,7 @@ var _ = Describe("Branch", func() {
 	BeforeEach(func() {
 		b1 := NewBranch("type/author/feature")
 		b3, _ := NewAuthoredBranch("type/%s/%s", "author", "feature")
-		b4, _ := AuthoredBranchFromBranchName("refs/heads/type/author/feature")
+		b4, _ := AuthoredBranchFromBranchName(BRANCH_NAME_PREFIX + "type/author/feature")
 		branches = []Branch{b1, b3, b4}
 	})
 
@@ -53,7 +53,7 @@ var _ = Describe("Branch", func() {
 	It("has a branch name", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			branchName := branch.(Branch).BranchName()
-			Expect(branchName).To(Equal("refs/heads/type/author/feature"))
+			Expect(branchName).To(Equal(BRANCH_NAME_PREFIX + "type/author/feature"))
 		})
 	})
 
