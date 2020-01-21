@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
-	. "github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -29,31 +29,31 @@ var releaseCmd = &cobra.Command{
 	Short: "create a release branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		g, err := GetGitClient()
-		ExitOnError(err)
+		g, err := util.GetGitClient()
+		util.ExitOnError(err)
 
-		version, s := ProcessVersion(
+		version, s := util.ProcessVersion(
 			args[0],
 			releaseCmdOptions.VersionFile,
 			releaseCmdOptions.VersionFileType,
 		)
 
 		release, err := glow.NewRelease(version)
-		ExitOnError(err)
+		util.ExitOnError(err)
 
-		ExitOnError(g.Create(release, rootCmdOptions.SkipChecks))
+		util.ExitOnError(g.Create(release, rootCmdOptions.SkipChecks))
 
 		_, _, err = g.Checkout(release)
-		ExitOnError(err)
+		util.ExitOnError(err)
 
-		if IsSemanticVersion(args[0]) {
-			ExitOnError(s.SetNextVersion(args[0]))
+		if util.IsSemanticVersion(args[0]) {
+			util.ExitOnError(s.SetNextVersion(args[0]))
 		} else {
-			ExitOnError(s.SetVersion(version))
+			util.ExitOnError(s.SetVersion(version))
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		PostRunWithCurrentVersion(
+		util.PostRunWithCurrentVersion(
 			releaseCmdOptions.VersionFile,
 			releaseCmdOptions.VersionFileType,
 			releaseCmdOptions.PostReleaseScript,

@@ -4,13 +4,13 @@ import (
 	"log"
 
 	"github.com/meinto/glow"
-	. "github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(closeCmd)
-	AddFlagsForMergeRequests(closeCmd)
+	util.AddFlagsForMergeRequests(closeCmd)
 }
 
 var closeCmd = &cobra.Command{
@@ -18,29 +18,29 @@ var closeCmd = &cobra.Command{
 	Short: "close a branch",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		g, err := GetGitClient()
-		ExitOnError(err)
+		g, err := util.GetGitClient()
+		util.ExitOnError(err)
 
 		// err := g.Fetch()
-		// CheckForError(err, "Fetch")
+		// util.CheckForError(err, "Fetch")
 
-		gp, err := GetGitProvider()
-		ExitOnError(err)
+		gp, err := util.GetGitProvider()
+		util.ExitOnError(err)
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
 			cb := gp.GetCIBranch()
-			ExitOnError(err)
+			util.ExitOnError(err)
 			currentBranch = cb
 		} else {
 			cb, _, _, err := g.CurrentBranch()
-			ExitOnError(err)
+			util.ExitOnError(err)
 			currentBranch = cb
 		}
 
 		err = gp.Close(currentBranch)
-		if !MergeRequestFlags.Gracefully {
-			ExitOnError(err)
+		if !util.MergeRequestFlags.Gracefully {
+			util.ExitOnError(err)
 		} else {
 			log.Println(err)
 		}
