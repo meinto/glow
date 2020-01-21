@@ -2,204 +2,155 @@ package git_test
 
 import (
 	"strings"
-	"testing"
 
 	"github.com/meinto/glow/cmd"
 
 	. "github.com/meinto/glow/git"
 	"github.com/meinto/glow/testenv"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func setupNativeGitService(pathToRepo string) Service {
-	exec := cmd.NewCmdExecutorInDir("/bin/bash", pathToRepo)
-	s := NewNativeService(exec)
-	s = NewLoggingService(s)
-	return s
-}
+var _ = Describe("git service", func() {
 
-func TestSetCICDOrigin(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
+	var local *testenv.LocalRepository
+	var bare *testenv.BareRepository
+	var teardown func()
+	var s Service
 
-	newOrigin := "https://new.origin"
-	s := setupNativeGitService(local.Folder)
-	_, _, err := s.SetCICDOrigin(newOrigin)
-	testenv.CheckForErrors(t, err)
+	BeforeEach(func() {
+		local, bare, teardown = testenv.SetupEnv()
+		exec := cmd.NewCmdExecutorInDir("/bin/bash", local.Folder)
+		s = NewNativeService(exec)
+		s = NewLoggingService(s)
+	})
 
-	stdout, _, err := local.Do("git remote get-url origin")
-	testenv.CheckForErrors(t, err)
-	if strings.TrimSpace(stdout.String()) != newOrigin {
-		t.Errorf("origin should be %s but is %s", newOrigin, stdout.String())
-	}
-}
+	AfterEach(func() {
+		teardown()
+	})
 
-func TestGitRepoPath(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
+	Describe("SetCICDOrigin", func() {
+		It("sets a new origin for the local repository", func() {
+			newOrigin := "https://new.origin"
+			_, _, err := s.SetCICDOrigin(newOrigin)
+			Expect(err).To(BeNil())
+			stdout, _, err := local.Do("git remote get-url origin")
+			Expect(err).To(BeNil())
+			Expect(strings.TrimSpace(stdout.String())).To(Equal(newOrigin))
+		})
+	})
 
-	s := setupNativeGitService(local.Folder + "/subfolder")
-	repoPath, _, _, err := s.GitRepoPath()
-	testenv.CheckForErrors(t, err)
+	Describe("GitRepoPath", func() {
+		It("returns the path to the git repository", func() {
+			exec := cmd.NewCmdExecutorInDir("/bin/bash", local.Folder+"/subfolder")
+			s = NewNativeService(exec)
+			s = NewLoggingService(s)
+			repoPath, _, _, err := s.GitRepoPath()
+			Expect(err).To(BeNil())
+			Expect(strings.TrimPrefix(repoPath, "/private")).To(Equal(local.Folder))
+		})
+	})
 
-	if strings.TrimPrefix(repoPath, "/private") != local.Folder {
-		t.Errorf("repo path should be %s but is %s", local.Folder, repoPath)
-	}
-}
+	Describe("CurrentBranch", func() {
+		It("returns 'master'", func() {
+			b, _, _, err := s.CurrentBranch()
+			Expect(err).To(BeNil())
+			Expect(b.ShortBranchName()).To(Equal("master"))
+		})
 
-func TestCurrentBranch(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
+		It("returns 'test/branch'", func() {
+			newBranch := "test/branch"
+			local.CreateBranch(newBranch)
+			local.Checkout(newBranch)
+			b, _, _, err := s.CurrentBranch()
+			Expect(err).To(BeNil())
+			Expect(b.ShortBranchName()).To(Equal(newBranch))
+		})
+	})
 
-	s := setupNativeGitService(local.Folder)
-	b, _, _, err := s.CurrentBranch()
-	testenv.CheckForErrors(t, err)
-	if b.ShortBranchName() != "master" {
-		t.Errorf("branch should be 'master' but is '%s'", b.ShortBranchName())
-	}
+	Describe("BranchList", func() {
+		It("returns a list of all branches", func() {
+			featureBranches := []string{"test/branch", "test/branch2"}
+			for _, b := range featureBranches {
+				local.CreateBranch(b)
+			}
+			bs, _, _, err := s.BranchList()
+			expectedBranches := []string{"master"}
+			expectedBranches = append(expectedBranches, featureBranches...)
+			Expect(err).To(BeNil())
+			for i, eb := range expectedBranches {
+				b := bs[i]
+				Expect(b.ShortBranchName()).To(Equal(eb))
+			}
+		})
+	})
 
-	newBranch := "test/branch"
-	local.CreateBranch(newBranch)
-	local.Checkout(newBranch)
+	Describe("Fetch", func() {
+		It("fetches remote branches", func() {
+			local2 := testenv.Clone(bare.Folder, "local2")
 
-	b, _, _, err = s.CurrentBranch()
-	testenv.CheckForErrors(t, err)
-	if b.ShortBranchName() != newBranch {
-		t.Errorf("branch should be 'master' but is '%s'", b.ShortBranchName())
-	}
-}
+			local2Branch := "local2/branch"
+			local2.CreateBranch(local2Branch)
+			local2.Checkout(local2Branch)
+			local2.Push(local2Branch)
+			_, _, err := s.Fetch()
+			Expect(err).To(BeNil())
+			exists, branchName := local.Exists(local2Branch)
+			Expect(exists).To(BeTrue())
+			Expect(branchName).To(Equal(local2Branch))
+		})
+	})
 
-func TestBranchList(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
+	Describe("Stashing", func() {
+		It("stashes changes", func() {
+			local.Do("touch test.file")
+			stdout, _, _ := local.Do("git status | grep test.file")
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("test.file"))
+			s.AddAll()
+			s.Stash()
+			stdout, _, _ = local.Do("git status | grep test.file")
+			Expect(strings.TrimSpace(stdout.String())).To(Equal(""))
+		})
 
-	featureBranches := []string{"test/branch", "test/branch2"}
-	for _, b := range featureBranches {
-		local.CreateBranch(b)
-	}
+		It("pops the stash", func() {
+			local.Do("touch test.file")
+			stdout, _, _ := local.Do("git status | grep test.file")
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("test.file"))
+			s.AddAll()
+			s.Stash()
+			stdout, _, _ = local.Do("git status | grep test.file")
+			Expect(strings.TrimSpace(stdout.String())).To(Equal(""))
+			s.StashPop()
+			stdout, _, _ = local.Do("git status | grep test.file")
+			Expect(strings.TrimSpace(stdout.String())).NotTo(Equal(""))
+		})
+	})
 
-	s := setupNativeGitService(local.Folder)
-	bs, _, _, err := s.BranchList()
-	testenv.CheckForErrors(t, err)
+	Describe("Commit", func() {
+		It("commits the changes", func() {
+			branchIsAhead := "Your branch is ahead of 'origin/master' by 1 commit"
+			local.Do("touch test.file")
+			s.AddAll()
+			_, _, err := s.Commit("Commit test.file")
+			Expect(err).To(BeNil())
+			stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsAhead)
+			Expect(stdout.String()).NotTo(Equal(""))
+		})
+	})
 
-	expectedBranches := []string{"master"}
-	expectedBranches = append(expectedBranches, featureBranches...)
-	for i, eb := range expectedBranches {
-		b := bs[i]
-		if b.ShortBranchName() != eb {
-			t.Errorf("branch should be '%s' but is '%s'", eb, b.ShortBranchName())
-		}
-	}
-}
-
-func TestFetch(t *testing.T) {
-	local, bare, teardown := testenv.SetupEnv()
-	defer teardown()
-
-	local2 := testenv.Clone(bare.Folder, "local2")
-
-	local2Branch := "local2/branch"
-	local2.CreateBranch(local2Branch)
-	local2.Checkout(local2Branch)
-	local2.Push(local2Branch)
-
-	s := setupNativeGitService(local.Folder)
-	_, _, err := s.Fetch()
-	testenv.CheckForErrors(t, err)
-
-	exists, branchName := local.Exists(local2Branch)
-	if !exists {
-		t.Errorf("branch should be '%s' but is '%s'", local2Branch, branchName)
-	}
-}
-
-func TestStash(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
-
-	s := setupNativeGitService(local.Folder)
-	local.Do("touch test.file")
-	stdout, _, _ := local.Do("git status | grep test.file")
-	if stdout.String() == "" {
-		t.Errorf("testfile lookup should NOT be empty")
-	}
-
-	s.AddAll()
-	s.Stash()
-
-	stdout, _, _ = local.Do("git status | grep test.file")
-	if stdout.String() != "" {
-		t.Errorf("testfile lookup should be empty")
-	}
-}
-
-func TestStashPop(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
-
-	s := setupNativeGitService(local.Folder)
-	local.Do("touch test.file")
-	stdout, _, _ := local.Do("git status | grep test.file")
-	if stdout.String() == "" {
-		t.Errorf("testfile lookup should NOT be empty")
-	}
-
-	s.AddAll()
-	s.Stash()
-
-	stdout, _, _ = local.Do("git status | grep test.file")
-	if stdout.String() != "" {
-		t.Errorf("testfile lookup should be empty")
-	}
-
-	s.StashPop()
-
-	stdout, _, _ = local.Do("git status | grep test.file")
-	if stdout.String() == "" {
-		t.Errorf("testfile lookup should NOT be empty")
-	}
-}
-
-func TestCommit(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
-
-	branchIsAhead := "Your branch is ahead of 'origin/master' by 1 commit"
-	s := setupNativeGitService(local.Folder)
-	local.Do("touch test.file")
-
-	s.AddAll()
-	_, _, err := s.Commit("Commit test.file")
-	if err != nil {
-		t.Error(err)
-	}
-
-	stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsAhead)
-	if stdout.String() == "" {
-		t.Errorf("Branch should be 1 commit ahead")
-	}
-}
-
-func TestPushU(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv()
-	defer teardown()
-
-	branchIsUpToDate := "Your branch is up to date with 'origin/master'"
-	s := setupNativeGitService(local.Folder)
-	local.Do("touch test.file")
-	s.AddAll()
-	s.Commit("Commit test.file")
-	stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsUpToDate)
-	if stdout.String() != "" {
-		t.Error("Branch should NOT be up to date")
-	}
-
-	_, _, err := s.Push(false)
-	if err != nil {
-		t.Error(err)
-	}
-
-	stdout, _, _ = local.Do(`git status | grep "%s"`, branchIsUpToDate)
-	if stdout.String() == "" {
-		t.Error("Branch should be up to date")
-	}
-}
+	Describe("Push", func() {
+		It("pushes changes", func() {
+			branchIsUpToDate := "Your branch is up to date with 'origin/master'"
+			local.Do("touch test.file")
+			s.AddAll()
+			s.Commit("Commit test.file")
+			stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsUpToDate)
+			Expect(stdout.String()).To(Equal(""))
+			_, _, err := s.Push(false)
+			Expect(err).To(BeNil())
+			stdout, _, _ = local.Do(`git status | grep "%s"`, branchIsUpToDate)
+			Expect(stdout.String()).NotTo(Equal(""))
+		})
+	})
+})
