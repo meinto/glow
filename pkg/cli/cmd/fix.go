@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
-	. "github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -19,12 +19,12 @@ var fixCmd = &cobra.Command{
 		fixName := args[0]
 
 		fix, err := glow.NewFix(viper.GetString("author"), fixName)
-		ExitOnError(err)
+		util.ExitOnError(err)
 
-		g, err := GetGitClient()
-		ExitOnError(err)
+		g, err := util.GetGitClient()
+		util.ExitOnError(err)
 
-		ExitOnError(g.Create(fix, rootCmdOptions.SkipChecks))
-		ExitOnError(g.Checkout(fix))
+		util.ExitOnError(g.Create(fix, rootCmdOptions.SkipChecks))
+		util.ExitOnError(g.Checkout(fix))
 	},
 }

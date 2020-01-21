@@ -5,8 +5,9 @@ import (
 	"log"
 	"os"
 
+	kitlog "github.com/go-kit/kit/log"
 	"github.com/gobuffalo/packr/v2"
-	. "github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,27 +21,29 @@ var rootCmdOptions struct {
 	SkipChecks       bool
 }
 
+var logger kitlog.Logger
+
 var rootCmd = &cobra.Command{
 	Use:     "glow",
 	Short:   "small tool to adapt git-flow for gitlab",
 	Version: "0.0.0", // needed to set the version dynamically
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if rootCmdOptions.CICDOrigin != "" {
-			g, err := GetGitClient()
-			ExitOnError(err)
+			g, err := util.GetGitClient()
+			util.ExitOnError(err)
 
-			ExitOnError(g.SetCICDOrigin(rootCmdOptions.CICDOrigin))
+			util.ExitOnError(g.SetCICDOrigin(rootCmdOptions.CICDOrigin))
 		} else if rootCmdOptions.DetectCICDOrigin {
-			g, err := GetGitClient()
-			ExitOnError(err)
+			g, err := util.GetGitClient()
+			util.ExitOnError(err)
 
-			gp, err := GetGitProvider()
-			ExitOnError(err)
+			gp, err := util.GetGitProvider()
+			util.ExitOnError(err)
 
 			cicdOrigin, err := gp.DetectCICDOrigin()
-			ExitOnError(err)
+			util.ExitOnError(err)
 
-			ExitOnError(g.SetCICDOrigin(cicdOrigin))
+			util.ExitOnError(g.SetCICDOrigin(cicdOrigin))
 		}
 	},
 }
@@ -65,6 +68,9 @@ func init() {
 }
 
 func Execute() {
+	logger = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
+	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
