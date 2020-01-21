@@ -2,12 +2,9 @@ package testenv
 
 import (
 	"os"
-	"testing"
 )
 
-func SetupEnv(t *testing.T) (*LocalRepository, *BareRepository, func()) {
-	t.Log("init tmp git repo")
-
+func SetupEnv() (*LocalRepository, *BareRepository, func()) {
 	tmpFolder := "/tmp/github.com/meinto/glow"
 	local := NewLocalRepository(tmpFolder)
 	bare := NewBareRepository(tmpFolder)
@@ -17,6 +14,5 @@ func SetupEnv(t *testing.T) (*LocalRepository, *BareRepository, func()) {
 
 	return local, bare, func() {
 		os.RemoveAll("/tmp/github.com/meinto/glow")
-		t.Log("finish")
 	}
 }

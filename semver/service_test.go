@@ -1,93 +1,94 @@
-package semver
+package semver_test
 
 import (
 	"strings"
-	"testing"
 
+	. "github.com/meinto/glow/semver"
 	"github.com/meinto/glow/testenv"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestGetCurrentVersion(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
-	defer teardown()
+var _ = Describe("semver service", func() {
 
-	s := setupSemverService(local.Folder)
-	s = NewLoggingService(s)
-	currentVersion, err := s.GetCurrentVersion()
-	testenv.CheckForErrors(t, err)
+	var local *testenv.LocalRepository
+	var bare *testenv.BareRepository
+	var teardown func()
+	var s Service
 
-	if currentVersion != "1.2.3" || err != nil {
-		t.Errorf("current version should be '1.2.3' but is '%s'", currentVersion)
-	}
-}
+	BeforeEach(func() {
+		local, bare, teardown = testenv.SetupEnv()
+		s = setupSemverService(local.Folder)
+		s = NewLoggingService(s)
+	})
 
-func TestGetNextVersion(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
-	defer teardown()
+	AfterEach(func() {
+		teardown()
+	})
 
-	s := setupSemverService(local.Folder)
-	v, err := s.GetNextVersion("major")
-	testenv.CheckForErrors(t, err)
-	if v != "2.0.0" {
-		t.Errorf("version should be '2.0.0' but is '%s'", v)
-	}
+	Describe("GetCurrentVersion", func() {
+		It("returns the current version", func() {
+			currentVersion, err := s.GetCurrentVersion()
+			Expect(err).To(BeNil())
+			Expect(currentVersion).To(Equal("1.2.3"))
+		})
+	})
 
-	v, err = s.GetNextVersion("minor")
-	testenv.CheckForErrors(t, err)
-	if v != "1.3.0" {
-		t.Errorf("version should be '1.3.0' but is '%s'", v)
-	}
+	Describe("GetNextVersion", func() {
+		It("returns the next patch version", func() {
+			version, err := s.GetNextVersion("patch")
+			Expect(err).To(BeNil())
+			Expect(version).To(Equal("1.2.4"))
+		})
 
-	v, err = s.GetNextVersion("patch")
-	testenv.CheckForErrors(t, err)
-	if v != "1.2.4" {
-		t.Errorf("version should be '1.2.4' but is '%s'", v)
-	}
-}
+		It("returns the next minor version", func() {
+			version, err := s.GetNextVersion("minor")
+			Expect(err).To(BeNil())
+			Expect(version).To(Equal("1.3.0"))
+		})
 
-func TestSetNextVersion(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
-	defer teardown()
+		It("returns the next major version", func() {
+			version, err := s.GetNextVersion("major")
+			Expect(err).To(BeNil())
+			Expect(version).To(Equal("2.0.0"))
+		})
+	})
 
-	s := setupSemverService(local.Folder)
-	err := s.SetNextVersion("major")
-	testenv.CheckForErrors(t, err)
-	stdout, _, _ := local.Do("cat VERSION")
-	if stdout.String() != "2.0.0" {
-		t.Errorf("version should be '2.0.0' but is '%s'", stdout.String())
-	}
+	Describe("SetNextVersion", func() {
+		It("sets the next patch version", func() {
+			err := s.SetNextVersion("patch")
+			stdout, _, _ := local.Do("cat VERSION")
+			Expect(err).To(BeNil())
+			Expect(stdout.String()).To(Equal("1.2.4"))
+		})
 
-	err = s.SetNextVersion("minor")
-	testenv.CheckForErrors(t, err)
-	stdout, _, _ = local.Do("cat VERSION")
-	if stdout.String() != "2.1.0" {
-		t.Errorf("version should be '2.1.0' but is '%s'", stdout.String())
-	}
+		It("sets the next minor version", func() {
+			err := s.SetNextVersion("minor")
+			stdout, _, _ := local.Do("cat VERSION")
+			Expect(err).To(BeNil())
+			Expect(stdout.String()).To(Equal("1.3.0"))
+		})
 
-	err = s.SetNextVersion("patch")
-	testenv.CheckForErrors(t, err)
-	stdout, _, _ = local.Do("cat VERSION")
-	if stdout.String() != "2.1.1" {
-		t.Errorf("version should be '2.1.1' but is '%s'", stdout.String())
-	}
-}
+		It("sets the next major version", func() {
+			err := s.SetNextVersion("major")
+			stdout, _, _ := local.Do("cat VERSION")
+			Expect(err).To(BeNil())
+			Expect(stdout.String()).To(Equal("2.0.0"))
+		})
+	})
 
-func TestTagCurrentVersion(t *testing.T) {
-	local, bare, teardown := testenv.SetupEnv(t)
-	defer teardown()
-
-	s := setupSemverService(local.Folder)
-	err := s.TagCurrentVersion()
-	testenv.CheckForErrors(t, err)
-
-	stdout, _, _ := bare.Do("git tag | grep v1.2.3")
-	if strings.TrimSpace(stdout.String()) != "v1.2.3" {
-		t.Errorf("git tag 'v1.2.3' should have been pushed. Bare repo tag list: %s", stdout.String())
-	}
-}
+	Describe("TagCurrentVersion", func() {
+		It("sets a git tag for the current version", func() {
+			err := s.TagCurrentVersion()
+			stdout, _, _ := bare.Do("git tag | grep v1.2.3")
+			Expect(err).To(BeNil())
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("v1.2.3"))
+		})
+	})
+})
 
 // helpers
-
 func setupSemverService(folder string) Service {
 	return NewSemverService(
 		folder,
