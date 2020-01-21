@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/gobuffalo/packr/v2"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
@@ -21,7 +20,6 @@ var rootCmdOptions struct {
 	SkipChecks       bool
 }
 
-var logger kitlog.Logger
 
 var rootCmd = &cobra.Command{
 	Use:     "glow",
@@ -68,9 +66,6 @@ func init() {
 }
 
 func Execute() {
-	logger = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC)
-
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

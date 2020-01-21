@@ -1,4 +1,4 @@
-package git
+package git_test
 
 import (
 	"strings"
@@ -7,6 +7,7 @@ import (
 	"github.com/meinto/glow/cmd"
 
 	"github.com/meinto/glow/testenv"
+	. "github.com/meinto/glow/git"
 )
 
 func setupNativeGitService(pathToRepo string) Service {
