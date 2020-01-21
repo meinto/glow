@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +14,9 @@ var cleanupTagsCmd = &cobra.Command{
 	Short: "cleanup tags",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+		g, err := GetGitClient()
+		ExitOnError(err)
 
-		util.ExitOnError(g.CleanupTags(cleanupCmdFlags.cleanupUntracked))
+		ExitOnError(g.CleanupTags(cleanupCmdFlags.cleanupUntracked))
 	},
 }

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -30,29 +30,29 @@ var hotfixCmd = &cobra.Command{
 	Short: "create a hotfix branch",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+		g, err := GetGitClient()
+		ExitOnError(err)
 
-		version, s := util.ProcessVersion(
+		version, s := ProcessVersion(
 			args[0],
 			hotfixCmdOptions.VersionFile,
 			hotfixCmdOptions.VersionFileType,
 		)
 
 		hotfix, err := glow.NewHotfix(version)
-		util.ExitOnError(err)
+		ExitOnError(err)
 
-		util.ExitOnError(g.Create(hotfix, rootCmdOptions.SkipChecks))
-		util.ExitOnError(g.Checkout(hotfix))
+		ExitOnError(g.Create(hotfix, rootCmdOptions.SkipChecks))
+		ExitOnError(g.Checkout(hotfix))
 
-		if util.IsSemanticVersion(args[0]) {
-			util.ExitOnError(s.SetNextVersion(args[0]))
+		if IsSemanticVersion(args[0]) {
+			ExitOnError(s.SetNextVersion(args[0]))
 		} else {
-			util.ExitOnError(s.SetVersion(version))
+			ExitOnError(s.SetVersion(version))
 		}
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		util.PostRunWithCurrentVersion(
+		PostRunWithCurrentVersion(
 			hotfixCmdOptions.VersionFile,
 			hotfixCmdOptions.VersionFileType,
 			hotfixCmdOptions.PostHotfixScript,

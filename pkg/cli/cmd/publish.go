@@ -4,13 +4,13 @@ import (
 	"log"
 
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(publishCmd)
-	util.AddFlagsForMergeRequests(publishCmd)
+	AddFlagsForMergeRequests(publishCmd)
 }
 
 var publishCmd = &cobra.Command{
@@ -18,26 +18,26 @@ var publishCmd = &cobra.Command{
 	Short: "publish a release branch",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+		g, err := GetGitClient()
+		ExitOnError(err)
 
-		gp, err := util.GetGitProvider()
-		util.ExitOnError(err)
+		gp, err := GetGitProvider()
+		ExitOnError(err)
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
 			cb := gp.GetCIBranch()
-			util.ExitOnError(err)
+			ExitOnError(err)
 			currentBranch = cb
 		} else {
 			cb, _, _, err := g.CurrentBranch()
-			util.ExitOnError(err)
+			ExitOnError(err)
 			currentBranch = cb
 		}
 
 		err = gp.Publish(currentBranch)
-		if !util.MergeRequestFlags.Gracefully {
-			util.ExitOnError(err)
+		if !MergeRequestFlags.Gracefully {
+			ExitOnError(err)
 		} else {
 			log.Println(err)
 		}
