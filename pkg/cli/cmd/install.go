@@ -11,7 +11,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	cobraUtils "github.com/meinto/cobra-utils"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -25,19 +25,19 @@ var installCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		flist, err := fileList(".")
-		util.ExitOnErrorWithMessage("cannot get file list")(err)
+		ExitOnErrorWithMessage("cannot get file list")(err)
 
 		index, _, err := cobraUtils.PromptSelect(
 			"Select your downloaded glow file",
 			flist,
 		)
-		util.ExitOnErrorWithMessage(fmt.Sprintf("cannot get path to glow file: %s", err))(err)
+		ExitOnErrorWithMessage(fmt.Sprintf("cannot get path to glow file: %s", err))(err)
 
 		filePath, err := filepath.Abs(flist[index])
-		util.ExitOnErrorWithMessage("cannot get absolute file path")(err)
+		ExitOnErrorWithMessage("cannot get absolute file path")(err)
 
 		index, err = usageOptions()
-		util.ExitOnErrorWithMessage("cannot get usage option")(err)
+		ExitOnErrorWithMessage("cannot get usage option")(err)
 
 		var newFileName string
 		switch index {
@@ -49,7 +49,7 @@ var installCmd = &cobra.Command{
 
 		if _, err := os.Stat(newFileName); !os.IsNotExist(err) {
 			replace, err := replaceFile(newFileName)
-			util.ExitOnErrorWithMessage(err.Error())(err)
+			ExitOnErrorWithMessage(err.Error())(err)
 			if !replace {
 				log.Fatal("file not replaced")
 			}

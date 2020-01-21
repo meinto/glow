@@ -4,14 +4,14 @@ import (
 	"log"
 
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	closeCmd.AddCommand(closeHotfixCmd)
-	util.AddFlagsForMergeRequests(closeHotfixCmd)
+	AddFlagsForMergeRequests(closeHotfixCmd)
 }
 
 var closeHotfixCmd = &cobra.Command{
@@ -22,11 +22,11 @@ var closeHotfixCmd = &cobra.Command{
 		version := args[0]
 
 		if version == "current" {
-			g, err := util.GetGitClient()
-			util.ExitOnError(err)
+			g, err := GetGitClient()
+			ExitOnError(err)
 
 			pathToRepo, _, _, err := g.GitRepoPath()
-			util.ExitOnError(err)
+			ExitOnError(err)
 
 			s := semver.NewSemverService(
 				pathToRepo,
@@ -36,19 +36,19 @@ var closeHotfixCmd = &cobra.Command{
 			)
 			s = semver.NewLoggingService(s)
 			v, err := s.GetCurrentVersion()
-			util.ExitOnError(err)
+			ExitOnError(err)
 			version = v
 		}
 
-		gp, err := util.GetGitProvider()
-		util.ExitOnError(err)
+		gp, err := GetGitProvider()
+		ExitOnError(err)
 
 		currentBranch, err := glow.NewHotfix(version)
-		util.ExitOnError(err)
+		ExitOnError(err)
 
 		err = gp.Close(currentBranch)
-		if !util.MergeRequestFlags.Gracefully {
-			util.ExitOnError(err)
+		if !MergeRequestFlags.Gracefully {
+			ExitOnError(err)
 		} else {
 			log.Println(err)
 		}

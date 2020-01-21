@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	. "github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ func init() {
 	rootCmd.AddCommand(pushCmd)
 	pushCmd.Flags().BoolVar(&pushCmdOptions.AddAll, "addAll", false, "add all changes made on the current branch")
 	pushCmd.Flags().StringVar(&pushCmdOptions.CommitMessage, "commitMessage", "", "add a commit message (flag --addAll required)")
-	util.AddFlagsForMergeRequests(pushCmd)
+	AddFlagsForMergeRequests(pushCmd)
 }
 
 var pushCmd = &cobra.Command{
@@ -23,36 +23,36 @@ var pushCmd = &cobra.Command{
 	Short: "push changes",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+		g, err := GetGitClient()
+		ExitOnError(err)
 
-		gp, err := util.GetGitProvider()
-		util.ExitOnError(err)
+		gp, err := GetGitProvider()
+		ExitOnError(err)
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
 			cb := gp.GetCIBranch()
-			util.ExitOnError(err)
+			ExitOnError(err)
 			currentBranch = cb
 		} else {
 			cb, _, _, err := g.CurrentBranch()
-			util.ExitOnError(err)
+			ExitOnError(err)
 			currentBranch = cb
 		}
 
 		if pushCmdOptions.AddAll {
-			util.ExitOnError(g.AddAll())
-			util.ExitOnError(g.Stash())
-			util.ExitOnError(g.Checkout(currentBranch))
-			util.ExitOnError(g.StashPop())
-			util.ExitOnError(g.AddAll())
+			ExitOnError(g.AddAll())
+			ExitOnError(g.Stash())
+			ExitOnError(g.Checkout(currentBranch))
+			ExitOnError(g.StashPop())
+			ExitOnError(g.AddAll())
 
 			if pushCmdOptions.CommitMessage != "" {
-				util.ExitOnError(g.Commit(pushCmdOptions.CommitMessage))
+				ExitOnError(g.Commit(pushCmdOptions.CommitMessage))
 			}
 		}
 
 		g.Push(false)
-		util.ExitOnError(err)
+		ExitOnError(err)
 	},
 }
