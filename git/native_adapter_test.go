@@ -6,8 +6,8 @@ import (
 
 	"github.com/meinto/glow/cmd"
 
-	"github.com/meinto/glow/testenv"
 	. "github.com/meinto/glow/git"
+	"github.com/meinto/glow/testenv"
 )
 
 func setupNativeGitService(pathToRepo string) Service {
@@ -18,7 +18,7 @@ func setupNativeGitService(pathToRepo string) Service {
 }
 
 func TestSetCICDOrigin(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	newOrigin := "https://new.origin"
@@ -34,7 +34,7 @@ func TestSetCICDOrigin(t *testing.T) {
 }
 
 func TestGitRepoPath(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	s := setupNativeGitService(local.Folder + "/subfolder")
@@ -47,7 +47,7 @@ func TestGitRepoPath(t *testing.T) {
 }
 
 func TestCurrentBranch(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	s := setupNativeGitService(local.Folder)
@@ -69,7 +69,7 @@ func TestCurrentBranch(t *testing.T) {
 }
 
 func TestBranchList(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	featureBranches := []string{"test/branch", "test/branch2"}
@@ -92,7 +92,7 @@ func TestBranchList(t *testing.T) {
 }
 
 func TestFetch(t *testing.T) {
-	local, bare, teardown := testenv.SetupEnv(t)
+	local, bare, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	local2 := testenv.Clone(bare.Folder, "local2")
@@ -113,7 +113,7 @@ func TestFetch(t *testing.T) {
 }
 
 func TestStash(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	s := setupNativeGitService(local.Folder)
@@ -133,7 +133,7 @@ func TestStash(t *testing.T) {
 }
 
 func TestStashPop(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	s := setupNativeGitService(local.Folder)
@@ -160,7 +160,7 @@ func TestStashPop(t *testing.T) {
 }
 
 func TestCommit(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	branchIsAhead := "Your branch is ahead of 'origin/master' by 1 commit"
@@ -180,7 +180,7 @@ func TestCommit(t *testing.T) {
 }
 
 func TestPushU(t *testing.T) {
-	local, _, teardown := testenv.SetupEnv(t)
+	local, _, teardown := testenv.SetupEnv()
 	defer teardown()
 
 	branchIsUpToDate := "Your branch is up to date with 'origin/master'"
