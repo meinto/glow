@@ -29,8 +29,11 @@ func Log() *logger {
 	parts := strings.Split(nameFull, "/")
 	name := strings.Split(nameFull, "/")[len(parts)-1]
 
+	prefix := name
 	nameParts := strings.Split(name, ".")
-	prefix := strings.Join(nameParts[:len(nameParts)-1], ".")
+	if nameParts[len(nameParts)-1] == "func1" {
+		prefix = strings.Join(nameParts[:len(nameParts)-1], ".")
+	}
 
 	return &logger{l.WithFields(logrus.Fields{
 		"prefix": prefix,
