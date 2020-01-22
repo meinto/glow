@@ -9,6 +9,9 @@ import (
 
 func Log() *logrus.Entry {
 	l := logrus.New()
+	l.SetFormatter(&logrus.TextFormatter{
+		ForceColors: true,
+	})
 
 	pc, _, _, _ := runtime.Caller(1)
 	nameFull := runtime.FuncForPC(pc).Name()
