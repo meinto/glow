@@ -3,10 +3,11 @@ package util
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	l "github.com/meinto/glow/logging"
 )
 
 func PostRunWithCurrentVersion(
@@ -37,18 +38,14 @@ func PostRunWithCurrentVersion(
 
 func postRelease(version, script string) {
 	pathToFile, err := filepath.Abs(script)
-	if err != nil {
-		log.Println("cannot find post-release script", err)
-	}
+	l.Log().Error(err)
 	cmd := exec.Command(pathToFile, version)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
-	if err != nil {
-		log.Println("error while executing post-release script", err)
-	}
-	log.Println("post release:")
-	log.Println(out.String())
+	l.Log().
+		Stdout(out.String()).
+		Error(err)
 }
 
 func execute(version, command string) {
@@ -61,9 +58,7 @@ func execute(version, command string) {
 	cmd.Stderr = &stderr
 	cmd.Stdout = &stdout
 	err := cmd.Run()
-	if err != nil {
-		log.Println("error while executing post-release script", err.Error(), stderr.String())
-	}
-	log.Println("post release:")
-	log.Println(stdout.String())
+	l.Log().
+		Stdout(stdout.String()).
+		Stderr(stderr.String(), err)
 }

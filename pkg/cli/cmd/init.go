@@ -10,6 +10,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	cobraUtils "github.com/meinto/cobra-utils"
+	l "github.com/meinto/glow/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -92,7 +93,15 @@ var initCmd = &cobra.Command{
 		}
 		writeJSONFile(config, privateConfigFileName)
 
-		log.Println(config, author, gitProviderDomain, gitProvider, projectNamespace, projectName, token)
+		l.Log().Info(l.Fields{
+			"config":            config,
+			"author":            author,
+			"gitProviderDomain": gitProviderDomain,
+			"gitProvider":       gitProvider,
+			"projectNamespace":  projectNamespace,
+			"projectName":       projectName,
+			"token":             token,
+		})
 	},
 }
 

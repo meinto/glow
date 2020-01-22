@@ -1,8 +1,10 @@
 package util
 
 import (
-	"log"
+	"errors"
 	"os"
+
+	l "github.com/meinto/glow/logging"
 )
 
 func ExitOnError(args ...interface{}) {
@@ -14,7 +16,7 @@ func ExitOnError(args ...interface{}) {
 func ExitOnErrorWithMessage(msg string) func(args ...interface{}) {
 	return func(args ...interface{}) {
 		if hasError(args...) {
-			log.Println(msg)
+			l.Log().Error(errors.New(msg))
 			os.Exit(1)
 		}
 	}

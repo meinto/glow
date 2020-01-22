@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/meinto/glow"
+	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +38,7 @@ var publishCmd = &cobra.Command{
 		if !util.MergeRequestFlags.Gracefully {
 			util.ExitOnError(err)
 		} else {
-			log.Println(err)
+			l.Log().Error(err)
 		}
 	},
 }

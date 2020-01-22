@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	l "github.com/meinto/glow/logging"
 
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
@@ -49,7 +49,7 @@ var closeHotfixCmd = &cobra.Command{
 		if !util.MergeRequestFlags.Gracefully {
 			util.ExitOnError(err)
 		} else {
-			log.Println(err)
+			l.Log().Error(err)
 		}
 	},
 }

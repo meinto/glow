@@ -3,10 +3,9 @@ package main
 //go:generate ../../.circleci/generate-assets.sh
 
 import (
-	"log"
-
 	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
+	l "github.com/meinto/glow/logging"
 	clicmd "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/spf13/viper"
 )
@@ -22,22 +21,16 @@ func main() {
 	viper.SetConfigName("glow.config")
 	viper.AddConfigPath(rootRepoPath)
 	err = viper.ReadInConfig()
-	if err != nil {
-		log.Println("there is no glow config")
-	}
+	l.Log().Warn(l.Fields{"msg": "there is no glow config"})
 
 	viper.SetConfigName("glow.private")
 	viper.AddConfigPath(rootRepoPath)
 	err = viper.MergeInConfig()
-	if err != nil {
-		log.Println("there is no private glow config")
-	}
+	l.Log().Warn(l.Fields{"msg": "there is no private glow config"})
 
 	viper.SetEnvPrefix("glow")
 	err = viper.BindEnv("token")
-	if err != nil {
-		log.Println("env GLOW_TOKEN is missing")
-	}
+	l.Log().Warn(l.Fields{"msg": "env GLOW_TOKEN is missing"})
 
 	clicmd.Execute()
 }

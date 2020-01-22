@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/gobuffalo/packr/v2"
+	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,7 +18,6 @@ var rootCmdOptions struct {
 	CI               bool
 	SkipChecks       bool
 }
-
 
 var rootCmd = &cobra.Command{
 	Use:     "glow",
@@ -50,7 +48,7 @@ func init() {
 	box := packr.New("build-assets", "../../../buildAssets")
 	version, err := box.FindString("VERSION")
 	if err != nil {
-		log.Println(err)
+		l.Log().Error(err)
 		version = "0.0.0"
 	}
 	rootCmd.SetVersionTemplate(version)
@@ -67,7 +65,7 @@ func init() {
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		l.Log().Error(err)
 		os.Exit(1)
 	}
 }
