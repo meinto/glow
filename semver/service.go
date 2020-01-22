@@ -1,12 +1,12 @@
 package semver
 
 import (
-	"log"
 	"strings"
 
 	semver "github.com/meinto/git-semver"
 	"github.com/meinto/git-semver/file"
 	"github.com/meinto/git-semver/git"
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -73,7 +73,7 @@ func (s *service) SetNextVersion(versionType string) error {
 		return err
 	}
 
-	log.Println("new version will be: ", nextVersion)
+	l.Log().Info(l.Fields{"nextVersion": nextVersion})
 
 	return s.SetVersion(nextVersion)
 }
