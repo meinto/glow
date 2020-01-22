@@ -2,7 +2,6 @@ package semver
 
 import (
 	l "github.com/meinto/glow/logging"
-	"github.com/sirupsen/logrus"
 )
 
 type loggingService struct {
@@ -11,57 +10,53 @@ type loggingService struct {
 
 func NewLoggingService(s Service) Service {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{"service": s}).Info()
+		l.Log().Info(l.Fields{"service": s})
 	}()
 	return &loggingService{s}
 }
 
 func (s *loggingService) GetCurrentVersion() (version string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"version": version,
-			"error":   err,
-		}).Info()
+		l.Log().
+			Info(l.Fields{"version": version}).
+			Error(err)
 	}()
 	return s.next.GetCurrentVersion()
 }
 
 func (s *loggingService) GetNextVersion(versionType string) (version string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"versionType": versionType,
-			"version":     version,
-			"error":       err,
-		}).Info()
+		l.Log().
+			Info(l.Fields{
+				"versionType": versionType,
+				"version":     version,
+			}).
+			Error(err)
 	}()
 	return s.next.GetNextVersion(versionType)
 }
 
 func (s *loggingService) SetNextVersion(versionType string) (err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"versionType": versionType,
-			"error":       err,
-		}).Info()
+		l.Log().
+			Info(l.Fields{"versionType": versionType}).
+			Error(err)
 	}()
 	return s.next.SetNextVersion(versionType)
 }
 
 func (s *loggingService) SetVersion(version string) (err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"version": version,
-			"error":   err,
-		}).Info()
+		l.Log().
+			Info(l.Fields{"version": version}).
+			Error(err)
 	}()
 	return s.next.SetVersion(version)
 }
 
 func (s *loggingService) TagCurrentVersion() (err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"error": err,
-		}).Info()
+		l.Log().Error(err)
 	}()
 	return s.next.TagCurrentVersion()
 }
