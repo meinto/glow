@@ -26,12 +26,12 @@ type service struct {
 }
 
 func NewSemverService(pathToRepo, pathToShell, versionFile, versionFileType string) Service {
-	return &service{
+	return NewLoggingService(&service{
 		pathToRepo:      pathToRepo,
 		pathToShell:     pathToShell,
 		versionFile:     versionFile,
 		versionFileType: versionFileType,
-	}
+	})
 }
 
 func (s *service) GetCurrentVersion() (string, error) {

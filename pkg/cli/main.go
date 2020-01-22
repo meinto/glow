@@ -14,7 +14,6 @@ import (
 func main() {
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
-	g = git.NewLoggingService(g)
 	rootRepoPath, _, _, err := g.GitRepoPath()
 	if err != nil {
 		rootRepoPath = "."

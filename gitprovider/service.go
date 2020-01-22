@@ -26,9 +26,8 @@ type service struct {
 func NewGitlabService(endpoint, namespace, project, token string) Service {
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
-	g = git.NewLoggingService(g)
 
-	return &gitlabAdapter{
+	return NewLoggingService(&gitlabAdapter{
 		service{
 			endpoint,
 			namespace,
@@ -36,15 +35,14 @@ func NewGitlabService(endpoint, namespace, project, token string) Service {
 			token,
 			g,
 		},
-	}
+	})
 }
 
 func NewGithubService(endpoint, namespace, project, token string) Service {
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
-	g = git.NewLoggingService(g)
 
-	return &githubAdapter{
+	return NewLoggingService(&githubAdapter{
 		service{
 			endpoint,
 			namespace,
@@ -52,5 +50,5 @@ func NewGithubService(endpoint, namespace, project, token string) Service {
 			token,
 			g,
 		},
-	}
+	})
 }

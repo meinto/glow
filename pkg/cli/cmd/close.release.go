@@ -34,7 +34,6 @@ var closeReleaseCmd = &cobra.Command{
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
 			)
-			s = semver.NewLoggingService(s)
 			v, err := s.GetCurrentVersion()
 			util.ExitOnError(err)
 			version = v

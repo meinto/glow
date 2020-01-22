@@ -12,6 +12,9 @@ type loggingService struct {
 
 // NewLoggingService returns a new instance of a logging Service.
 func NewLoggingService(s Service) Service {
+	defer func() {
+		l.Log().WithFields(logrus.Fields{"service": s})
+	}()
 	return &loggingService{s}
 }
 

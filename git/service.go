@@ -32,5 +32,5 @@ type NativeService interface {
 type service struct{ Service }
 
 func NewNativeService(cmdExecutor cmd.CmdExecutor) Service {
-	return service{nativeGitAdapter{cmdExecutor}}
+	return NewLoggingService(service{nativeGitAdapter{cmdExecutor}})
 }
