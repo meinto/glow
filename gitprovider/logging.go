@@ -11,6 +11,9 @@ type loggingService struct {
 }
 
 func NewLoggingService(s Service) Service {
+	defer func() {
+		l.Log().WithFields(logrus.Fields{"service": s})
+	}()
 	return &loggingService{s}
 }
 

@@ -48,6 +48,5 @@ func GetGitProvider() (gitprovider.Service, error) {
 	default:
 		return nil, errors.New("git provider not specified")
 	}
-	s = gitprovider.NewLoggingService(s)
 	return s, nil
 }

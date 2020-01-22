@@ -20,7 +20,6 @@ var _ = Describe("semver service", func() {
 	BeforeEach(func() {
 		local, bare, teardown = testenv.SetupEnv()
 		s = setupSemverService(local.Folder)
-		s = NewLoggingService(s)
 	})
 
 	AfterEach(func() {

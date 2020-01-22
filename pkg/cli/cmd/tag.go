@@ -26,7 +26,6 @@ var tagCmd = &cobra.Command{
 			releaseCmdOptions.VersionFile,
 			releaseCmdOptions.VersionFileType,
 		)
-		s = semver.NewLoggingService(s)
 
 		util.ExitOnError(s.TagCurrentVersion())
 	},

@@ -23,7 +23,6 @@ func ProcessVersion(versionArg, versionFile, versionFileType string) (string, se
 		versionFile,
 		versionFileType,
 	)
-	s = semver.NewLoggingService(s)
 
 	if version == "current" {
 		v, err := s.GetCurrentVersion()
