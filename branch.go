@@ -29,7 +29,7 @@ func NewBranch(name string) Branch {
 	if !strings.HasPrefix(name, BRANCH_NAME_PREFIX) {
 		name = BRANCH_NAME_PREFIX + name
 	}
-	return branch{name}
+	return NewBranchLoggingService(branch{name})
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
@@ -91,11 +91,11 @@ func NewAuthoredBranch(branchType, author, featureName string) (AuthoredBranch, 
 	}
 	branchName := fmt.Sprintf("%s/%s/%s", branchType, author, featureName)
 	branch := NewBranch(branchName)
-	return authoredBranch{
+	return NewBranchLoggingService(authoredBranch{
 		author,
 		featureName,
 		branch,
-	}, nil
+	}), nil
 }
 
 // AuthoredBranchFromBranchName extracts a feature definition from branch name
