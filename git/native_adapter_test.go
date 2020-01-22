@@ -129,28 +129,26 @@ var _ = Describe("git service", func() {
 
 	Describe("Commit", func() {
 		It("commits the changes", func() {
-			branchIsAhead := "Your branch is ahead of 'origin/master' by 1 commit"
 			local.Do("touch test.file")
 			s.AddAll()
 			_, _, err := s.Commit("Commit test.file")
 			Expect(err).To(BeNil())
-			stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsAhead)
-			Expect(stdout.String()).NotTo(BeEmpty())
+			stdout, _, _ := local.Do(`git rev-list --left-only --count master...origin/master`)
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("1"))
 		})
 	})
 
 	Describe("Push", func() {
 		It("pushes changes", func() {
-			branchIsUpToDate := "Your branch is up to date with 'origin/master'"
 			local.Do("touch test.file")
 			s.AddAll()
 			s.Commit("Commit test.file")
-			stdout, _, _ := local.Do(`git status | grep "%s"`, branchIsUpToDate)
-			Expect(stdout.String()).To(BeEmpty())
+			stdout, _, _ := local.Do(`git rev-list --left-only --count master...origin/master`)
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("1"))
 			_, _, err := s.Push(false)
 			Expect(err).To(BeNil())
-			stdout, _, _ = local.Do(`git status | grep "%s"`, branchIsUpToDate)
-			Expect(stdout.String()).NotTo(BeEmpty())
+			stdout, _, _ = local.Do(`git rev-list --left-only --count master...origin/master`)
+			Expect(strings.TrimSpace(stdout.String())).To(Equal("0"))
 		})
 	})
 })
