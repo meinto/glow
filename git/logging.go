@@ -3,7 +3,6 @@ package git
 import (
 	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
-	"github.com/sirupsen/logrus"
 )
 
 type loggingService struct {
@@ -13,7 +12,7 @@ type loggingService struct {
 // NewLoggingService returns a new instance of a logging Service.
 func NewLoggingService(s Service) Service {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{"service": s}).Info()
+		l.Log().Info(l.Fields{"service": s})
 	}()
 	return &loggingService{s}
 }
@@ -21,12 +20,9 @@ func NewLoggingService(s Service) Service {
 // SetCICDOrigin for pipeline
 func (s loggingService) SetCICDOrigin(origin string) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"origin": origin,
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"origin": origin}).
+			Stderr(stderr, err)
 	}()
 	return s.next.SetCICDOrigin(origin)
 }
@@ -34,12 +30,9 @@ func (s loggingService) SetCICDOrigin(origin string) (stdout, stderr string, err
 // GitRepoPath returns the path to the root with the .git folder
 func (s loggingService) GitRepoPath() (repoPath string, stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"repoPath": repoPath,
-			"stdout":   stdout,
-			"stderr":   stderr,
-			"error":    err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"repoPath": repoPath}).
+			Stderr(stderr, err)
 	}()
 	return s.next.GitRepoPath()
 }
@@ -47,12 +40,9 @@ func (s loggingService) GitRepoPath() (repoPath string, stdout, stderr string, e
 // CurrentBranch returns the current branch name
 func (s loggingService) CurrentBranch() (branch glow.Branch, stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"branchName": branch.BranchName(),
-			"stdout":     stdout,
-			"stderr":     stderr,
-			"error":      err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"branchName": branch.BranchName()}).
+			Stderr(stderr, err)
 	}()
 	return s.next.CurrentBranch()
 }
@@ -60,11 +50,9 @@ func (s loggingService) CurrentBranch() (branch glow.Branch, stdout, stderr stri
 // BranchList returns a list of avalilable branches
 func (s loggingService) BranchList() (_ []glow.Branch, stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			Stdout(stdout).
+			Stderr(stderr, err)
 	}()
 	return s.next.BranchList()
 }
@@ -72,11 +60,9 @@ func (s loggingService) BranchList() (_ []glow.Branch, stdout, stderr string, er
 // Fetch changes
 func (s loggingService) Fetch() (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			Stdout(stdout).
+			Stderr(stderr, err)
 	}()
 	return s.next.Fetch()
 }
@@ -84,11 +70,9 @@ func (s loggingService) Fetch() (stdout, stderr string, err error) {
 // Add all changes
 func (s loggingService) AddAll() (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			Stdout(stdout).
+			Stderr(stderr, err)
 	}()
 	return s.next.AddAll()
 }
@@ -96,11 +80,9 @@ func (s loggingService) AddAll() (stdout, stderr string, err error) {
 // Stash all changes
 func (s loggingService) Stash() (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			Stdout(stdout).
+			Stderr(stderr, err)
 	}()
 	return s.next.Stash()
 }
@@ -108,11 +90,9 @@ func (s loggingService) Stash() (stdout, stderr string, err error) {
 // Pop all stashed changes
 func (s loggingService) StashPop() (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"stdout": stdout,
-			"stderr": stderr,
-			"error":  err,
-		}).Info()
+		l.Log().
+			Stdout(stdout).
+			Stderr(stderr, err)
 	}()
 	return s.next.StashPop()
 }
@@ -120,12 +100,9 @@ func (s loggingService) StashPop() (stdout, stderr string, err error) {
 // Commit added changes
 func (s loggingService) Commit(message string) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"message": message,
-			"stdout":  stdout,
-			"stderr":  stderr,
-			"error":   err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"message": message}).
+			Stderr(stderr, err)
 	}()
 	return s.next.Commit(message)
 }
@@ -133,12 +110,9 @@ func (s loggingService) Commit(message string) (stdout, stderr string, err error
 // Push changes
 func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"setUpstream": setUpstream,
-			"stdout":      stdout,
-			"stderr":      stderr,
-			"error":       err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"setUpstream": setUpstream}).
+			Stderr(stderr, err)
 	}()
 	return s.next.Push(setUpstream)
 }
@@ -146,13 +120,12 @@ func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error
 // Create a new branch
 func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"branchName": b.BranchName(),
-			"skipChecks": skipChecks,
-			"stdout":     stdout,
-			"stderr":     stderr,
-			"error":      err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{
+				"branchName": b.BranchName(),
+				"skipChecks": skipChecks,
+			}).
+			Stderr(stderr, err)
 	}()
 	return s.next.Create(b, skipChecks)
 }
@@ -160,12 +133,9 @@ func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr s
 // Checkout a branch
 func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"branchName": b.BranchName(),
-			"stdout":     stdout,
-			"stderr":     stderr,
-			"error":      err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"branchName": b.BranchName()}).
+			Stderr(stderr, err)
 	}()
 	return s.next.Checkout(b)
 }
@@ -173,13 +143,12 @@ func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err erro
 // CleanupBranches removes all unused branches
 func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"cleanupGone":      cleanupGone,
-			"cleanupUntracked": cleanupUntracked,
-			"stdout":           stdout,
-			"stderr":           stderr,
-			"error":            err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{
+				"cleanupGone":      cleanupGone,
+				"cleanupUntracked": cleanupUntracked,
+			}).
+			Stderr(stderr, err)
 	}()
 	return s.next.CleanupBranches(cleanupGone, cleanupUntracked)
 }
@@ -187,24 +156,18 @@ func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (std
 // CleanupTags removes tags from local repo
 func (s loggingService) CleanupTags(cleanupUntracked bool) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"cleanupUntracked": cleanupUntracked,
-			"stdout":           stdout,
-			"stderr":           stderr,
-			"error":            err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"cleanupUntracked": cleanupUntracked}).
+			Stderr(stderr, err)
 	}()
 	return s.next.CleanupTags(cleanupUntracked)
 }
 
 func (s loggingService) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
 	defer func() {
-		l.Log().WithFields(logrus.Fields{
-			"branchName": branchName,
-			"stdout":     stdout,
-			"stderr":     stderr,
-			"error":      err,
-		}).Info()
+		l.Log().
+			StdoutFields(stdout, l.Fields{"branchName": branchName}).
+			Stderr(stderr, err)
 	}()
 	return s.next.RemoteBranchExists(branchName)
 }
