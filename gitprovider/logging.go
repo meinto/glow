@@ -1,6 +1,8 @@
 package gitprovider
 
 import (
+	"regexp"
+
 	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
 )
@@ -42,9 +44,16 @@ func (s *loggingService) GetCIBranch() (branch glow.Branch) {
 }
 
 func (s *loggingService) DetectCICDOrigin() (cicdOrigin string, err error) {
+	re := regexp.MustCompile(`:([^:]+)@`)
+
+	cleanedCicdOrigin := cicdOrigin
+	if re.MatchString(cicdOrigin) {
+		cleanedCicdOrigin = re.ReplaceAllString(cicdOrigin, ":xxxxxx@")
+	}
+
 	defer func() {
 		l.Log().
-			Info(l.Fields{"cicdOrigin": cicdOrigin}).
+			Info(l.Fields{"cicdOrigin": cleanedCicdOrigin}).
 			Error(err)
 	}()
 	return s.next.DetectCICDOrigin()
