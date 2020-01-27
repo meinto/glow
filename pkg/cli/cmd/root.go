@@ -5,7 +5,7 @@ import (
 
 	"github.com/gobuffalo/packr/v2"
 	l "github.com/meinto/glow/logging"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
