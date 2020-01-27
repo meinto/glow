@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
 )
