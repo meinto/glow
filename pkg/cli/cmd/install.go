@@ -11,7 +11,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	cobraUtils "github.com/meinto/cobra-utils"
-	"github.com/meinto/glow/pkg/cli/cmd/util"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
 

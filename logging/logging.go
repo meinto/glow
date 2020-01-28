@@ -64,6 +64,13 @@ func (l *logger) Warn(fields Fields) *logger {
 	return l
 }
 
+func (l *logger) WarnIf(fields Fields, condition bool) *logger {
+	if condition {
+		l.prefixEntry.WithFields(logrus.Fields(fields)).Warn()
+	}
+	return l
+}
+
 func (l *logger) Stderr(stderr string, err error) *logger {
 	if strings.TrimSpace(stderr) != "" {
 		entry := l.prefixEntry.WithFields(logrus.Fields{"stderr": stderr})
@@ -79,6 +86,17 @@ func (l *logger) Stderr(stderr string, err error) *logger {
 func (l *logger) Error(err error) *logger {
 	if err != nil {
 		l.prefixEntry.WithFields(logrus.Fields{"err": err}).Error()
+	}
+	return l
+}
+
+func (l *logger) ErrorFields(err error, fields Fields) *logger {
+	if err != nil {
+		mergo.Merge(
+			&fields,
+			Fields{"err": err},
+		)
+		l.prefixEntry.WithFields(logrus.Fields(fields)).Error()
 	}
 	return l
 }
