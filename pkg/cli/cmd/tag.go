@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(tagCmd)
+	RootCmd.AddCommand(tagCmd)
 }
 
 var tagCmd = &cobra.Command{

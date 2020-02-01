@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(featureCmd)
+	RootCmd.AddCommand(featureCmd)
 }
 
 var featureCmd = &cobra.Command{

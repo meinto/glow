@@ -6,6 +6,7 @@ require (
 	github.com/gobuffalo/logger v1.0.1
 	github.com/gobuffalo/packr v1.23.0
 	github.com/gobuffalo/packr/v2 v2.7.1
+	github.com/golang/mock v1.4.0
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8
 	github.com/manifoldco/promptui v0.3.2

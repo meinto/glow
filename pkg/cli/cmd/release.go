@@ -15,7 +15,7 @@ var releaseCmdOptions struct {
 }
 
 func init() {
-	rootCmd.AddCommand(releaseCmd)
+	RootCmd.AddCommand(releaseCmd)
 	releaseCmd.Flags().BoolVar(&releaseCmdOptions.Push, "push", false, "push created release branch")
 	releaseCmd.Flags().StringVar(&releaseCmdOptions.PostReleaseScript, "postRelease", "", "script that executes after switching to release branch")
 	releaseCmd.Flags().StringArrayVar(&releaseCmdOptions.PostReleaseCommand, "postReleaseCommand", []string{}, "commands which should be executed after switching to release branch")

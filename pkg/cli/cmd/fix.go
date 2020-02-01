@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(fixCmd)
+	RootCmd.AddCommand(fixCmd)
 }
 
 var fixCmd = &cobra.Command{
