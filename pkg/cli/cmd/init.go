@@ -27,7 +27,7 @@ var publicConfigFileName = "glow.config.json"
 var privateConfigFileName = "glow.private.json"
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	RootCmd.AddCommand(initCmd)
 }
 
 var initCmd = &cobra.Command{

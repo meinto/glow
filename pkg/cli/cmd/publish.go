@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(publishCmd)
+	RootCmd.AddCommand(publishCmd)
 	util.AddFlagsForMergeRequests(publishCmd)
 }
 

@@ -15,7 +15,7 @@ var hotfixCmdOptions struct {
 }
 
 func init() {
-	rootCmd.AddCommand(hotfixCmd)
+	RootCmd.AddCommand(hotfixCmd)
 
 	hotfixCmd.Flags().BoolVar(&hotfixCmdOptions.Push, "push", false, "push created hotfix branch")
 	hotfixCmd.Flags().StringVar(&hotfixCmdOptions.PostHotfixScript, "postHotfix", "", "script that executes after switching to hotfix branch")

@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(installCmd)
+	RootCmd.AddCommand(installCmd)
 }
 
 var installCmd = &cobra.Command{
