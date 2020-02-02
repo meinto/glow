@@ -9,6 +9,7 @@ import (
 	mockg "github.com/meinto/glow/git/mock_git"
 	mockgp "github.com/meinto/glow/gitprovider/mock_gitprovider"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
+	mocksemver "github.com/meinto/glow/semver/mock_semver"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -30,6 +31,7 @@ type MockCommand struct {
 func (tc *MockCommand) SetupServices() command.Service {
 	tc.SetGitClient(mockg.NewMockNativeService(tc.mockCtrl))
 	tc.SetGitProvider(mockgp.NewMockService(tc.mockCtrl))
+	tc.SetSemverClient(mocksemver.NewMockService(tc.mockCtrl))
 	return tc
 }
 
