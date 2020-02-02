@@ -28,5 +28,5 @@ func SetupCleanupBranchesCommand(parent command.Service) command.Service {
 				util.ExitOnError(cmd.GitClient().CleanupBranches(cleanupCmdFlags.cleanupGone, cleanupCmdFlags.cleanupUntracked))
 			},
 		},
-	})
+	}).PostSetup(parent)
 }
