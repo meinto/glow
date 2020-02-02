@@ -9,7 +9,7 @@ import (
 
 // TODO implement this cmd
 func init() {
-	// rootCmd.AddCommand(mergeRequestCmd)
+	// RootCmd.Cmd().AddCommand(mergeRequestCmd)
 	util.AddFlagsForMergeRequests(mergeRequestCmd)
 }
 

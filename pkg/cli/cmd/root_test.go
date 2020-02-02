@@ -17,7 +17,7 @@ var _ = Describe("Root command", func() {
 
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockCommand = NewMockCommand(RootCmd, mockCtrl)
+		mockCommand = NewMockCommand(CreateRootCmd(), mockCtrl)
 		mockCommand.Init().Patch()
 	})
 
@@ -29,16 +29,13 @@ var _ = Describe("Root command", func() {
 		mockCommand.Cmd().SetArgs([]string{
 			"--detectCicdOrigin",
 		})
-
 		mockCommand.GitProvider().(mockgp.MockServiceInterface).
 			EXPECT().
 			DetectCICDOrigin().
 			Return("new-origin", nil)
-
 		mockCommand.GitClient().(mockg.MockNativeServiceInterface).
 			EXPECT().
 			SetCICDOrigin("new-origin")
-
 		mockCommand.Execute()
 	})
 
@@ -46,11 +43,10 @@ var _ = Describe("Root command", func() {
 		mockCommand.Cmd().SetArgs([]string{
 			"--cicdOrigin", "my-custom-origin",
 		})
-
 		mockCommand.GitClient().(mockg.MockNativeServiceInterface).
 			EXPECT().
 			SetCICDOrigin("my-custom-origin")
-
 		mockCommand.Execute()
 	})
+
 })

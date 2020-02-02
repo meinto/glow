@@ -10,7 +10,7 @@ var cleanupCmdFlags struct {
 }
 
 func init() {
-	RootCmd.AddCommand(cleanupCmd)
+	RootCmd.Cmd().AddCommand(cleanupCmd)
 	cleanupCmd.PersistentFlags().BoolVar(&cleanupCmdFlags.cleanupGone, "gone", false, "cleanup branches which are gone on remote")
 	cleanupCmd.PersistentFlags().BoolVar(&cleanupCmdFlags.cleanupUntracked, "untracked", false, "cleanup branches which are gone on remote")
 }
