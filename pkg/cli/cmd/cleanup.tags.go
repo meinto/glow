@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	cleanupCmd.AddCommand(cleanupTagsCmd)
+	cleanupCmd.Cmd().AddCommand(cleanupTagsCmd)
 }
 
 var cleanupTagsCmd = &cobra.Command{
