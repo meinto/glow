@@ -33,10 +33,14 @@ var hotfixCmd = &cobra.Command{
 		g, err := util.GetGitClient()
 		util.ExitOnError(err)
 
+		pathToRepo, _, _, err := g.GitRepoPath()
+		util.ExitOnError(err)
+
 		version, s := util.ProcessVersion(
 			args[0],
 			hotfixCmdOptions.VersionFile,
 			hotfixCmdOptions.VersionFileType,
+			pathToRepo,
 		)
 
 		hotfix, err := glow.NewHotfix(version)

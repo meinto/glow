@@ -34,10 +34,14 @@ func ReleaseCmd(parent command.Service) command.Service {
 			Args:  cobra.MinimumNArgs(1),
 		},
 		Run: func(cmd command.Service, args []string) {
+			pathToRepo, _, _, err := cmd.GitClient().GitRepoPath()
+			util.ExitOnError(err)
+
 			version, s := util.ProcessVersion(
 				args[0],
 				releaseCmdOptions.VersionFile,
 				releaseCmdOptions.VersionFileType,
+				pathToRepo,
 			)
 
 			release, err := glow.NewRelease(version)
