@@ -19,6 +19,7 @@ type Service interface {
 	Patch() Service
 	WrapRun(fieldName string, run func(cmd Service, args []string))
 	Execute() error
+	Add(Service)
 }
 
 type Command struct {
@@ -26,6 +27,7 @@ type Command struct {
 	gitClient        git.Service
 	gitProvider      gitprovider.Service
 	Run              func(cmd Service, args []string)
+	PostRun          func(cmd Service, args []string)
 	PersistentPreRun func(cmd Service, args []string)
 }
 
@@ -62,6 +64,7 @@ func (c *Command) Init() Service {
 
 func (c *Command) Patch() Service {
 	c.WrapRun("Run", c.Run)
+	c.WrapRun("PostRun", c.PostRun)
 	c.WrapRun("PersistentPreRun", c.PersistentPreRun)
 	return c
 }
@@ -81,4 +84,8 @@ func (c *Command) WrapRun(fieldName string, run func(cmd Service, args []string)
 
 func (c *Command) Execute() error {
 	return c.Command.Execute()
+}
+
+func (c *Command) Add(cmd Service) {
+	c.Command.AddCommand(cmd.Init().Patch().Cmd())
 }

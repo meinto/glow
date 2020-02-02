@@ -12,7 +12,7 @@ var pushCmdOptions struct {
 }
 
 func init() {
-	RootCmd.AddCommand(pushCmd)
+	RootCmd.Cmd().AddCommand(pushCmd)
 	pushCmd.Flags().BoolVar(&pushCmdOptions.AddAll, "addAll", false, "add all changes made on the current branch")
 	pushCmd.Flags().StringVar(&pushCmdOptions.CommitMessage, "commitMessage", "", "add a commit message (flag --addAll required)")
 	util.AddFlagsForMergeRequests(pushCmd)

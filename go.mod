@@ -9,6 +9,7 @@ require (
 	github.com/golang/mock v1.4.0
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8
+	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/manifoldco/promptui v0.3.2
 	github.com/meinto/cobra-utils v0.1.0
 	github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f
