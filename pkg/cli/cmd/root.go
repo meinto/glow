@@ -21,15 +21,11 @@ var rootCmdOptions struct {
 	SkipChecks       bool
 }
 
-func Registry(rootCmd command.Service) {
-	ReleaseCmd(rootCmd)
-}
-
 type RootCommand struct {
 	command.Service
 }
 
-func (cmd *RootCommand) SetupFlags(parent command.Service) command.Service {
+func (cmd *RootCommand) PostSetup(parent command.Service) command.Service {
 	box := packr.New("build-assets", "../../../buildAssets")
 	version, err := box.FindString("VERSION")
 	if err != nil {
@@ -48,6 +44,8 @@ func (cmd *RootCommand) SetupFlags(parent command.Service) command.Service {
 	viper.BindPFlag("gitPath", cmd.Cmd().PersistentFlags().Lookup("gitPath"))
 	return cmd
 }
+
+var RootCmd = SetupRootCommand()
 
 func SetupRootCommand() command.Service {
 	return command.Setup(&RootCommand{
@@ -70,10 +68,8 @@ func SetupRootCommand() command.Service {
 				log.Println("hello from glow")
 			},
 		},
-	}).SetupFlags(nil)
+	}).PostSetup(nil)
 }
-
-var RootCmd = SetupRootCommand()
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {

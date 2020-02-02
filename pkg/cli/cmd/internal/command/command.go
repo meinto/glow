@@ -15,7 +15,7 @@ type Service interface {
 	Execute() error
 	Add(Service)
 
-	SetupFlags(parent Service) Service
+	PostSetup(parent Service) Service
 
 	SetupServices() Service
 	SetGitClient(git.Service)
@@ -49,7 +49,7 @@ func (c *Command) Cmd() *cobra.Command {
 	return c.Command
 }
 
-func (c *Command) SetupFlags(parent Service) Service {
+func (c *Command) PostSetup(parent Service) Service {
 	return c
 }
 
