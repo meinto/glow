@@ -1,0 +1,41 @@
+package pkg
+
+import (
+	"os"
+
+	l "github.com/meinto/glow/logging"
+	"github.com/meinto/glow/cmd"
+	"github.com/meinto/glow/git"
+	"github.com/spf13/viper"
+)
+
+var configInitialized = false
+
+func InitGlobalConfig() {
+	if !configInitialized {
+		exec := cmd.NewCmdExecutor("/bin/bash")
+		g := git.NewNativeService(exec)
+		rootRepoPath, _, _, err := g.GitRepoPath()
+		if err != nil {
+			rootRepoPath = "."
+		}
+
+		viper.SetConfigName("glow.config")
+		viper.AddConfigPath(rootRepoPath)
+		err = viper.ReadInConfig()
+		l.Log().
+			Info(viper.AllSettings()).
+			ErrorFields(err, l.Fields{"msg": "there is no glow config"})
+
+		viper.SetConfigName("glow.private")
+		viper.AddConfigPath(rootRepoPath)
+		err = viper.MergeInConfig()
+		l.Log().ErrorFields(err, l.Fields{"msg": "there is no private glow config"})
+
+		viper.SetEnvPrefix("glow")
+		err = viper.BindEnv("token")
+		l.Log().
+			WarnIf(l.Fields{"msg": "env GLOW_TOKEN is missing"}, os.Getenv("GLOW_TOKEN") == "").
+			Error(err)
+	}
+}

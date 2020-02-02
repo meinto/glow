@@ -27,7 +27,7 @@ type MockCommand struct {
 	mockCtrl *gomock.Controller
 }
 
-func (tc *MockCommand) Init() command.Service {
+func (tc *MockCommand) SetupServices() command.Service {
 	tc.SetGitClient(mockg.NewMockNativeService(tc.mockCtrl))
 	tc.SetGitProvider(mockgp.NewMockService(tc.mockCtrl))
 	return tc

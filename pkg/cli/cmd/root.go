@@ -25,7 +25,11 @@ func Registry(rootCmd command.Service) {
 	ReleaseCmd(rootCmd)
 }
 
-func SetupRootCmd(cmd command.Service) command.Service {
+type RootCommand struct {
+	command.Service
+}
+
+func (cmd *RootCommand) SetupFlags(parent command.Service) command.Service {
 	box := packr.New("build-assets", "../../../buildAssets")
 	version, err := box.FindString("VERSION")
 	if err != nil {
@@ -42,43 +46,37 @@ func SetupRootCmd(cmd command.Service) command.Service {
 	cmd.Cmd().PersistentFlags().BoolVar(&rootCmdOptions.SkipChecks, "skipChecks", false, "skip checks like accidentally creating git-flow branches from wrong source branch")
 	viper.BindPFlag("author", cmd.Cmd().PersistentFlags().Lookup("author"))
 	viper.BindPFlag("gitPath", cmd.Cmd().PersistentFlags().Lookup("gitPath"))
-
 	return cmd
 }
 
-func CreateRootCmd() command.Service {
-	return SetupRootCmd(&command.Command{
-		Command: &cobra.Command{
-			Use:     "glow",
-			Short:   "small tool to adapt git-flow for gitlab",
-			Version: "0.0.0", // needed to set the version dynamically
+func SetupRootCommand() command.Service {
+	return command.Setup(&RootCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:     "glow",
+				Short:   "small tool to adapt git-flow for gitlab",
+				Version: "0.0.0", // needed to set the version dynamically
+			},
+			PersistentPreRun: func(cmd command.Service, args []string) {
+				if rootCmdOptions.CICDOrigin != "" {
+					util.ExitOnError(cmd.GitClient().SetCICDOrigin(rootCmdOptions.CICDOrigin))
+				} else if rootCmdOptions.DetectCICDOrigin {
+					cicdOrigin, err := cmd.GitProvider().DetectCICDOrigin()
+					util.ExitOnError(err)
+					util.ExitOnError(cmd.GitClient().SetCICDOrigin(cicdOrigin))
+				}
+			},
+			Run: func(cmd command.Service, args []string) {
+				log.Println("hello from glow")
+			},
 		},
-		PersistentPreRun: func(cmd command.Service, args []string) {
-			if rootCmdOptions.CICDOrigin != "" {
-				util.ExitOnError(cmd.GitClient().SetCICDOrigin(rootCmdOptions.CICDOrigin))
-			} else if rootCmdOptions.DetectCICDOrigin {
-				cicdOrigin, err := cmd.GitProvider().DetectCICDOrigin()
-				util.ExitOnError(err)
-				util.ExitOnError(cmd.GitClient().SetCICDOrigin(cicdOrigin))
-			}
-		},
-		Run: func(cmd command.Service, args []string) {
-			log.Println("hello from glow")
-		},
-	})
+	}).SetupFlags(nil)
 }
 
-var RootCmd = CreateRootCmd()
-
-func init() {
-	Registry(RootCmd)
-}
+var RootCmd = SetupRootCommand()
 
 func Execute() {
-	if err := RootCmd.
-		Init().
-		Patch().
-		Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		l.Log().Error(err)
 		os.Exit(1)
 	}
