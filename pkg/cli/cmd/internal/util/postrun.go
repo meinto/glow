@@ -18,7 +18,10 @@ func PostRunWithCurrentVersion(
 	g, err := GetGitClient()
 	ExitOnError(err)
 
-	version, _ := ProcessVersion("current", versionFile, versionFileType)
+	pathToRepo, _, _, err := g.GitRepoPath()
+	ExitOnError(err)
+
+	version, _ := ProcessVersion("current", versionFile, versionFileType, pathToRepo)
 
 	if postReleaseScript != "" {
 		postRelease(version, postReleaseScript)

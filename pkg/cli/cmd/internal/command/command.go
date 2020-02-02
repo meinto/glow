@@ -59,6 +59,17 @@ func (c *Command) Init() Service {
 	gp, err := util.GetGitProvider()
 	util.ExitOnError(err)
 	c.SetGitProvider(gp)
+
+	// TODO version file information from config
+	// pathToRepo, _, _, err := g.GitRepoPath()
+	// util.ExitOnError(err)
+
+	// s := semver.NewSemverService(
+	// 	pathToRepo,
+	// 	"/bin/bash",
+	// 	versionFile,
+	// 	versionFileType,
+	// )
 	return c
 }
 

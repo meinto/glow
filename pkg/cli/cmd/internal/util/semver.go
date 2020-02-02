@@ -8,17 +8,11 @@ import (
 	"github.com/meinto/glow/semver"
 )
 
-func ProcessVersion(versionArg, versionFile, versionFileType string) (string, semver.Service) {
+func ProcessVersion(versionArg, versionFile, versionFileType, repoPath string) (string, semver.Service) {
 	version := versionArg
 
-	g, err := GetGitClient()
-	ExitOnError(err)
-
-	pathToRepo, _, _, err := g.GitRepoPath()
-	ExitOnError(err)
-
 	s := semver.NewSemverService(
-		pathToRepo,
+		repoPath,
 		"/bin/bash",
 		versionFile,
 		versionFileType,
