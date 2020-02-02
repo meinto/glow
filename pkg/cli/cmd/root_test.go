@@ -2,8 +2,8 @@ package cmd_test
 
 import (
 	"github.com/golang/mock/gomock"
-	mockg "github.com/meinto/glow/git/mock_git"
-	mockgp "github.com/meinto/glow/gitprovider/mock_gitprovider"
+	mockg "github.com/meinto/glow/git/__mock__"
+	mockgp "github.com/meinto/glow/gitprovider/__mock__"
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	. "github.com/onsi/ginkgo"
