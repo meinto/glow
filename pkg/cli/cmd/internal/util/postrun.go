@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meinto/glow/git"
 	l "github.com/meinto/glow/logging"
+	"github.com/meinto/glow/semver"
 )
 
 func PostRunWithCurrentVersion(
@@ -36,6 +38,32 @@ func PostRunWithCurrentVersion(
 		ExitOnError(g.AddAll())
 		ExitOnError(g.Commit("[glow] Add post release changes"))
 		ExitOnError(g.Push(true))
+	}
+}
+
+func PostRunWithCurrentVersionS(
+	semverClient semver.Service,
+	gitClient git.Service,
+	postReleaseScript string,
+	postReleaseCommand []string,
+	push bool,
+) {
+
+	if postReleaseScript != "" {
+		version := ProcessVersionS("current", semverClient)
+		postRelease(version, postReleaseScript)
+	}
+	if len(postReleaseCommand) > 0 {
+		version := ProcessVersionS("current", semverClient)
+		for _, command := range postReleaseCommand {
+			execute(version, command)
+		}
+	}
+
+	if push {
+		ExitOnError(gitClient.AddAll())
+		ExitOnError(gitClient.Commit("[glow] Add post release changes"))
+		ExitOnError(gitClient.Push(true))
 	}
 }
 

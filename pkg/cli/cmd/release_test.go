@@ -1,9 +1,14 @@
 package cmd_test
 
 import (
+	"log"
+
 	"github.com/golang/mock/gomock"
+	"github.com/meinto/glow"
+	mockg "github.com/meinto/glow/git/mock_git"
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
+	mocksemver "github.com/meinto/glow/semver/mock_semver"
 	. "github.com/onsi/ginkgo"
 )
 
@@ -16,31 +21,38 @@ var _ = Describe("Release command", func() {
 
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockRootCommand = NewMockCommand(SetupRootCommand(), mockCtrl)
-		mockRootCommand.SetupServices().Patch()
-		releaseMockCommand = NewMockCommand(SetupReleaseCommand(), mockCtrl)
-		releaseMockCommand.SetupServices().Patch()
-		mockRootCommand.Add(releaseMockCommand)
+		mockRootCommand = NewMockCommand(SetupRootCommand(), mockCtrl).
+			SetupServices().
+			Patch()
+		releaseMockCommand = NewMockCommand(SetupReleaseCommand(mockRootCommand), mockCtrl).
+			SetupServices().
+			Patch()
+		log.Println(releaseMockCommand)
 	})
 
 	AfterEach(func() {
 		mockCtrl.Finish()
 	})
 
-	// It("pushes the changes", func() {
-	// 	mockRootCommand.Cmd().SetArgs([]string{
-	// 		"release", "2.3.4",
-	// 	})
-	// 	releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
-	// 		EXPECT().
-	// 		GitRepoPath().
-	// 		Return("path-to-repo", "", "", nil)
-	// 	releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
-	// 		EXPECT().
-	// 		Create(nil, false)
-	// 	mockRootCommand.Execute()
-	// 	// mockCommand.Cmd().Run(mockCommand.Cmd(), []string{
-	// 	// 	"release", "2.3.4",
-	// 	// })
-	// })
+	It("creates a release branch with the current version", func() {
+		mockRootCommand.Cmd().SetArgs([]string{
+			"release", "current",
+		})
+		CURRENT_VERSION := "2.2.2"
+		releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface).
+			EXPECT().
+			GetCurrentVersion().
+			Return(CURRENT_VERSION, nil)
+		b, _ := glow.NewRelease(CURRENT_VERSION)
+		releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
+			EXPECT().
+			Create(b, false)
+		releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
+			EXPECT().
+			Checkout(b)
+		releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface).
+			EXPECT().
+			SetVersion(CURRENT_VERSION)
+		mockRootCommand.Execute()
+	})
 })

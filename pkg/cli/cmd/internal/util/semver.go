@@ -33,6 +33,22 @@ func ProcessVersion(versionArg, versionFile, versionFileType, repoPath string) (
 	return version, s
 }
 
+func ProcessVersionS(versionArg string, s semver.Service) string {
+	version := versionArg
+	if version == "current" {
+		v, err := s.GetCurrentVersion()
+		ExitOnError(err)
+		version = v
+	}
+
+	if IsSemanticVersion(version) {
+		v, err := s.GetNextVersion(version)
+		ExitOnError(err)
+		version = v
+	}
+	return version
+}
+
 func HasSemverConfig() bool {
 	if _, err := os.Stat(viper.GetString("gitPath") + "/semver.config.json"); os.IsNotExist(err) {
 		return false
