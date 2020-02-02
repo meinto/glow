@@ -18,7 +18,7 @@ var _ = Describe("Release command", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRootCommand = NewMockCommand(SetupRootCommand(), mockCtrl)
 		mockRootCommand.SetupServices().Patch()
-		releaseMockCommand = NewMockCommand(ReleaseCmd(mockRootCommand), mockCtrl)
+		releaseMockCommand = NewMockCommand(SetupReleaseCommand(), mockCtrl)
 		releaseMockCommand.SetupServices().Patch()
 		mockRootCommand.Add(releaseMockCommand)
 	})
