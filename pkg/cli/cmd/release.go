@@ -30,9 +30,9 @@ func (cmd *ReleaseCommand) PostSetup(parent command.Service) command.Service {
 	return cmd
 }
 
-var ReleaseCmd = SetupReleaseCommand()
+var ReleaseCmd = SetupReleaseCommand(RootCmd)
 
-func SetupReleaseCommand() command.Service {
+func SetupReleaseCommand(parent command.Service) command.Service {
 	return command.Setup(&ReleaseCommand{
 		&command.Command{
 			Command: &cobra.Command{
@@ -41,15 +41,7 @@ func SetupReleaseCommand() command.Service {
 				Args:  cobra.MinimumNArgs(1),
 			},
 			Run: func(cmd command.Service, args []string) {
-				pathToRepo, _, _, err := cmd.GitClient().GitRepoPath()
-				util.ExitOnError(err)
-
-				version, s := util.ProcessVersion(
-					args[0],
-					releaseCmdOptions.VersionFile,
-					releaseCmdOptions.VersionFileType,
-					pathToRepo,
-				)
+				version := util.ProcessVersionS(args[0], cmd.SemverClient())
 
 				release, err := glow.NewRelease(version)
 				util.ExitOnError(err)
@@ -60,20 +52,20 @@ func SetupReleaseCommand() command.Service {
 				util.ExitOnError(err)
 
 				if util.IsSemanticVersion(args[0]) {
-					util.ExitOnError(s.SetNextVersion(args[0]))
+					util.ExitOnError(cmd.SemverClient().SetNextVersion(args[0]))
 				} else {
-					util.ExitOnError(s.SetVersion(version))
+					util.ExitOnError(cmd.SemverClient().SetVersion(version))
 				}
 			},
 			PostRun: func(cmd command.Service, args []string) {
-				util.PostRunWithCurrentVersion(
-					releaseCmdOptions.VersionFile,
-					releaseCmdOptions.VersionFileType,
+				util.PostRunWithCurrentVersionS(
+					cmd.SemverClient(),
+					cmd.GitClient(),
 					releaseCmdOptions.PostReleaseScript,
 					releaseCmdOptions.PostReleaseCommand,
 					releaseCmdOptions.Push,
 				)
 			},
 		},
-	}).PostSetup(RootCmd)
+	}).PostSetup(parent)
 }

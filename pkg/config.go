@@ -3,9 +3,9 @@ package pkg
 import (
 	"os"
 
-	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
+	l "github.com/meinto/glow/logging"
 	"github.com/spf13/viper"
 )
 
@@ -13,6 +13,7 @@ var configInitialized = false
 
 func InitGlobalConfig() {
 	if !configInitialized {
+		configInitialized = true
 		exec := cmd.NewCmdExecutor("/bin/bash")
 		g := git.NewNativeService(exec)
 		rootRepoPath, _, _, err := g.GitRepoPath()
