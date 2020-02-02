@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	cleanupCmd.AddCommand(cleanupBranchesCmd)
+	cleanupCmd.Cmd().AddCommand(cleanupBranchesCmd)
 }
 
 var cleanupBranchesCmd = &cobra.Command{
