@@ -9,6 +9,7 @@ import (
 
 func ExitOnError(args ...interface{}) {
 	if hasError(args...) {
+		l.Log().Error(getError(args...))
 		os.Exit(1)
 	}
 }
@@ -28,4 +29,12 @@ func hasError(args ...interface{}) bool {
 		return true
 	}
 	return false
+}
+
+func getError(args ...interface{}) error {
+	last := args[len(args)-1]
+	if last != nil {
+		return last.(error)
+	}
+	return nil
 }

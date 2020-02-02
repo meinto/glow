@@ -5,21 +5,35 @@ import (
 
 	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/gitprovider"
+	"github.com/meinto/glow/pkg"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
 
 type Service interface {
 	Cmd() *cobra.Command
+	Execute() error
+	Add(Service)
+
+	SetupFlags(parent Service) Service
+
+	SetupServices() Service
 	SetGitClient(git.Service)
 	GitClient() git.Service
 	SetGitProvider(gitprovider.Service)
 	GitProvider() gitprovider.Service
-	Init() Service
+
 	Patch() Service
-	WrapRun(fieldName string, run func(cmd Service, args []string))
-	Execute() error
-	Add(Service)
+	PatchRun(fieldName string, run func(cmd Service, args []string))
+}
+
+func Setup(cmd Service) Service {
+	pkg.InitGlobalConfig()
+	cmd.
+		SetupServices().
+		Patch()
+
+	return cmd
 }
 
 type Command struct {
@@ -33,6 +47,10 @@ type Command struct {
 
 func (c *Command) Cmd() *cobra.Command {
 	return c.Command
+}
+
+func (c *Command) SetupFlags(parent Service) Service {
+	return c
 }
 
 func (c *Command) SetGitClient(gc git.Service) {
@@ -51,7 +69,7 @@ func (c *Command) GitProvider() gitprovider.Service {
 	return c.gitProvider
 }
 
-func (c *Command) Init() Service {
+func (c *Command) SetupServices() Service {
 	g, err := util.GetGitClient()
 	util.ExitOnError(err)
 	c.SetGitClient(g)
@@ -74,13 +92,13 @@ func (c *Command) Init() Service {
 }
 
 func (c *Command) Patch() Service {
-	c.WrapRun("Run", c.Run)
-	c.WrapRun("PostRun", c.PostRun)
-	c.WrapRun("PersistentPreRun", c.PersistentPreRun)
+	c.PatchRun("Run", c.Run)
+	c.PatchRun("PostRun", c.PostRun)
+	c.PatchRun("PersistentPreRun", c.PersistentPreRun)
 	return c
 }
 
-func (c *Command) WrapRun(fieldName string, run func(cmd Service, args []string)) {
+func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string)) {
 	if run != nil {
 		r := reflect.ValueOf(c.Command)
 		f := reflect.Indirect(r).FieldByName(fieldName)
@@ -98,5 +116,5 @@ func (c *Command) Execute() error {
 }
 
 func (c *Command) Add(cmd Service) {
-	c.Command.AddCommand(cmd.Init().Patch().Cmd())
+	c.Command.AddCommand(cmd.Cmd())
 }
