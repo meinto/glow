@@ -6,10 +6,10 @@ import (
 	// . "github.com/meinto/glow"
 	"github.com/golang/mock/gomock"
 	"github.com/meinto/glow/git"
-	mockg "github.com/meinto/glow/git/mock_git"
-	mockgp "github.com/meinto/glow/gitprovider/mock_gitprovider"
+	mockg "github.com/meinto/glow/git/__mock__"
+	mockgp "github.com/meinto/glow/gitprovider/__mock__"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
-	mocksemver "github.com/meinto/glow/semver/mock_semver"
+	mocksemver "github.com/meinto/glow/semver/__mock__"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
