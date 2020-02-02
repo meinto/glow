@@ -4,5 +4,7 @@
   "gitProvider": "github",
   "projectNamespace": "meinto",
   "projectName": "glow",
-  "mergeRequest.squashCommits": true
+  "mergeRequest.squashCommits": true,
+  "versionFile": "VERSION",
+  "versionFileType": "raw"
 }

@@ -7,7 +7,9 @@ import (
 	"github.com/meinto/glow/gitprovider"
 	"github.com/meinto/glow/pkg"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
+	"github.com/meinto/glow/semver"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type Service interface {
@@ -22,6 +24,8 @@ type Service interface {
 	GitClient() git.Service
 	SetGitProvider(gitprovider.Service)
 	GitProvider() gitprovider.Service
+	SetSemverClient(semver.Service)
+	SemverClient() semver.Service
 
 	Patch() Service
 	PatchRun(fieldName string, run func(cmd Service, args []string))
@@ -40,6 +44,7 @@ type Command struct {
 	*cobra.Command
 	gitClient        git.Service
 	gitProvider      gitprovider.Service
+	semverClient     semver.Service
 	Run              func(cmd Service, args []string)
 	PostRun          func(cmd Service, args []string)
 	PersistentPreRun func(cmd Service, args []string)
@@ -69,6 +74,14 @@ func (c *Command) GitProvider() gitprovider.Service {
 	return c.gitProvider
 }
 
+func (c *Command) SetSemverClient(s semver.Service) {
+	c.semverClient = s
+}
+
+func (c *Command) SemverClient() semver.Service {
+	return c.semverClient
+}
+
 func (c *Command) SetupServices() Service {
 	g, err := util.GetGitClient()
 	util.ExitOnError(err)
@@ -78,16 +91,16 @@ func (c *Command) SetupServices() Service {
 	util.ExitOnError(err)
 	c.SetGitProvider(gp)
 
-	// TODO version file information from config
-	// pathToRepo, _, _, err := g.GitRepoPath()
-	// util.ExitOnError(err)
+	pathToRepo, _, _, err := g.GitRepoPath()
+	util.ExitOnError(err)
 
-	// s := semver.NewSemverService(
-	// 	pathToRepo,
-	// 	"/bin/bash",
-	// 	versionFile,
-	// 	versionFileType,
-	// )
+	s := semver.NewSemverService(
+		pathToRepo,
+		"/bin/bash",
+		viper.GetString("versionFile"),
+		viper.GetString("versionFileType"),
+	)
+	c.SetSemverClient(s)
 	return c
 }
 

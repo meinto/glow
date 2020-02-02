@@ -106,7 +106,9 @@ glow init
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
   "gitPath": "/usr/local/bin/git",
-  "mergeRequest.squashCommits": true
+  "mergeRequest.squashCommits": true,
+  "versionFile": "VERSION",
+  "versionFileType": "raw"
 }
 ```
 
