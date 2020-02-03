@@ -65,10 +65,13 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		Squash             bool   `json:"squash"`
 	}
 
+	sourceBranchName := source.ShortBranchName()
+	targetBranchName := target.ShortBranchName()
+
 	data := Payload{
-		SourceBranch:       source.ShortBranchName(),
-		TargetBranch:       target.ShortBranchName(),
-		Title:              fmt.Sprintf("Merge %s in %s", source.ShortBranchName(), target.ShortBranchName()),
+		SourceBranch:       sourceBranchName,
+		TargetBranch:       targetBranchName,
+		Title:              fmt.Sprintf("Merge %s in %s", sourceBranchName, targetBranchName),
 		RemoveSourceBranch: removeSourceBranch,
 		Squash:             viper.GetBool("mergeRequest.squashCommits"),
 	}
@@ -98,7 +101,7 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	}
 	defer resp.Body.Close()
 
-	log.Printf("created merge request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
+	log.Printf("created merge request of %s into %s", sourceBranchName, targetBranchName)
 	return nil
 }
 

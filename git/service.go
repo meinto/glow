@@ -1,6 +1,7 @@
 package git
 
 import (
+	"github.com/imdario/mergo"
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/cmd"
 )
@@ -31,6 +32,24 @@ type NativeService interface {
 
 type service struct{ Service }
 
-func NewNativeService(cmdExecutor cmd.CmdExecutor) Service {
-	return NewLoggingService(service{nativeGitAdapter{cmdExecutor}})
+type Options struct {
+	CmdExecutor cmd.CmdExecutor
+	ShouldLog   bool
+}
+
+var defaultOptions = Options{
+	ShouldLog: true,
+}
+
+func NewNativeService(options Options) Service {
+	mergo.Merge(&options, defaultOptions)
+
+	var s Service
+	s = service{nativeGitAdapter{options.CmdExecutor}}
+
+	if options.ShouldLog {
+		s = NewLoggingService(s)
+	}
+
+	return s
 }

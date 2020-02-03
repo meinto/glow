@@ -41,7 +41,9 @@ var defaultOptions = Options{
 func NewGitlabService(options Options) Service {
 	mergo.Merge(&options, defaultOptions)
 	exec := cmd.NewCmdExecutor("/bin/bash")
-	g := git.NewNativeService(exec)
+	g := git.NewNativeService(git.Options{
+		CmdExecutor: exec,
+	})
 
 	s := &gitlabAdapter{
 		service{
@@ -63,7 +65,9 @@ func NewGitlabService(options Options) Service {
 func NewGithubService(options Options) Service {
 	mergo.Merge(&options, defaultOptions)
 	exec := cmd.NewCmdExecutor("/bin/bash")
-	g := git.NewNativeService(exec)
+	g := git.NewNativeService(git.Options{
+		CmdExecutor: exec,
+	})
 
 	s := &githubAdapter{
 		service{
