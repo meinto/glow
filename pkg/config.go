@@ -15,7 +15,9 @@ func InitGlobalConfig() {
 	if !configInitialized {
 		configInitialized = true
 		exec := cmd.NewCmdExecutor("/bin/bash")
-		g := git.NewNativeService(exec)
+		g := git.NewNativeService(git.Options{
+			CmdExecutor: exec,
+		})
 		rootRepoPath, _, _, err := g.GitRepoPath()
 		if err != nil {
 			rootRepoPath = "."
