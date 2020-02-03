@@ -36,9 +36,11 @@ func (s *loggingService) Publish(b glow.Branch) (err error) {
 	return s.next.Publish(b)
 }
 
-func (s *loggingService) GetCIBranch() (branch glow.Branch) {
+func (s *loggingService) GetCIBranch() (branch glow.Branch, err error) {
 	defer func() {
-		l.Log().Info(l.Fields{"branch": branch.BranchName()})
+		l.Log().
+			Info(l.Fields{"branch": branch.BranchName()}).
+			Error(err)
 	}()
 	return s.next.GetCIBranch()
 }

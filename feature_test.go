@@ -14,7 +14,8 @@ var _ = Describe("Feature", func() {
 	BeforeEach(func() {
 		f1, _ := NewFeature("luke", "falcon")
 		f2, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon")
-		branches = []AuthoredBranch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "feature/luke/falcon")
+		branches = []AuthoredBranch{f1, f2, f3}
 	})
 
 	It("can be closed", func() {

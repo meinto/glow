@@ -25,7 +25,7 @@ var publishCmd = &cobra.Command{
 
 		var currentBranch glow.Branch
 		if rootCmdOptions.CI {
-			cb := gp.GetCIBranch()
+			cb, err := gp.GetCIBranch()
 			util.ExitOnError(err)
 			currentBranch = cb
 		} else {
