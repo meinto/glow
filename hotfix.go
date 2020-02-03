@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -14,18 +15,30 @@ type hotfix struct {
 }
 
 // NewHotfix creates a new hotfix definition
-func NewHotfix(version string) (Branch, error) {
+func NewHotfix(version string) (b Branch, err error) {
+	l.Log().Info(l.Fields{"version": version})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	branchName := fmt.Sprintf(BRANCH_NAME_PREFIX+"hotfix/v%s", version)
-	b := NewBranch(branchName)
+	b = NewBranch(branchName)
 	return hotfix{version, b}, nil
 }
 
 // HotfixFromBranch extracts a fix definition from branch name
-func HotfixFromBranch(branchName string) (Branch, error) {
+func HotfixFromBranch(branchName string) (b Branch, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	if !strings.Contains(branchName, "/hotfix/v") {
 		return hotfix{}, errors.New("no valid hotfix branch")
 	}
-	b := NewBranch(branchName)
+	b = NewBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
 		return hotfix{}, errors.New("invalid branch name " + branchName)

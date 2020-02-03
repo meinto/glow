@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	l "github.com/meinto/glow/logging"
 )
 
 // Branch interface
@@ -26,13 +28,20 @@ const BRANCH_NAME_PREFIX = "refs/heads/"
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) Branch {
+	l.Log().Info(l.Fields{"name": name})
 	if !strings.HasPrefix(name, BRANCH_NAME_PREFIX) {
 		name = BRANCH_NAME_PREFIX + name
 	}
 	return NewBranchLoggingService(branch{name})
 }
 
-func BranchFromBranchName(name string) (Branch, error) {
+func BranchFromBranchName(name string) (b Branch, err error) {
+	l.Log().Info(l.Fields{"name": name})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	if strings.Contains(name, "/feature/") {
 		return FeatureFromBranch(name)
 	}

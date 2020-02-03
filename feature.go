@@ -3,6 +3,7 @@ package glow
 import (
 	"strings"
 
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -12,13 +13,25 @@ type feature struct {
 }
 
 // NewFeature creates a new feature definition
-func NewFeature(author, name string) (AuthoredBranch, error) {
+func NewFeature(author, name string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"author": author, "name": name})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	ab, err := NewAuthoredBranch(AUTHORED_BRANCH_TYPE_FEATURE, author, name)
 	return feature{ab}, errors.Wrap(err, "error while creating feature definition")
 }
 
 // FeatureFromBranch extracts a feature definition from branch name
-func FeatureFromBranch(branchName string) (AuthoredBranch, error) {
+func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	if !strings.Contains(branchName, "/feature/") {
 		return feature{}, errors.New("no valid feature branch")
 	}
