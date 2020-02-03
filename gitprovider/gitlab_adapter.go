@@ -10,12 +10,21 @@ import (
 	"os"
 
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
 type gitlabAdapter struct {
 	service
+}
+
+func (s *gitlabAdapter) GitService() (gs git.Service) {
+	return s.gitService
+}
+
+func (s *gitlabAdapter) SetGitService(gs git.Service) {
+	s.gitService = gs
 }
 
 func (a *gitlabAdapter) Close(b glow.Branch) error {
