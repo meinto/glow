@@ -75,7 +75,7 @@ func postRelease(version, script string) {
 	cmd.Stdout = &out
 	err = cmd.Run()
 	l.Log().
-		Stdout(out.String()).
+		Info(l.Stdout(out.String())).
 		Error(err)
 }
 
@@ -90,6 +90,6 @@ func execute(version, command string) {
 	cmd.Stdout = &stdout
 	err := cmd.Run()
 	l.Log().
-		Stdout(stdout.String()).
+		Info(l.Stdout(stdout.String())).
 		Stderr(stderr.String(), err)
 }

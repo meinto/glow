@@ -9,9 +9,7 @@ type loggingService struct {
 }
 
 func NewLoggingService(s Service) Service {
-	defer func() {
-		l.Log().Info(l.Fields{"service": s})
-	}()
+	l.Log().Trace(l.Fields{"service": s})
 	return &loggingService{s}
 }
 
