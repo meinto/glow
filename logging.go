@@ -9,18 +9,14 @@ type branchLoggingService struct {
 }
 
 func NewBranchLoggingService(b Branch) Branch {
-	defer func() {
-		l.Log().Info(l.Fields{"branch": b})
-	}()
+	l.Log().Debug(l.Fields{"branch": b})
 	return &branchLoggingService{b}
 }
 
 func (s *branchLoggingService) CreationIsAllowedFrom(sourceBranch Branch) (creationAllowed bool) {
+	l.Log().Info(l.Fields{"sourceBranch": sourceBranch})
 	defer func() {
-		l.Log().Info(l.Fields{
-			"sourceBranch":    sourceBranch,
-			"creationAllowed": creationAllowed,
-		})
+		l.Log().Info(l.Fields{"creationAllowed": creationAllowed})
 	}()
 	return s.next.CreationIsAllowedFrom(sourceBranch)
 }
@@ -40,11 +36,9 @@ func (s *branchLoggingService) CanBePublished() (canBePublished bool) {
 }
 
 func (s *branchLoggingService) CloseBranches(availableBranches []Branch) (closeBranches []Branch) {
+	l.Log().Info(l.Fields{"availableBranches": availableBranches})
 	defer func() {
-		l.Log().Info(l.Fields{
-			"availableBranches": availableBranches,
-			"closeBranches":     closeBranches,
-		})
+		l.Log().Info(l.Fields{"closeBranches": closeBranches})
 	}()
 	return s.next.CloseBranches(availableBranches)
 }

@@ -17,9 +17,10 @@ func NewLoggingService(s Service) Service {
 
 // SetCICDOrigin for pipeline
 func (s loggingService) SetCICDOrigin(origin string) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"origin": origin})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"origin": origin})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.SetCICDOrigin(origin)
@@ -27,9 +28,10 @@ func (s loggingService) SetCICDOrigin(origin string) (stdout, stderr string, err
 
 // GitRepoPath returns the path to the root with the .git folder
 func (s loggingService) GitRepoPath() (repoPath string, stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"repoPath": repoPath})
 	defer func() {
 		l.Log().
-			Debug(l.StdoutFields(stdout, l.Fields{"repoPath": repoPath})).
+			Debug(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.GitRepoPath()
@@ -46,10 +48,10 @@ func (s loggingService) CurrentBranch() (branch glow.Branch, stdout, stderr stri
 }
 
 // BranchList returns a list of avalilable branches
-func (s loggingService) BranchList() (_ []glow.Branch, stdout, stderr string, err error) {
+func (s loggingService) BranchList() (branches []glow.Branch, stdout, stderr string, err error) {
 	defer func() {
 		l.Log().
-			Info(l.Stdout(stdout)).
+			Info(l.StdoutFields(stdout, l.Fields{"branches": branches})).
 			Stderr(stderr, err)
 	}()
 	return s.next.BranchList()
@@ -97,9 +99,10 @@ func (s loggingService) StashPop() (stdout, stderr string, err error) {
 
 // Commit added changes
 func (s loggingService) Commit(message string) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"message": message})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"message": message})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.Commit(message)
@@ -107,9 +110,10 @@ func (s loggingService) Commit(message string) (stdout, stderr string, err error
 
 // Push changes
 func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"setUpstream": setUpstream})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"setUpstream": setUpstream})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.Push(setUpstream)
@@ -117,12 +121,13 @@ func (s loggingService) Push(setUpstream bool) (stdout, stderr string, err error
 
 // Create a new branch
 func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{
+		"branchName": b.BranchName(),
+		"skipChecks": skipChecks,
+	})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{
-				"branchName": b.BranchName(),
-				"skipChecks": skipChecks,
-			})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.Create(b, skipChecks)
@@ -130,9 +135,10 @@ func (s loggingService) Create(b glow.Branch, skipChecks bool) (stdout, stderr s
 
 // Checkout a branch
 func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"branchName": b.BranchName()})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"branchName": b.BranchName()})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.Checkout(b)
@@ -140,12 +146,13 @@ func (s loggingService) Checkout(b glow.Branch) (stdout, stderr string, err erro
 
 // CleanupBranches removes all unused branches
 func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{
+		"cleanupGone":      cleanupGone,
+		"cleanupUntracked": cleanupUntracked,
+	})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{
-				"cleanupGone":      cleanupGone,
-				"cleanupUntracked": cleanupUntracked,
-			})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.CleanupBranches(cleanupGone, cleanupUntracked)
@@ -153,18 +160,20 @@ func (s loggingService) CleanupBranches(cleanupGone, cleanupUntracked bool) (std
 
 // CleanupTags removes tags from local repo
 func (s loggingService) CleanupTags(cleanupUntracked bool) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"cleanupUntracked": cleanupUntracked})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"cleanupUntracked": cleanupUntracked})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.CleanupTags(cleanupUntracked)
 }
 
 func (s loggingService) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
 	defer func() {
 		l.Log().
-			Info(l.StdoutFields(stdout, l.Fields{"branchName": branchName})).
+			Info(l.Stdout(stdout)).
 			Stderr(stderr, err)
 	}()
 	return s.next.RemoteBranchExists(branchName)
