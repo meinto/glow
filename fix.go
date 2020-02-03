@@ -3,6 +3,7 @@ package glow
 import (
 	"strings"
 
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -11,13 +12,25 @@ type fix struct {
 }
 
 // NewFix creates a new fix definition
-func NewFix(author, name string) (AuthoredBranch, error) {
+func NewFix(author, name string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"author": author, "name": name})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	ab, err := NewAuthoredBranch(AUTHORED_BRANCH_TYPE_FIX, author, name)
 	return fix{ab}, errors.Wrap(err, "error while creating fix definition")
 }
 
 // FixFromBranch extracts a fix definition from branch name
-func FixFromBranch(branchName string) (AuthoredBranch, error) {
+func FixFromBranch(branchName string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	if !strings.Contains(branchName, "/fix/") {
 		return fix{}, errors.New("no valid fix branch")
 	}
