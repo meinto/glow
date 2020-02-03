@@ -77,11 +77,12 @@ func (mr *MockServiceMockRecorder) DetectCICDOrigin() *gomock.Call {
 }
 
 // GetCIBranch mocks base method
-func (m *MockService) GetCIBranch() glow.Branch {
+func (m *MockService) GetCIBranch() (glow.Branch, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCIBranch")
 	ret0, _ := ret[0].(glow.Branch)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetCIBranch indicates an expected call of GetCIBranch

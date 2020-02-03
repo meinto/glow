@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	closeCmd.AddCommand(closeReleaseCmd)
+	closeCmd.Cmd().AddCommand(closeReleaseCmd)
 	util.AddFlagsForMergeRequests(closeReleaseCmd)
 }
 
