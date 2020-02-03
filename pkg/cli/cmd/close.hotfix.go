@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	closeCmd.AddCommand(closeHotfixCmd)
+	closeCmd.Cmd().AddCommand(closeHotfixCmd)
 	util.AddFlagsForMergeRequests(closeHotfixCmd)
 }
 
