@@ -28,7 +28,7 @@ func (s loggingService) SetCICDOrigin(origin string) (stdout, stderr string, err
 
 // GitRepoPath returns the path to the root with the .git folder
 func (s loggingService) GitRepoPath() (repoPath string, stdout, stderr string, err error) {
-	l.Log().Info(l.Fields{"repoPath": repoPath})
+	l.Log().Debug(l.Fields{"repoPath": repoPath})
 	defer func() {
 		l.Log().
 			Debug(l.Stdout(stdout)).
