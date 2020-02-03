@@ -32,6 +32,22 @@ func NewBranch(name string) Branch {
 	return NewBranchLoggingService(branch{name})
 }
 
+func BranchFromBranchName(name string) (Branch, error) {
+	if strings.Contains(name, "/feature/") {
+		return FeatureFromBranch(name)
+	}
+	if strings.Contains(name, "/fix/") {
+		return FixFromBranch(name)
+	}
+	if strings.Contains(name, "/hotfix/") {
+		return HotfixFromBranch(name)
+	}
+	if strings.Contains(name, "/release/v") {
+		return ReleaseFromBranch(name)
+	}
+	return NewBranch(name), nil
+}
+
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (b branch) CreationIsAllowedFrom(sourceBranch Branch) bool {

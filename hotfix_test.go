@@ -14,7 +14,8 @@ var _ = Describe("Hotfix", func() {
 	BeforeEach(func() {
 		f1, _ := NewHotfix("0.0.1")
 		f2, _ := HotfixFromBranch(BRANCH_NAME_PREFIX + "hotfix/v0.0.1")
-		branches = []Branch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "hotfix/v0.0.1")
+		branches = []Branch{f1, f2, f3}
 	})
 
 	It("can be closed", func() {

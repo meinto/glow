@@ -14,7 +14,8 @@ var _ = Describe("Fix", func() {
 	BeforeEach(func() {
 		f1, _ := NewFix("luke", "falcon")
 		f2, _ := FixFromBranch(BRANCH_NAME_PREFIX + "fix/luke/falcon")
-		branches = []AuthoredBranch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "fix/luke/falcon")
+		branches = []AuthoredBranch{f1, f2, f3}
 	})
 
 	It("can be closed", func() {
