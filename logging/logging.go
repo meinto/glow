@@ -40,63 +40,63 @@ func Log() *logger {
 	})}
 }
 
-func (l *logger) Stdout(stdout string) *logger {
-	l.prefixEntry.WithFields(logrus.Fields{"stdout": stdout}).Info()
+func (l *logger) Stdout(stdout string, args ...interface{}) *logger {
+	l.prefixEntry.WithFields(logrus.Fields{"stdout": stdout}).Info(args...)
 	return l
 }
 
-func (l *logger) StdoutFields(stdout string, fields Fields) *logger {
+func (l *logger) StdoutFields(stdout string, fields Fields, args ...interface{}) *logger {
 	mergo.Merge(
 		&fields,
 		Fields{"stdout": stdout},
 	)
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Info()
+	l.prefixEntry.WithFields(logrus.Fields(fields)).Info(args...)
 	return l
 }
 
-func (l *logger) Info(fields Fields) *logger {
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Info()
+func (l *logger) Info(fields Fields, args ...interface{}) *logger {
+	l.prefixEntry.WithFields(logrus.Fields(fields)).Info(args...)
 	return l
 }
 
-func (l *logger) Warn(fields Fields) *logger {
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Warn()
+func (l *logger) Warn(fields Fields, args ...interface{}) *logger {
+	l.prefixEntry.WithFields(logrus.Fields(fields)).Warn(args...)
 	return l
 }
 
-func (l *logger) WarnIf(fields Fields, condition bool) *logger {
+func (l *logger) WarnIf(fields Fields, condition bool, args ...interface{}) *logger {
 	if condition {
-		l.prefixEntry.WithFields(logrus.Fields(fields)).Warn()
+		l.prefixEntry.WithFields(logrus.Fields(fields)).Warn(args...)
 	}
 	return l
 }
 
-func (l *logger) Stderr(stderr string, err error) *logger {
+func (l *logger) Stderr(stderr string, err error, args ...interface{}) *logger {
 	if strings.TrimSpace(stderr) != "" {
 		entry := l.prefixEntry.WithFields(logrus.Fields{"stderr": stderr})
-		entry.Warn()
+		entry.Warn(args...)
 	}
 	if err != nil {
 		entry := l.prefixEntry.WithFields(logrus.Fields{"err": err})
-		entry.Error()
+		entry.Error(args...)
 	}
 	return l
 }
 
-func (l *logger) Error(err error) *logger {
+func (l *logger) Error(err error, args ...interface{}) *logger {
 	if err != nil {
-		l.prefixEntry.WithFields(logrus.Fields{"err": err}).Error()
+		l.prefixEntry.WithFields(logrus.Fields{"err": err}).Error(args...)
 	}
 	return l
 }
 
-func (l *logger) ErrorFields(err error, fields Fields) *logger {
+func (l *logger) ErrorFields(err error, fields Fields, args ...interface{}) *logger {
 	if err != nil {
 		mergo.Merge(
 			&fields,
 			Fields{"err": err},
 		)
-		l.prefixEntry.WithFields(logrus.Fields(fields)).Error()
+		l.prefixEntry.WithFields(logrus.Fields(fields)).Error(args...)
 	}
 	return l
 }
