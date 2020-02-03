@@ -13,7 +13,7 @@ type loggingService struct {
 }
 
 func NewLoggingService(s Service) Service {
-	l.Log().Info(l.Fields{"service": s})
+	l.Log().Trace(l.Fields{"service": s})
 	return &loggingService{s}
 }
 

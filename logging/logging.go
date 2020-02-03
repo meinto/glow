@@ -15,7 +15,20 @@ type logger struct {
 	prefixEntry *logrus.Entry
 }
 
-func Log() *logger {
+type Options struct {
+	Level logrus.Level
+}
+
+var defaultOptions = Options{
+	Level: logrus.InfoLevel,
+}
+
+func Log(options ...Options) *logger {
+	var _options Options
+	if len(options) > 0 {
+		_options = options[0]
+	}
+	mergo.Merge(&_options, defaultOptions)
 	l := logrus.New()
 	l.SetFormatter(&prefixed.TextFormatter{
 		ForceColors:     true,
@@ -23,6 +36,7 @@ func Log() *logger {
 		FullTimestamp:   true,
 		TimestampFormat: "15:04:05",
 	})
+	l.SetLevel(_options.Level)
 
 	pc, _, _, _ := runtime.Caller(1)
 	nameFull := runtime.FuncForPC(pc).Name()
@@ -40,17 +54,25 @@ func Log() *logger {
 	})}
 }
 
-func (l *logger) Stdout(stdout string, args ...interface{}) *logger {
-	l.prefixEntry.WithFields(logrus.Fields{"stdout": stdout}).Info(args...)
-	return l
+func Stdout(stdout string) Fields {
+	return Fields{"stdout": stdout}
 }
 
-func (l *logger) StdoutFields(stdout string, fields Fields, args ...interface{}) *logger {
+func StdoutFields(stdout string, fields Fields) Fields {
 	mergo.Merge(
 		&fields,
 		Fields{"stdout": stdout},
 	)
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Info(args...)
+	return fields
+}
+
+func (l *logger) Trace(fields Fields, args ...interface{}) *logger {
+	l.prefixEntry.WithFields(logrus.Fields(fields)).Trace(args...)
+	return l
+}
+
+func (l *logger) Debug(fields Fields, args ...interface{}) *logger {
+	l.prefixEntry.WithFields(logrus.Fields(fields)).Debug(args...)
 	return l
 }
 
