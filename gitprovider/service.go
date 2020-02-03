@@ -1,6 +1,7 @@
 package gitprovider
 
 import (
+	"github.com/imdario/mergo"
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
@@ -9,6 +10,8 @@ import (
 // Service describes all actions which can performed
 // with the git hosting git service (gitlab etc.)
 type Service interface {
+	GitService() git.Service
+	SetGitService(git.Service)
 	Close(b glow.Branch) error
 	Publish(b glow.Branch) error
 	DetectCICDOrigin() (string, error)
@@ -23,32 +26,58 @@ type service struct {
 	gitService git.Service
 }
 
-func NewGitlabService(endpoint, namespace, project, token string) Service {
-	exec := cmd.NewCmdExecutor("/bin/bash")
-	g := git.NewNativeService(exec)
-
-	return NewLoggingService(&gitlabAdapter{
-		service{
-			endpoint,
-			namespace,
-			project,
-			token,
-			g,
-		},
-	})
+type Options struct {
+	Endpoint  string
+	Namespace string
+	Project   string
+	Token     string
+	ShouldLog bool
 }
 
-func NewGithubService(endpoint, namespace, project, token string) Service {
+var defaultOptions = Options{
+	ShouldLog: true,
+}
+
+func NewGitlabService(options Options) Service {
+	mergo.Merge(&options, defaultOptions)
 	exec := cmd.NewCmdExecutor("/bin/bash")
 	g := git.NewNativeService(exec)
 
-	return NewLoggingService(&githubAdapter{
+	s := &gitlabAdapter{
 		service{
-			endpoint,
-			namespace,
-			project,
-			token,
+			options.Endpoint,
+			options.Namespace,
+			options.Project,
+			options.Token,
 			g,
 		},
-	})
+	}
+
+	if options.ShouldLog {
+		NewLoggingService(s)
+	}
+
+	return s
+}
+
+func NewGithubService(options Options) Service {
+	mergo.Merge(&options, defaultOptions)
+	exec := cmd.NewCmdExecutor("/bin/bash")
+	g := git.NewNativeService(exec)
+
+	s := &githubAdapter{
+		service{
+			options.Endpoint,
+			options.Namespace,
+			options.Project,
+			options.Token,
+			g,
+		},
+	}
+
+	if options.ShouldLog {
+		NewLoggingService(s)
+	}
+
+	return s
 }

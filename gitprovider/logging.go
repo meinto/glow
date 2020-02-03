@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	l "github.com/meinto/glow/logging"
 )
 
@@ -14,6 +15,18 @@ type loggingService struct {
 func NewLoggingService(s Service) Service {
 	l.Log().Info(l.Fields{"service": s})
 	return &loggingService{s}
+}
+
+func (s *loggingService) GitService() (gs git.Service) {
+	defer func() {
+		l.Log().Info(l.Fields{"git-service": gs})
+	}()
+	return s.next.GitService()
+}
+
+func (s *loggingService) SetGitService(gs git.Service) {
+	l.Log().Info(l.Fields{"git-service": gs})
+	s.next.SetGitService(gs)
 }
 
 func (s *loggingService) Close(b glow.Branch) (err error) {

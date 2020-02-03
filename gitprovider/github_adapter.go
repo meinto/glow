@@ -8,11 +8,20 @@ import (
 	"net/http"
 
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	"github.com/pkg/errors"
 )
 
 type githubAdapter struct {
 	service
+}
+
+func (s *githubAdapter) GitService() (gs git.Service) {
+	return s.gitService
+}
+
+func (s *githubAdapter) SetGitService(gs git.Service) {
+	s.gitService = gs
 }
 
 func (a *githubAdapter) Close(b glow.Branch) error {
