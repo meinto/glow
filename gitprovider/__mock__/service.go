@@ -7,6 +7,7 @@ package mock_gitprovider
 import (
 	gomock "github.com/golang/mock/gomock"
 	glow "github.com/meinto/glow"
+	git "github.com/meinto/glow/git"
 	reflect "reflect"
 )
 
@@ -31,6 +32,32 @@ func NewMockService(ctrl *gomock.Controller) *MockService {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
+}
+
+// GitService mocks base method
+func (m *MockService) GitService() git.Service {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GitService")
+	ret0, _ := ret[0].(git.Service)
+	return ret0
+}
+
+// GitService indicates an expected call of GitService
+func (mr *MockServiceMockRecorder) GitService() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GitService", reflect.TypeOf((*MockService)(nil).GitService))
+}
+
+// SetGitService mocks base method
+func (m *MockService) SetGitService(arg0 git.Service) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetGitService", arg0)
+}
+
+// SetGitService indicates an expected call of SetGitService
+func (mr *MockServiceMockRecorder) SetGitService(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetGitService", reflect.TypeOf((*MockService)(nil).SetGitService), arg0)
 }
 
 // Close mocks base method
