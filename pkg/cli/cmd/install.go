@@ -11,57 +11,71 @@ import (
 
 	"github.com/manifoldco/promptui"
 	cobraUtils "github.com/meinto/cobra-utils"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	RootCmd.Cmd().AddCommand(installCmd)
+type InstallCommand struct {
+	command.Service
 }
 
-var installCmd = &cobra.Command{
-	Use:   "install",
-	Short: "install glow",
-	Run: func(cmd *cobra.Command, args []string) {
+func (cmd *InstallCommand) PostSetup(parent command.Service) command.Service {
+	parent.Add(cmd)
+	return cmd
+}
 
-		flist, err := fileList(".")
-		util.ExitOnErrorWithMessage("cannot get file list")(err)
+var installCmd = SetupInstallCommand(RootCmd)
 
-		index, _, err := cobraUtils.PromptSelect(
-			"Select your downloaded glow file",
-			flist,
-		)
-		util.ExitOnErrorWithMessage(fmt.Sprintf("cannot get path to glow file: %s", err))(err)
+func SetupInstallCommand(parent command.Service) command.Service {
+	return command.Setup(&InstallCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:   "install",
+				Short: "install glow",
+			},
+			Run: func(cmd command.Service, args []string) {
 
-		filePath, err := filepath.Abs(flist[index])
-		util.ExitOnErrorWithMessage("cannot get absolute file path")(err)
+				flist, err := fileList(".")
+				util.ExitOnErrorWithMessage("cannot get file list")(err)
 
-		index, err = usageOptions()
-		util.ExitOnErrorWithMessage("cannot get usage option")(err)
+				index, _, err := cobraUtils.PromptSelect(
+					"Select your downloaded glow file",
+					flist,
+				)
+				util.ExitOnErrorWithMessage(fmt.Sprintf("cannot get path to glow file: %s", err))(err)
 
-		var newFileName string
-		switch index {
-		case 0:
-			newFileName = "/usr/local/bin/glow"
-		case 1:
-			newFileName = "/usr/local/bin/git-glow"
-		}
+				filePath, err := filepath.Abs(flist[index])
+				util.ExitOnErrorWithMessage("cannot get absolute file path")(err)
 
-		if _, err := os.Stat(newFileName); !os.IsNotExist(err) {
-			replace, err := replaceFile(newFileName)
-			util.ExitOnErrorWithMessage(err.Error())(err)
-			if !replace {
-				log.Fatal("file not replaced")
-			}
-		}
+				index, err = usageOptions()
+				util.ExitOnErrorWithMessage("cannot get usage option")(err)
 
-		err = os.Rename(filePath, newFileName)
-		if err != nil {
-			log.Fatal(err)
-		}
+				var newFileName string
+				switch index {
+				case 0:
+					newFileName = "/usr/local/bin/glow"
+				case 1:
+					newFileName = "/usr/local/bin/git-glow"
+				}
 
-		fmt.Println("successfully moved glow")
-	},
+				if _, err := os.Stat(newFileName); !os.IsNotExist(err) {
+					replace, err := replaceFile(newFileName)
+					util.ExitOnErrorWithMessage(err.Error())(err)
+					if !replace {
+						log.Fatal("file not replaced")
+					}
+				}
+
+				err = os.Rename(filePath, newFileName)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				fmt.Println("successfully moved glow")
+			},
+		},
+	})
 }
 
 func pathToGlowFile() (string, error) {
