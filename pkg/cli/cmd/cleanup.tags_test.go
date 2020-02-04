@@ -19,13 +19,13 @@ var _ = Describe("Cleanup branches command", func() {
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRootCmd = NewMockCommand(SetupRootCommand(), mockCtrl).
-			SetupServices().
+			SetupServices(true).
 			Patch()
 		mockCleanupCmd = NewMockCommand(SetupCleanupCommand(mockRootCmd), mockCtrl).
-			SetupServices().
+			SetupServices(true).
 			Patch()
 		mockCleanupTagsCmd = NewMockCommand(SetupCleanupTagsCommand(mockCleanupCmd), mockCtrl).
-			SetupServices().
+			SetupServices(true).
 			Patch()
 	})
 

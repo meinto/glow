@@ -18,7 +18,7 @@ var _ = Describe("Root command", func() {
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(SetupRootCommand(), mockCtrl).
-			SetupServices().
+			SetupServices(true).
 			Patch()
 	})
 
