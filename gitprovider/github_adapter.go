@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 
@@ -21,8 +20,12 @@ func (s *githubAdapter) GitService() (gs git.Service) {
 	return s.gitService
 }
 
-func (s *githubAdapter) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
-	return http.NewRequest(method, url, body)
+func (s *githubAdapter) HTTPClient() HttpClient {
+	return s.httpClient
+}
+
+func (s *githubAdapter) SetHTTPClient(client HttpClient) {
+	s.SetHTTPClient(client)
 }
 
 func (s *githubAdapter) SetGitService(gs git.Service) {
@@ -85,7 +88,7 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 		a.namespace,
 		a.project,
 	)
-	req, err := a.NewRequest("POST", requestURI, body)
+	req, err := http.NewRequest("POST", requestURI, body)
 	if err != nil {
 		return errors.Wrap(err, "prepare request")
 	}
@@ -93,7 +96,7 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "token "+a.token)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := a.HTTPClient().Do(req)
 	if err != nil {
 		return errors.Wrap(err, "do request")
 	}

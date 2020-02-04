@@ -1,7 +1,6 @@
 package gitprovider
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/imdario/mergo"
@@ -10,11 +9,16 @@ import (
 	"github.com/meinto/glow/git"
 )
 
+type HttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // Service describes all actions which can performed
 // with the git hosting git service (gitlab etc.)
 type Service interface {
 	GitService() git.Service
-	NewRequest(method, url string, body io.Reader) (*http.Request, error)
+	HTTPClient() HttpClient
+	SetHTTPClient(HttpClient)
 	SetGitService(git.Service)
 	Close(b glow.Branch) error
 	Publish(b glow.Branch) error
@@ -28,18 +32,21 @@ type service struct {
 	project    string
 	token      string
 	gitService git.Service
+	httpClient HttpClient
 }
 
 type Options struct {
-	Endpoint  string
-	Namespace string
-	Project   string
-	Token     string
-	ShouldLog bool
+	Endpoint   string
+	Namespace  string
+	Project    string
+	Token      string
+	ShouldLog  bool
+	HttpClient HttpClient
 }
 
 var defaultOptions = Options{
-	ShouldLog: true,
+	ShouldLog:  true,
+	HttpClient: http.DefaultClient,
 }
 
 func NewGitlabService(options Options) Service {
@@ -56,6 +63,7 @@ func NewGitlabService(options Options) Service {
 			options.Project,
 			options.Token,
 			g,
+			options.HttpClient,
 		},
 	}
 
@@ -80,6 +88,7 @@ func NewGithubService(options Options) Service {
 			options.Project,
 			options.Token,
 			g,
+			options.HttpClient,
 		},
 	}
 
