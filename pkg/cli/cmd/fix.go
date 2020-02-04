@@ -2,29 +2,40 @@ package cmd
 
 import (
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-func init() {
-	RootCmd.Cmd().AddCommand(fixCmd)
+type FixCommand struct {
+	command.Service
 }
 
-var fixCmd = &cobra.Command{
-	Use:   "fix",
-	Short: "create a fix branch",
-	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		fixName := args[0]
+func (cmd *FixCommand) PostSetup(parent command.Service) command.Service {
+	parent.Add(cmd)
+	return cmd
+}
 
-		fix, err := glow.NewFix(viper.GetString("author"), fixName)
-		util.ExitOnError(err)
+var fixCmd = SetupFixCommand(RootCmd)
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+func SetupFixCommand(parent command.Service) command.Service {
+	return command.Setup(&FixCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:   "fix",
+				Short: "create a fix branch",
+				Args:  cobra.MinimumNArgs(1),
+			},
+			Run: func(cmd command.Service, args []string) {
+				fixName := args[0]
 
-		util.ExitOnError(g.Create(fix, rootCmdOptions.SkipChecks))
-		util.ExitOnError(g.Checkout(fix))
-	},
+				fix, err := glow.NewFix(viper.GetString("author"), fixName)
+				util.ExitOnError(err)
+
+				util.ExitOnError(cmd.GitClient().Create(fix, rootCmdOptions.SkipChecks))
+				util.ExitOnError(cmd.GitClient().Checkout(fix))
+			},
+		},
+	})
 }
