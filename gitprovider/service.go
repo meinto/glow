@@ -1,6 +1,9 @@
 package gitprovider
 
 import (
+	"io"
+	"net/http"
+
 	"github.com/imdario/mergo"
 	"github.com/meinto/glow"
 	"github.com/meinto/glow/cmd"
@@ -11,6 +14,7 @@ import (
 // with the git hosting git service (gitlab etc.)
 type Service interface {
 	GitService() git.Service
+	NewRequest(method, url string, body io.Reader) (*http.Request, error)
 	SetGitService(git.Service)
 	Close(b glow.Branch) error
 	Publish(b glow.Branch) error

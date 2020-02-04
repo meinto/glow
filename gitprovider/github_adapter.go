@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -18,6 +19,10 @@ type githubAdapter struct {
 
 func (s *githubAdapter) GitService() (gs git.Service) {
 	return s.gitService
+}
+
+func (s *githubAdapter) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+	return http.NewRequest(method, url, body)
 }
 
 func (s *githubAdapter) SetGitService(gs git.Service) {
@@ -80,7 +85,7 @@ func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch
 		a.namespace,
 		a.project,
 	)
-	req, err := http.NewRequest("POST", requestURI, body)
+	req, err := a.NewRequest("POST", requestURI, body)
 	if err != nil {
 		return errors.Wrap(err, "prepare request")
 	}

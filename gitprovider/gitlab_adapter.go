@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -21,6 +22,10 @@ type gitlabAdapter struct {
 
 func (s *gitlabAdapter) GitService() (gs git.Service) {
 	return s.gitService
+}
+
+func (s *gitlabAdapter) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+	return http.NewRequest(method, url, body)
 }
 
 func (s *gitlabAdapter) SetGitService(gs git.Service) {
@@ -87,7 +92,7 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		a.endpoint,
 		url.QueryEscape(a.namespace+"/"+a.project),
 	)
-	req, err := http.NewRequest("POST", requestURI, body)
+	req, err := a.NewRequest("POST", requestURI, body)
 	if err != nil {
 		return errors.Wrap(err, "prepare request")
 	}
