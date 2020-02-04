@@ -14,6 +14,7 @@ var _ = Describe("Cleanup branches command", func() {
 		mockRootCmd        command.Service
 		mockCleanupCmd     command.Service
 		mockCleanupTagsCmd command.Service
+		mockGitClient      mockg.MockNativeServiceInterface
 	)
 
 	BeforeEach(func() {
@@ -27,6 +28,7 @@ var _ = Describe("Cleanup branches command", func() {
 		mockCleanupTagsCmd = NewMockCommand(SetupCleanupTagsCommand(mockCleanupCmd), mockCtrl).
 			SetupServices(true).
 			Patch()
+		mockGitClient = mockCleanupTagsCmd.GitClient().(mockg.MockNativeServiceInterface)
 	})
 
 	AfterEach(func() {
@@ -37,9 +39,7 @@ var _ = Describe("Cleanup branches command", func() {
 		mockRootCmd.Cmd().SetArgs([]string{
 			"cleanup", "tags",
 		})
-		mockCleanupTagsCmd.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			CleanupTags(false)
+		mockGitClient.EXPECT().CleanupTags(false)
 		mockRootCmd.Execute()
 	})
 
@@ -47,9 +47,7 @@ var _ = Describe("Cleanup branches command", func() {
 		mockRootCmd.Cmd().SetArgs([]string{
 			"cleanup", "tags", "--untracked",
 		})
-		mockCleanupTagsCmd.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			CleanupTags(true)
+		mockGitClient.EXPECT().CleanupTags(true)
 		mockRootCmd.Execute()
 	})
 
