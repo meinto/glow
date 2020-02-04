@@ -33,7 +33,7 @@ type Service interface {
 
 func Setup(cmd Service) Service {
 	pkg.InitGlobalConfig()
-	cmd.Patch()
+	cmd.SetupServices(false).Patch()
 
 	return cmd
 }
@@ -130,7 +130,7 @@ func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string
 }
 
 func (c *Command) Execute() error {
-	return c.SetupServices(false).(*Command).Command.Execute()
+	return c.Command.Execute()
 }
 
 func (c *Command) Add(cmd Service) {
