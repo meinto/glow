@@ -8,8 +8,48 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	glow "github.com/meinto/glow"
 	git "github.com/meinto/glow/git"
+	gitprovider "github.com/meinto/glow/gitprovider"
+	http "net/http"
 	reflect "reflect"
 )
+
+// MockHttpClient is a mock of HttpClient interface
+type MockHttpClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockHttpClientMockRecorder
+}
+
+// MockHttpClientMockRecorder is the mock recorder for MockHttpClient
+type MockHttpClientMockRecorder struct {
+	mock *MockHttpClient
+}
+
+// NewMockHttpClient creates a new mock instance
+func NewMockHttpClient(ctrl *gomock.Controller) *MockHttpClient {
+	mock := &MockHttpClient{ctrl: ctrl}
+	mock.recorder = &MockHttpClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockHttpClient) EXPECT() *MockHttpClientMockRecorder {
+	return m.recorder
+}
+
+// Do mocks base method
+func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Do", req)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Do indicates an expected call of Do
+func (mr *MockHttpClientMockRecorder) Do(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Do", reflect.TypeOf((*MockHttpClient)(nil).Do), req)
+}
 
 // MockService is a mock of Service interface
 type MockService struct {
@@ -46,6 +86,32 @@ func (m *MockService) GitService() git.Service {
 func (mr *MockServiceMockRecorder) GitService() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GitService", reflect.TypeOf((*MockService)(nil).GitService))
+}
+
+// HTTPClient mocks base method
+func (m *MockService) HTTPClient() gitprovider.HttpClient {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HTTPClient")
+	ret0, _ := ret[0].(gitprovider.HttpClient)
+	return ret0
+}
+
+// HTTPClient indicates an expected call of HTTPClient
+func (mr *MockServiceMockRecorder) HTTPClient() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HTTPClient", reflect.TypeOf((*MockService)(nil).HTTPClient))
+}
+
+// SetHTTPClient mocks base method
+func (m *MockService) SetHTTPClient(arg0 gitprovider.HttpClient) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetHTTPClient", arg0)
+}
+
+// SetHTTPClient indicates an expected call of SetHTTPClient
+func (mr *MockServiceMockRecorder) SetHTTPClient(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetHTTPClient", reflect.TypeOf((*MockService)(nil).SetHTTPClient), arg0)
 }
 
 // SetGitService mocks base method

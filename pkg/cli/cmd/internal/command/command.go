@@ -19,7 +19,7 @@ type Service interface {
 
 	PostSetup(parent Service) Service
 
-	SetupServices() Service
+	SetupServices(override bool) Service
 	SetGitClient(git.Service)
 	GitClient() git.Service
 	SetGitProvider(gitprovider.Service)
@@ -33,9 +33,7 @@ type Service interface {
 
 func Setup(cmd Service) Service {
 	pkg.InitGlobalConfig()
-	cmd.
-		SetupServices().
-		Patch()
+	cmd.Patch()
 
 	return cmd
 }
@@ -82,25 +80,32 @@ func (c *Command) SemverClient() semver.Service {
 	return c.semverClient
 }
 
-func (c *Command) SetupServices() Service {
-	g, err := util.GetGitClient()
-	util.ExitOnError(err)
-	c.SetGitClient(g)
+func (c *Command) SetupServices(override bool) Service {
+	if c.gitClient == nil || override {
+		g, err := util.GetGitClient()
+		util.ExitOnError(err)
+		c.SetGitClient(g)
+	}
 
-	gp, err := util.GetGitProvider()
-	util.ExitOnError(err)
-	c.SetGitProvider(gp)
+	if c.gitProvider == nil || override {
+		gp, err := util.GetGitProvider()
+		util.ExitOnError(err)
+		c.SetGitProvider(gp)
+	}
 
-	pathToRepo, _, _, err := g.GitRepoPath()
-	util.ExitOnError(err)
+	if c.semverClient == nil || override {
+		pathToRepo, _, _, err := c.GitClient().GitRepoPath()
+		util.ExitOnError(err)
 
-	s := semver.NewSemverService(
-		pathToRepo,
-		"/bin/bash",
-		viper.GetString("versionFile"),
-		viper.GetString("versionFileType"),
-	)
-	c.SetSemverClient(s)
+		s := semver.NewSemverService(
+			pathToRepo,
+			"/bin/bash",
+			viper.GetString("versionFile"),
+			viper.GetString("versionFileType"),
+		)
+		c.SetSemverClient(s)
+	}
+
 	return c
 }
 
@@ -125,7 +130,7 @@ func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string
 }
 
 func (c *Command) Execute() error {
-	return c.Command.Execute()
+	return c.SetupServices(false).(*Command).Command.Execute()
 }
 
 func (c *Command) Add(cmd Service) {
