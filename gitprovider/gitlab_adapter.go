@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -24,8 +23,12 @@ func (s *gitlabAdapter) GitService() (gs git.Service) {
 	return s.gitService
 }
 
-func (s *gitlabAdapter) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
-	return http.NewRequest(method, url, body)
+func (s *gitlabAdapter) HTTPClient() HttpClient {
+	return s.httpClient
+}
+
+func (s *gitlabAdapter) SetHTTPClient(client HttpClient) {
+	s.SetHTTPClient(client)
 }
 
 func (s *gitlabAdapter) SetGitService(gs git.Service) {
@@ -42,6 +45,7 @@ func (a *gitlabAdapter) Close(b glow.Branch) error {
 		targets := b.CloseBranches(branchList)
 
 		for _, t := range targets {
+			log.Println(t.BranchName())
 			err := a.createMergeRequest(b, t, true)
 			if err != nil {
 				return errors.Wrap(err, "error creating merge request")
@@ -92,7 +96,7 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		a.endpoint,
 		url.QueryEscape(a.namespace+"/"+a.project),
 	)
-	req, err := a.NewRequest("POST", requestURI, body)
+	req, err := http.NewRequest("POST", requestURI, body)
 	if err != nil {
 		return errors.Wrap(err, "prepare request")
 	}
@@ -100,7 +104,7 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Private-Token", a.token)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := a.HTTPClient().Do(req)
 	if err != nil {
 		return errors.Wrap(err, "do request")
 	}

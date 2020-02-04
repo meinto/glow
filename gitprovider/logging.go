@@ -1,8 +1,6 @@
 package gitprovider
 
 import (
-	"io"
-	"net/http"
 	"regexp"
 
 	"github.com/meinto/glow"
@@ -26,11 +24,14 @@ func (s *loggingService) GitService() (gs git.Service) {
 	return s.next.GitService()
 }
 
-func (s *loggingService) NewRequest(method, url string, body io.Reader) (req *http.Request, err error) {
-	defer func() {
-		l.Log().Trace(l.Fields{"request": req}).Error(err)
-	}()
-	return s.next.NewRequest(method, url, body)
+func (s *loggingService) HTTPClient() HttpClient {
+	l.Log().Trace(nil, "get HTTPClient")
+	return s.next.HTTPClient()
+}
+
+func (s *loggingService) SetHTTPClient(client HttpClient) {
+	l.Log().Trace(nil, "set HTTPClient")
+	s.next.SetHTTPClient(client)
 }
 
 func (s *loggingService) SetGitService(gs git.Service) {
