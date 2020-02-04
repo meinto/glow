@@ -12,9 +12,11 @@ import (
 
 var _ = Describe("Cleanup branches command", func() {
 	var (
-		mockCtrl     *gomock.Controller
-		mockRootCmd  command.Service
-		mockCloseCmd command.Service
+		mockCtrl        *gomock.Controller
+		mockRootCmd     command.Service
+		mockCloseCmd    command.Service
+		mockGitProvider mockgp.MockServiceInterface
+		mockGitClient   mockg.MockNativeServiceInterface
 	)
 
 	BeforeEach(func() {
@@ -25,6 +27,8 @@ var _ = Describe("Cleanup branches command", func() {
 		mockCloseCmd = NewMockCommand(SetupCloseCommand(mockRootCmd), mockCtrl).
 			SetupServices(true).
 			Patch()
+		mockGitProvider = mockCloseCmd.GitProvider().(mockgp.MockServiceInterface)
+		mockGitClient = mockCloseCmd.GitClient().(mockg.MockNativeServiceInterface)
 	})
 
 	AfterEach(func() {
@@ -36,13 +40,8 @@ var _ = Describe("Cleanup branches command", func() {
 			"close",
 		})
 		b := glow.NewBranch("test")
-		mockCloseCmd.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			CurrentBranch().
-			Return(b, "", "", nil)
-		mockCloseCmd.GitProvider().(mockgp.MockServiceInterface).
-			EXPECT().
-			Close(b)
+		mockGitClient.EXPECT().CurrentBranch().Return(b, "", "", nil)
+		mockGitProvider.EXPECT().Close(b)
 		mockRootCmd.Execute()
 	})
 
@@ -51,13 +50,8 @@ var _ = Describe("Cleanup branches command", func() {
 			"close", "--ci",
 		})
 		b := glow.NewBranch("test")
-		mockCloseCmd.GitProvider().(mockgp.MockServiceInterface).
-			EXPECT().
-			GetCIBranch().
-			Return(b, nil)
-		mockCloseCmd.GitProvider().(mockgp.MockServiceInterface).
-			EXPECT().
-			Close(b)
+		mockGitProvider.EXPECT().GetCIBranch().Return(b, nil)
+		mockGitProvider.EXPECT().Close(b)
 		mockRootCmd.Execute()
 	})
 
