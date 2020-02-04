@@ -24,9 +24,9 @@ func (cmd *PushCommand) PostSetup(parent command.Service) command.Service {
 	return cmd
 }
 
-var PushCmd = SetupPushCommand()
+var PushCmd = SetupPushCommand(RootCmd)
 
-func SetupPushCommand() command.Service {
+func SetupPushCommand(parent command.Service) command.Service {
 	return command.Setup(&PushCommand{
 		&command.Command{
 			Command: &cobra.Command{
@@ -68,5 +68,5 @@ func SetupPushCommand() command.Service {
 				util.ExitOnError(err)
 			},
 		},
-	}).PostSetup(RootCmd)
+	}).PostSetup(parent)
 }
