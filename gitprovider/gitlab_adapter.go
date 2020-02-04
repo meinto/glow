@@ -46,7 +46,7 @@ func (a *gitlabAdapter) Close(b glow.Branch) error {
 
 		for _, t := range targets {
 			log.Println(t.BranchName())
-			err := a.createMergeRequest(b, t, true)
+			err := a.createMergeRequest(b, t, false)
 			if err != nil {
 				return errors.Wrap(err, "error creating merge request")
 			}

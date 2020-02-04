@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -41,6 +42,12 @@ var _ = Describe("Branch", func() {
 		log.Println(mockBranch, mockGitService)
 	})
 
+	AfterEach(func() {
+		os.Setenv("CI_COMMIT_REF_NAME", "")
+		os.Setenv("CI_GIT_USER", "")
+		os.Setenv("CI_GIT_TOKEN", "")
+	})
+
 	Context("close command", func() {
 		TestCreateMergeRequest := func(targetBranches []glow.Branch) {
 			for range targetBranches {
@@ -55,7 +62,7 @@ var _ = Describe("Branch", func() {
 				}))
 				bb, _ := ioutil.ReadAll(req.Body)
 				targetBranchName := targetBranches[mockHTTPClient.(*MockHTTPClient).RequestCounter].ShortBranchName()
-				expectedBodyString := `{"source_branch":"source-branch","target_branch":"` + targetBranchName + `","title":"Merge source-branch in ` + targetBranchName + `","remove_source_branch":true,"squash":false}`
+				expectedBodyString := `{"source_branch":"source-branch","target_branch":"` + targetBranchName + `","title":"Merge source-branch in ` + targetBranchName + `","remove_source_branch":false,"squash":false}`
 				Expect(string(bb)).To(Equal(expectedBodyString))
 			})
 		}
@@ -81,4 +88,45 @@ var _ = Describe("Branch", func() {
 		})
 	})
 
+	Context("publish command", func() {
+		TestCreateMergeRequest := func(targetBranch glow.Branch) {
+			mockBranch.EXPECT().ShortBranchName().Return("source-branch")
+			mockHTTPClient.(*MockHTTPClient).SetRequestIntercaptionCallback(func(req *http.Request) {
+				expectedURL, _ := url.Parse("https://mock.endpoint/api/v4/projects/mock-namespace%2Fmock-project/merge_requests")
+				Expect(req.URL).To(Equal(expectedURL))
+				Expect(req.Header).To(Equal(http.Header{
+					"Content-Type":  []string{"application/json"},
+					"Private-Token": []string{"mock-token"},
+				}))
+				bb, _ := ioutil.ReadAll(req.Body)
+				targetBranchName := targetBranch.ShortBranchName()
+				expectedBodyString := `{"source_branch":"source-branch","target_branch":"` + targetBranchName + `","title":"Merge source-branch in ` + targetBranchName + `","remove_source_branch":false,"squash":false}`
+				Expect(string(bb)).To(Equal(expectedBodyString))
+			})
+		}
+
+		It("detects the publish branch and creates merge request", func() {
+			mockBranch.EXPECT().ShortBranchName().Return("mock-branch")
+			mockGitService.EXPECT().RemoteBranchExists("mock-branch").Return("", "", nil)
+			mockBranch.EXPECT().CanBePublished().Return(true)
+			publishBranch := glow.NewBranch("mock-branch")
+			mockBranch.EXPECT().PublishBranch().Return(publishBranch)
+			TestCreateMergeRequest(publishBranch)
+			gp.Publish(mockBranch)
+			Expect(mockHTTPClient.(*MockHTTPClient).RequestCounter).To(Equal(1))
+		})
+	})
+
+	It("gets the cicd branch", func() {
+		os.Setenv("CI_COMMIT_REF_NAME", "feature-branch")
+		branch, _ := gp.GetCIBranch()
+		Expect(branch.ShortBranchName()).To(Equal("feature-branch"))
+	})
+
+	It("detects the cicd origin", func() {
+		os.Setenv("CI_GIT_USER", "username")
+		os.Setenv("CI_GIT_TOKEN", "password")
+		origin, _ := gp.DetectCICDOrigin()
+		Expect(origin).To(Equal("https://username:password@mock.endpoint/mock-namespace/mock-project.git"))
+	})
 })
