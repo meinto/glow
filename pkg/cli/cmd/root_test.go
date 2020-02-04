@@ -11,8 +11,10 @@ import (
 
 var _ = Describe("Root command", func() {
 	var (
-		mockCtrl    *gomock.Controller
-		mockCommand command.Service
+		mockCtrl        *gomock.Controller
+		mockCommand     command.Service
+		mockGitProvider mockgp.MockServiceInterface
+		mockGitClient   mockg.MockNativeServiceInterface
 	)
 
 	BeforeEach(func() {
@@ -20,6 +22,8 @@ var _ = Describe("Root command", func() {
 		mockCommand = NewMockCommand(SetupRootCommand(), mockCtrl).
 			SetupServices(true).
 			Patch()
+		mockGitProvider = mockCommand.GitProvider().(mockgp.MockServiceInterface)
+		mockGitClient = mockCommand.GitClient().(mockg.MockNativeServiceInterface)
 	})
 
 	AfterEach(func() {
@@ -30,13 +34,8 @@ var _ = Describe("Root command", func() {
 		mockCommand.Cmd().SetArgs([]string{
 			"--detectCicdOrigin",
 		})
-		mockCommand.GitProvider().(mockgp.MockServiceInterface).
-			EXPECT().
-			DetectCICDOrigin().
-			Return("new-origin", nil)
-		mockCommand.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			SetCICDOrigin("new-origin")
+		mockGitProvider.EXPECT().DetectCICDOrigin().Return("new-origin", nil)
+		mockGitClient.EXPECT().SetCICDOrigin("new-origin")
 		mockCommand.Execute()
 	})
 
@@ -44,9 +43,7 @@ var _ = Describe("Root command", func() {
 		mockCommand.Cmd().SetArgs([]string{
 			"--cicdOrigin", "my-custom-origin",
 		})
-		mockCommand.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			SetCICDOrigin("my-custom-origin")
+		mockGitClient.EXPECT().SetCICDOrigin("my-custom-origin")
 		mockCommand.Execute()
 	})
 
