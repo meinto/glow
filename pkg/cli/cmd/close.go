@@ -21,7 +21,7 @@ func (cmd *CloseCommand) PostSetup(parent command.Service) command.Service {
 var closeCmd = SetupCloseCommand(RootCmd)
 
 func SetupCloseCommand(parent command.Service) command.Service {
-	return command.Setup(&CleanupTagsCommand{
+	return command.Setup(&CloseCommand{
 		&command.Command{
 			Command: &cobra.Command{
 				Use:   "close",
