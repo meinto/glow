@@ -1,8 +1,6 @@
 package cmd_test
 
 import (
-	"log"
-
 	"github.com/golang/mock/gomock"
 	"github.com/meinto/glow"
 	mockg "github.com/meinto/glow/git/__mock__"
@@ -17,6 +15,8 @@ var _ = Describe("Release command", func() {
 		mockCtrl           *gomock.Controller
 		mockRootCommand    command.Service
 		releaseMockCommand command.Service
+		mockGitClient      mockg.MockNativeServiceInterface
+		mockSemverClient   mocksemver.MockServiceInterface
 	)
 
 	BeforeEach(func() {
@@ -27,7 +27,8 @@ var _ = Describe("Release command", func() {
 		releaseMockCommand = NewMockCommand(SetupReleaseCommand(mockRootCommand), mockCtrl).
 			SetupServices(true).
 			Patch()
-		log.Println(releaseMockCommand)
+		mockGitClient = releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface)
+		mockSemverClient = releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface)
 	})
 
 	AfterEach(func() {
@@ -39,20 +40,11 @@ var _ = Describe("Release command", func() {
 			"release", "current",
 		})
 		CURRENT_VERSION := "2.2.2"
-		releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface).
-			EXPECT().
-			GetCurrentVersion().
-			Return(CURRENT_VERSION, nil)
+		mockSemverClient.EXPECT().GetCurrentVersion().Return(CURRENT_VERSION, nil)
 		b, _ := glow.NewRelease(CURRENT_VERSION)
-		releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			Create(b, false)
-		releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface).
-			EXPECT().
-			Checkout(b)
-		releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface).
-			EXPECT().
-			SetVersion(CURRENT_VERSION)
+		mockGitClient.EXPECT().Create(b, false)
+		mockGitClient.EXPECT().Checkout(b)
+		mockSemverClient.EXPECT().SetVersion(CURRENT_VERSION)
 		mockRootCommand.Execute()
 	})
 })
