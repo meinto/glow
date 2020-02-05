@@ -116,7 +116,7 @@ func SetupInitCommand(parent command.Service) command.Service {
 				})
 			},
 		},
-	})
+	}, parent)
 }
 
 func promtNotEmpty(label string) (string, error) {

@@ -31,9 +31,11 @@ type Service interface {
 	PatchRun(fieldName string, run func(cmd Service, args []string))
 }
 
-func Setup(cmd Service) Service {
+func Setup(cmd Service, parent Service) Service {
 	pkg.InitGlobalConfig()
-	cmd.SetupServices(false).Patch()
+	cmd.SetupServices(false)
+	cmd.Patch()
+	cmd.PostSetup(parent)
 
 	return cmd
 }
@@ -118,7 +120,7 @@ func (c *Command) Patch() Service {
 
 func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string)) {
 	if run != nil {
-		r := reflect.ValueOf(c.Command)
+		r := reflect.ValueOf(c.Cmd())
 		f := reflect.Indirect(r).FieldByName(fieldName)
 
 		patchedRun := func(cmd *cobra.Command, args []string) {
@@ -127,10 +129,6 @@ func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string
 
 		f.Set(reflect.ValueOf(patchedRun))
 	}
-}
-
-func (c *Command) Execute() error {
-	return c.Command.Execute()
 }
 
 func (c *Command) Add(cmd Service) {

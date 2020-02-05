@@ -19,7 +19,7 @@ func (cmd *CloseReleaseCommand) PostSetup(parent command.Service) command.Servic
 	return cmd
 }
 
-var closeReleaseCmd = SetupCloseReleaseCommand(RootCmd)
+var closeReleaseCmd = SetupCloseReleaseCommand(closeCmd)
 
 func SetupCloseReleaseCommand(parent command.Service) command.Service {
 	return command.Setup(&CloseReleaseCommand{
@@ -58,5 +58,5 @@ func SetupCloseReleaseCommand(parent command.Service) command.Service {
 				}
 			},
 		},
-	})
+	}, parent)
 }

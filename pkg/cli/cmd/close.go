@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
@@ -13,6 +15,7 @@ type CloseCommand struct {
 }
 
 func (cmd *CloseCommand) PostSetup(parent command.Service) command.Service {
+	log.Println("test")
 	parent.Add(cmd)
 	util.AddFlagsForMergeRequests(cmd.Cmd())
 	return cmd
@@ -47,5 +50,5 @@ func SetupCloseCommand(parent command.Service) command.Service {
 				}
 			},
 		},
-	}).PostSetup(parent)
+	}, parent)
 }
