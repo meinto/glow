@@ -21,12 +21,8 @@ var _ = Describe("Cleanup branches command", func() {
 
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockRootCmd = NewMockCommand(SetupRootCommand(), mockCtrl).
-			SetupServices(true).
-			Patch()
-		mockCloseCmd = NewMockCommand(SetupCloseCommand(mockRootCmd), mockCtrl).
-			SetupServices(true).
-			Patch()
+		mockRootCmd = NewMockCommand(SetupRootCommand(), mockCtrl)
+		mockCloseCmd = NewMockCommand(SetupCloseCommand(mockRootCmd), mockCtrl)
 		mockGitProvider = mockCloseCmd.GitProvider().(mockgp.MockServiceInterface)
 		mockGitClient = mockCloseCmd.GitClient().(mockg.MockNativeServiceInterface)
 	})

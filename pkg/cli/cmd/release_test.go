@@ -21,12 +21,8 @@ var _ = Describe("Release command", func() {
 
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockRootCommand = NewMockCommand(SetupRootCommand(), mockCtrl).
-			SetupServices(true).
-			Patch()
-		releaseMockCommand = NewMockCommand(SetupReleaseCommand(mockRootCommand), mockCtrl).
-			SetupServices(true).
-			Patch()
+		mockRootCommand = NewMockCommand(SetupRootCommand(), mockCtrl)
+		releaseMockCommand = NewMockCommand(SetupReleaseCommand(mockRootCommand), mockCtrl)
 		mockGitClient = releaseMockCommand.GitClient().(mockg.MockNativeServiceInterface)
 		mockSemverClient = releaseMockCommand.SemverClient().(mocksemver.MockServiceInterface)
 	})
