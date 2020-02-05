@@ -68,5 +68,5 @@ func SetupPushCommand(parent command.Service) command.Service {
 				util.ExitOnError(err)
 			},
 		},
-	}).PostSetup(parent)
+	}, parent)
 }

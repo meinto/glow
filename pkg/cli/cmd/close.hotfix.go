@@ -20,7 +20,7 @@ func (cmd *CloseHotfixCommand) PostSetup(parent command.Service) command.Service
 	return cmd
 }
 
-var closeHotfixCmd = SetupCloseHotfixCommand(RootCmd)
+var closeHotfixCmd = SetupCloseHotfixCommand(closeCmd)
 
 func SetupCloseHotfixCommand(parent command.Service) command.Service {
 	return command.Setup(&CloseHotfixCommand{
@@ -59,5 +59,5 @@ func SetupCloseHotfixCommand(parent command.Service) command.Service {
 				}
 			},
 		},
-	})
+	}, parent)
 }

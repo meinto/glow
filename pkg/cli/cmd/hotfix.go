@@ -73,5 +73,5 @@ func SetupHotfixCommand(parent command.Service) command.Service {
 				)
 			},
 		},
-	})
+	}, parent)
 }

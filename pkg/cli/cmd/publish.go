@@ -47,5 +47,5 @@ func SetupPublishCommand(parent command.Service) command.Service {
 				}
 			},
 		},
-	})
+	}, parent)
 }

@@ -75,7 +75,7 @@ func SetupInstallCommand(parent command.Service) command.Service {
 				fmt.Println("successfully moved glow")
 			},
 		},
-	})
+	}, parent)
 }
 
 func pathToGlowFile() (string, error) {

@@ -67,5 +67,5 @@ func SetupReleaseCommand(parent command.Service) command.Service {
 				)
 			},
 		},
-	}).PostSetup(parent)
+	}, parent)
 }

@@ -38,5 +38,5 @@ func SetupFeatureCommand(parent command.Service) command.Service {
 				util.ExitOnError(cmd.GitClient().Checkout(feature))
 			},
 		},
-	})
+	}, parent)
 }

@@ -68,7 +68,7 @@ func SetupRootCommand() command.Service {
 				log.Println("hello from glow")
 			},
 		},
-	}).PostSetup(nil)
+	}, nil)
 }
 
 func Execute() {

@@ -37,5 +37,5 @@ func SetupFixCommand(parent command.Service) command.Service {
 				util.ExitOnError(cmd.GitClient().Checkout(fix))
 			},
 		},
-	})
+	}, parent)
 }

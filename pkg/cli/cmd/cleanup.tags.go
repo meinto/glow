@@ -28,5 +28,5 @@ func SetupCleanupTagsCommand(parent command.Service) command.Service {
 				util.ExitOnError(cmd.GitClient().CleanupTags(cleanupCmdFlags.cleanupUntracked))
 			},
 		},
-	}).PostSetup(parent)
+	}, parent)
 }

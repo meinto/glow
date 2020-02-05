@@ -32,5 +32,5 @@ func SetupCleanupCommand(parent command.Service) command.Service {
 			},
 			Run: func(cmd command.Service, args []string) {},
 		},
-	}).PostSetup(parent)
+	}, parent)
 }
