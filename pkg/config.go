@@ -23,6 +23,9 @@ func InitGlobalConfig() {
 			rootRepoPath = "."
 		}
 
+		viper.SetDefault("versionFile", "VERSION")
+		viper.SetDefault("versionFileType", "raw")
+
 		viper.SetConfigName("glow.config")
 		viper.AddConfigPath(rootRepoPath)
 		err = viper.ReadInConfig()
