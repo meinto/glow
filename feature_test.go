@@ -45,12 +45,12 @@ var _ = Describe("Feature", func() {
 		})
 	})
 
-	It("is only allowed to create from develop branch", func() {
+	It("is allowed to create from develop or feature branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			f := branch.(AuthoredBranch)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
-				if testBranchName == DEVELOP_BRANCH {
+				if testBranchName == DEVELOP_BRANCH || testBranchName == FEAUTURE_BRANCH {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeTrue())
 				} else {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeFalse())

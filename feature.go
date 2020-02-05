@@ -44,7 +44,8 @@ func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (f feature) CreationIsAllowedFrom(sourceBranch Branch) bool {
-	return strings.Contains(sourceBranch.ShortBranchName(), "develop")
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(sourceBranch.BranchName()))
+	return strings.Contains(sourceBranch.ShortBranchName(), "develop") || (matched && err == nil)
 }
 
 // CanBeClosed checks if the branch name is a valid
