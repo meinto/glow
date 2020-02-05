@@ -2,6 +2,7 @@ package glow
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	l "github.com/meinto/glow/logging"
@@ -35,7 +36,8 @@ func ReleaseFromBranch(branchName string) (b Branch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	if !strings.Contains(branchName, "/release/v") {
+	matched, err := regexp.Match(`release/v.*`, []byte(branchName))
+	if !matched || err != nil {
 		return release{}, errors.New("no valid release branch")
 	}
 	b = NewBranch(branchName)
