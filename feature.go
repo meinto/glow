@@ -33,7 +33,7 @@ func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	matched, err := regexp.Match(`feature/[^/]+/.*`, []byte(branchName))
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(branchName))
 	if !matched || err != nil {
 		return feature{}, errors.New("no valid feature branch")
 	}

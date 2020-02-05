@@ -25,7 +25,13 @@ type branch struct {
 	name string
 }
 
-const BRANCH_NAME_PREFIX = "refs/heads/"
+const (
+	BRANCH_NAME_PREFIX     = "refs/heads/"
+	FEATURE_BRANCH_PATTERN = `feature/[^/]+/.*`
+	FIX_BRANCH_PATTERN     = `fix/[^/]+/.*`
+	HOTFIX_BRANCH_PATTERN  = `hotfix/v.*`
+	RELEASE_BRANCH_PATTERN = `release/v.*`
+)
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) Branch {
@@ -43,19 +49,19 @@ func BranchFromBranchName(name string) (b Branch, err error) {
 			Debug(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	matched, err := regexp.Match(`feature/[^/]+/.*`, []byte(name))
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(name))
 	if matched && err == nil {
 		return FeatureFromBranch(name)
 	}
-	matched, err = regexp.Match(`fix/[^/]+/.*`, []byte(name))
+	matched, err = regexp.Match(FIX_BRANCH_PATTERN, []byte(name))
 	if matched && err == nil {
 		return FixFromBranch(name)
 	}
-	matched, err = regexp.Match(`hotfix/v.*`, []byte(name))
+	matched, err = regexp.Match(HOTFIX_BRANCH_PATTERN, []byte(name))
 	if matched && err == nil {
 		return HotfixFromBranch(name)
 	}
-	matched, err = regexp.Match(`release/v.*`, []byte(name))
+	matched, err = regexp.Match(RELEASE_BRANCH_PATTERN, []byte(name))
 	if matched && err == nil {
 		return ReleaseFromBranch(name)
 	}

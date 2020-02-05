@@ -36,7 +36,7 @@ func ReleaseFromBranch(branchName string) (b Branch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	matched, err := regexp.Match(`release/v.*`, []byte(branchName))
+	matched, err := regexp.Match(RELEASE_BRANCH_PATTERN, []byte(branchName))
 	if !matched || err != nil {
 		return release{}, errors.New("no valid release branch")
 	}
