@@ -1,6 +1,7 @@
 package glow
 
 import (
+	"regexp"
 	"strings"
 
 	l "github.com/meinto/glow/logging"
@@ -32,7 +33,8 @@ func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	if !strings.Contains(branchName, "/feature/") {
+	matched, err := regexp.Match(`feature/[^/]+/.*`, []byte(branchName))
+	if !matched || err != nil {
 		return feature{}, errors.New("no valid feature branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)

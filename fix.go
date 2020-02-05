@@ -1,6 +1,7 @@
 package glow
 
 import (
+	"regexp"
 	"strings"
 
 	l "github.com/meinto/glow/logging"
@@ -31,7 +32,8 @@ func FixFromBranch(branchName string) (b AuthoredBranch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	if !strings.Contains(branchName, "/fix/") {
+	matched, err := regexp.Match(`fix/[^/]+/.*`, []byte(branchName))
+	if !matched || err != nil {
 		return fix{}, errors.New("no valid fix branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)

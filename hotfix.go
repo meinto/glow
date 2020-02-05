@@ -2,6 +2,7 @@ package glow
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	l "github.com/meinto/glow/logging"
@@ -35,7 +36,8 @@ func HotfixFromBranch(branchName string) (b Branch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	if !strings.Contains(branchName, "/hotfix/v") {
+	matched, err := regexp.Match(`hotfix/v.*`, []byte(branchName))
+	if !matched || err != nil {
 		return hotfix{}, errors.New("no valid hotfix branch")
 	}
 	b = NewBranch(branchName)

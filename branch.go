@@ -3,6 +3,7 @@ package glow
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	l "github.com/meinto/glow/logging"
@@ -42,16 +43,20 @@ func BranchFromBranchName(name string) (b Branch, err error) {
 			Debug(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	if strings.Contains(name, "/feature/") {
+	matched, err := regexp.Match(`feature/[^/]+/.*`, []byte(name))
+	if matched && err == nil {
 		return FeatureFromBranch(name)
 	}
-	if strings.Contains(name, "/fix/") {
+	matched, err = regexp.Match(`fix/[^/]+/.*`, []byte(name))
+	if matched && err == nil {
 		return FixFromBranch(name)
 	}
-	if strings.Contains(name, "/hotfix/") {
+	matched, err = regexp.Match(`hotfix/v.*`, []byte(name))
+	if matched && err == nil {
 		return HotfixFromBranch(name)
 	}
-	if strings.Contains(name, "/release/v") {
+	matched, err = regexp.Match(`release/v.*`, []byte(name))
+	if matched && err == nil {
 		return ReleaseFromBranch(name)
 	}
 	return NewBranch(name), nil

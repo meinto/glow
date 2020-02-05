@@ -17,7 +17,8 @@ var _ = Describe("Feature", func() {
 		f1, _ := NewFeature("luke", "falcon")
 		f2, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon")
 		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "feature/luke/falcon")
-		branches = []AuthoredBranch{f1, f2, f3}
+		f4, _ := BranchFromBranchName("feature/luke/falcon")
+		branches = []AuthoredBranch{f1, f2, f3, f4}
 	})
 
 	It("is of type feature branch", func() {

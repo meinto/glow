@@ -17,7 +17,8 @@ var _ = Describe("Fix", func() {
 		f1, _ := NewFix("luke", "falcon")
 		f2, _ := FixFromBranch(BRANCH_NAME_PREFIX + "fix/luke/falcon")
 		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "fix/luke/falcon")
-		branches = []AuthoredBranch{f1, f2, f3}
+		f4, _ := BranchFromBranchName("fix/luke/falcon")
+		branches = []AuthoredBranch{f1, f2, f3, f4}
 	})
 
 	It("is of type fix branch", func() {
