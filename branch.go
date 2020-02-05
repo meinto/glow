@@ -116,11 +116,11 @@ func NewAuthoredBranch(branchType, author, featureName string) (AuthoredBranch, 
 	}
 	branchName := fmt.Sprintf("%s/%s/%s", branchType, author, featureName)
 	branch := NewBranch(branchName)
-	return NewBranchLoggingService(authoredBranch{
+	return authoredBranch{
 		author,
 		featureName,
 		branch,
-	}), nil
+	}, nil
 }
 
 // AuthoredBranchFromBranchName extracts a feature definition from branch name
