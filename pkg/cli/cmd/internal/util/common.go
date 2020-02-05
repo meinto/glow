@@ -24,7 +24,6 @@ func GetGitClient() (git.Service, error) {
 	s = git.NewNativeService(git.Options{
 		CmdExecutor: exec,
 	})
-	s = git.NewLoggingService(s)
 	return s, nil
 }
 
