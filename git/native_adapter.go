@@ -37,7 +37,7 @@ func (a nativeGitAdapter) CurrentBranch() (branch glow.Branch, stdout, stderr st
 	}
 	for _, b := range cmdBranchList {
 		if b.IsCurrentBranch {
-			branch := glow.NewBranch(b.Name)
+			branch, err := glow.BranchFromBranchName(b.Name)
 			return branch, stdout, stderr, err
 		}
 	}

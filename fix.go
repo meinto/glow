@@ -32,7 +32,7 @@ func FixFromBranch(branchName string) (b AuthoredBranch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	matched, err := regexp.Match(`fix/[^/]+/.*`, []byte(branchName))
+	matched, err := regexp.Match(FIX_BRANCH_PATTERN, []byte(branchName))
 	if !matched || err != nil {
 		return fix{}, errors.New("no valid fix branch")
 	}

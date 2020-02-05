@@ -14,11 +14,12 @@ var _ = Describe("Feature", func() {
 	var branches []AuthoredBranch
 
 	BeforeEach(func() {
-		f1, _ := NewFeature("luke", "falcon")
-		f2, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon")
-		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "feature/luke/falcon")
-		f4, _ := BranchFromBranchName("feature/luke/falcon")
-		branches = []AuthoredBranch{f1, f2, f3, f4}
+		f1, _ := NewFeature("luke", "falcon-shuttle")
+		f2, _ := FeatureFromBranch("feature/luke/falcon-shuttle")
+		f3, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon-shuttle")
+		f4, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "feature/luke/falcon-shuttle")
+		f5, _ := BranchFromBranchName("feature/luke/falcon-shuttle")
+		branches = []AuthoredBranch{f1, f2, f3, f4, f5}
 	})
 
 	It("is of type feature branch", func() {

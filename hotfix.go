@@ -36,7 +36,7 @@ func HotfixFromBranch(branchName string) (b Branch, err error) {
 			Info(l.Fields{"branch": b}).
 			Error(err)
 	}()
-	matched, err := regexp.Match(`hotfix/v.*`, []byte(branchName))
+	matched, err := regexp.Match(HOTFIX_BRANCH_PATTERN, []byte(branchName))
 	if !matched || err != nil {
 		return hotfix{}, errors.New("no valid hotfix branch")
 	}
