@@ -36,5 +36,8 @@ func (tc *MockCommand) SetupServices(override bool) command.Service {
 }
 
 func NewMockCommand(originalCommand command.Service, mockCtrl *gomock.Controller) *MockCommand {
-	return &MockCommand{originalCommand, mockCtrl}
+	cmd := &MockCommand{originalCommand, mockCtrl}
+	cmd.SetupServices(true)
+	cmd.Patch()
+	return cmd
 }
