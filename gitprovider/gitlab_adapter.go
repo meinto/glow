@@ -36,33 +36,37 @@ func (s *gitlabAdapter) SetGitService(gs git.Service) {
 }
 
 func (a *gitlabAdapter) Close(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBeClosed() && remoteBranchExists == nil {
-		branchList, _, _, err := a.gitService.BranchList()
-		if err != nil {
-			return errors.Wrap(err, "error getting branch list")
-		}
-		targets := b.CloseBranches(branchList)
-
-		for _, t := range targets {
-			log.Println(t.BranchName())
-			err := a.createMergeRequest(b, t, false)
+	if b.CanBeClosed() {
+		_, _, remoteBranchExists := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if remoteBranchExists == nil {
+			branchList, _, _, err := a.GitService().BranchList()
 			if err != nil {
-				return errors.Wrap(err, "error creating merge request")
+				return errors.Wrap(err, "error getting branch list")
 			}
+			targets := b.CloseBranches(branchList)
+
+			for _, t := range targets {
+				log.Println(t.BranchName())
+				err := a.createMergeRequest(b, t, false)
+				if err != nil {
+					return errors.Wrap(err, "error creating merge request")
+				}
+			}
+			return nil
 		}
-		return nil
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be closed")
+	return errors.New("cannot be closed")
 }
 
 func (a *gitlabAdapter) Publish(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBePublished() && remoteBranchExists == nil {
-		t := b.PublishBranch()
-		return a.createMergeRequest(b, t, false)
+	if b.CanBePublished() {
+		_, _, remoteBranchExists := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if remoteBranchExists == nil {
+			t := b.PublishBranch()
+			return a.createMergeRequest(b, t, false)
+		}
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be published")
+	return errors.New("cannot be published")
 }
 
 func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branch, removeSourceBranch bool) error {
