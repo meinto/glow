@@ -10,6 +10,7 @@ import (
 
 	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/meinto/promter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -74,43 +75,33 @@ func SetupInitCommand(parent command.Service) command.Service {
 					"Short author name; Will be used for the 'author part' in feature branch names",
 					initConfig.GetString("author"),
 				)
-				if err != nil {
-					log.Fatalf("error setting author: %s", err)
-				}
+				util.ExitOnError(err)
 
 				defaultUrl := initConfig.GetString("gitProviderDomain")
 				if strings.TrimSpace(defaultUrl) == "" {
 					defaultUrl = "https://gitlab.com"
 				}
 				gitProviderDomain, err := p.URLDefault("Your git host api endpoint", defaultUrl)
-				if err != nil {
-					log.Fatalf("error setting git provider api endpoint: %s", err)
-				}
+				util.ExitOnError(err)
 
 				_, gitProvider, err := p.SelectDefault(
 					"Select which git provider you use",
 					initConfig.GetString("gitProvider"),
 					[]string{"gitlab", "github"},
 				)
-				if err != nil {
-					log.Fatalf("error setting git provider: %s", err)
-				}
+				util.ExitOnError(err)
 
 				projectNamespace, err := p.TextDefault(
 					"Project namespace",
 					initConfig.GetString("projectNamespace"),
 				)
-				if err != nil {
-					log.Fatalf("error setting project namespace: %s", err)
-				}
+				util.ExitOnError(err)
 
 				projectName, err := p.TextDefault(
 					"Project name",
 					initConfig.GetString("projectName"),
 				)
-				if err != nil {
-					log.Fatalf("error setting project name: %s", err)
-				}
+				util.ExitOnError(err)
 
 				if _, err := os.Stat(publicConfigFileName); !os.IsNotExist(err) {
 					replace, err := replaceFile(publicConfigFileName)
