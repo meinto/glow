@@ -24,7 +24,7 @@ func (cmd *PushCommand) PostSetup(parent command.Service) command.Service {
 	return cmd
 }
 
-var PushCmd = SetupPushCommand(RootCmd)
+var pushCmd = SetupPushCommand(RootCmd)
 
 func SetupPushCommand(parent command.Service) command.Service {
 	return command.Setup(&PushCommand{
@@ -35,36 +35,30 @@ func SetupPushCommand(parent command.Service) command.Service {
 			},
 			Run: func(cmd command.Service, args []string) {
 
-				g, err := util.GetGitClient()
-				util.ExitOnError(err)
-
-				gp, err := util.GetGitProvider()
-				util.ExitOnError(err)
-
 				var currentBranch glow.Branch
-				if rootCmdOptions.CI {
-					cb, err := gp.GetCIBranch()
+				if RootCmdOptions.CI {
+					cb, err := cmd.GitProvider().GetCIBranch()
 					util.ExitOnError(err)
 					currentBranch = cb
 				} else {
-					cb, _, _, err := g.CurrentBranch()
+					cb, _, _, err := cmd.GitClient().CurrentBranch()
 					util.ExitOnError(err)
 					currentBranch = cb
 				}
 
 				if pushCmdOptions.AddAll {
-					util.ExitOnError(g.AddAll())
-					util.ExitOnError(g.Stash())
-					util.ExitOnError(g.Checkout(currentBranch))
-					util.ExitOnError(g.StashPop())
-					util.ExitOnError(g.AddAll())
+					util.ExitOnError(cmd.GitClient().AddAll())
+					util.ExitOnError(cmd.GitClient().Stash())
+					util.ExitOnError(cmd.GitClient().Checkout(currentBranch))
+					util.ExitOnError(cmd.GitClient().StashPop())
+					util.ExitOnError(cmd.GitClient().AddAll())
 
 					if pushCmdOptions.CommitMessage != "" {
-						util.ExitOnError(g.Commit(pushCmdOptions.CommitMessage))
+						util.ExitOnError(cmd.GitClient().Commit(pushCmdOptions.CommitMessage))
 					}
 				}
 
-				g.Push(false)
+				_, _, err := cmd.GitClient().Push(false)
 				util.ExitOnError(err)
 			},
 		},

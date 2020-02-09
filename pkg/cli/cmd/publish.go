@@ -29,7 +29,7 @@ func SetupPublishCommand(parent command.Service) command.Service {
 			},
 			Run: func(cmd command.Service, args []string) {
 				var currentBranch glow.Branch
-				if rootCmdOptions.CI {
+				if RootCmdOptions.CI {
 					cb, err := cmd.GitProvider().GetCIBranch()
 					util.ExitOnError(err)
 					currentBranch = cb

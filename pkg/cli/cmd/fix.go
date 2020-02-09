@@ -33,7 +33,7 @@ func SetupFixCommand(parent command.Service) command.Service {
 				fix, err := glow.NewFix(viper.GetString("author"), fixName)
 				util.ExitOnError(err)
 
-				util.ExitOnError(cmd.GitClient().Create(fix, rootCmdOptions.SkipChecks))
+				util.ExitOnError(cmd.GitClient().Create(fix, RootCmdOptions.SkipChecks))
 				util.ExitOnError(cmd.GitClient().Checkout(fix))
 			},
 		},

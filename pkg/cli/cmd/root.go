@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var rootCmdOptions struct {
+var RootCmdOptions struct {
 	Author           string
 	GitPath          string
 	CICDOrigin       string
@@ -34,12 +34,12 @@ func (cmd *RootCommand) PostSetup(parent command.Service) command.Service {
 	}
 	cmd.Cmd().SetVersionTemplate(version)
 
-	cmd.Cmd().PersistentFlags().StringVarP(&rootCmdOptions.Author, "author", "a", "", "name of the author")
-	cmd.Cmd().PersistentFlags().StringVar(&rootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
-	cmd.Cmd().PersistentFlags().StringVar(&rootCmdOptions.CICDOrigin, "cicdOrigin", "", "provide a git origin url where a pipeline can push things via token")
-	cmd.Cmd().PersistentFlags().BoolVar(&rootCmdOptions.DetectCICDOrigin, "detectCicdOrigin", false, "auto detect a git origin url where a pipeline can push things via token")
-	cmd.Cmd().PersistentFlags().BoolVar(&rootCmdOptions.CI, "ci", false, "detects if command is running in a ci")
-	cmd.Cmd().PersistentFlags().BoolVar(&rootCmdOptions.SkipChecks, "skipChecks", false, "skip checks like accidentally creating git-flow branches from wrong source branch")
+	cmd.Cmd().PersistentFlags().StringVarP(&RootCmdOptions.Author, "author", "a", "", "name of the author")
+	cmd.Cmd().PersistentFlags().StringVar(&RootCmdOptions.GitPath, "gitPath", "/usr/local/bin/git", "path to native git installation")
+	cmd.Cmd().PersistentFlags().StringVar(&RootCmdOptions.CICDOrigin, "cicdOrigin", "", "provide a git origin url where a pipeline can push things via token")
+	cmd.Cmd().PersistentFlags().BoolVar(&RootCmdOptions.DetectCICDOrigin, "detectCicdOrigin", false, "auto detect a git origin url where a pipeline can push things via token")
+	cmd.Cmd().PersistentFlags().BoolVar(&RootCmdOptions.CI, "ci", false, "detects if command is running in a ci")
+	cmd.Cmd().PersistentFlags().BoolVar(&RootCmdOptions.SkipChecks, "skipChecks", false, "skip checks like accidentally creating git-flow branches from wrong source branch")
 	viper.BindPFlag("author", cmd.Cmd().PersistentFlags().Lookup("author"))
 	viper.BindPFlag("gitPath", cmd.Cmd().PersistentFlags().Lookup("gitPath"))
 	return cmd
@@ -56,9 +56,9 @@ func SetupRootCommand() command.Service {
 				Version: "0.0.0", // needed to set the version dynamically
 			},
 			PersistentPreRun: func(cmd command.Service, args []string) {
-				if rootCmdOptions.CICDOrigin != "" {
-					util.ExitOnError(cmd.GitClient().SetCICDOrigin(rootCmdOptions.CICDOrigin))
-				} else if rootCmdOptions.DetectCICDOrigin {
+				if RootCmdOptions.CICDOrigin != "" {
+					util.ExitOnError(cmd.GitClient().SetCICDOrigin(RootCmdOptions.CICDOrigin))
+				} else if RootCmdOptions.DetectCICDOrigin {
 					cicdOrigin, err := cmd.GitProvider().DetectCICDOrigin()
 					util.ExitOnError(err)
 					util.ExitOnError(cmd.GitClient().SetCICDOrigin(cicdOrigin))
