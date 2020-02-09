@@ -108,7 +108,8 @@ glow init
   "gitPath": "/usr/local/bin/git",
   "squashCommits": true,
   "versionFile": "VERSION",
-  "versionFileType": "raw"
+  "versionFileType": "raw",
+  "logLevel": "info"
 }
 ```
 
