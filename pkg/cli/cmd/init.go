@@ -234,6 +234,8 @@ func logLevel(p promter.Promter, config *Config) {
 		[]string{
 			"trace",
 			"debug",
+			"panic",
+			"fatal",
 			"error",
 			"warning",
 			"info",

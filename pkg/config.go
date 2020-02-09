@@ -24,11 +24,16 @@ func InitGlobalConfig() {
 		}
 
 		viper.SetDefault("versionFile", "VERSION")
+		viper.SetDefault("logLevel", "info")
 		viper.SetDefault("versionFileType", "raw")
 
 		viper.SetConfigName("glow.config")
 		viper.AddConfigPath(rootRepoPath)
 		err = viper.ReadInConfig()
+		l.Configure(l.Options{
+			l.GetLevel(viper.GetString("logLevel")),
+		})
+
 		l.Log().
 			Info(viper.AllSettings()).
 			ErrorFields(err, l.Fields{"msg": "there is no glow config"})
