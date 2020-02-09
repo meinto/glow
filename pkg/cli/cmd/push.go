@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/meinto/glow"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
@@ -34,17 +33,7 @@ func SetupPushCommand(parent command.Service) command.Service {
 				Short: "push changes",
 			},
 			Run: func(cmd command.Service, args []string) {
-
-				var currentBranch glow.Branch
-				if RootCmdOptions.CI {
-					cb, err := cmd.GitProvider().GetCIBranch()
-					util.ExitOnError(err)
-					currentBranch = cb
-				} else {
-					cb, _, _, err := cmd.GitClient().CurrentBranch()
-					util.ExitOnError(err)
-					currentBranch = cb
-				}
+				currentBranch := cmd.CurrentBranch(RootCmdOptions.CI)
 
 				if pushCmdOptions.AddAll {
 					util.ExitOnError(cmd.GitClient().AddAll())

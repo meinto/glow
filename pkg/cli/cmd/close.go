@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
@@ -28,16 +27,7 @@ func SetupCloseCommand(parent command.Service) command.Service {
 				Short: "close a branch",
 			},
 			Run: func(cmd command.Service, args []string) {
-				var currentBranch glow.Branch
-				if RootCmdOptions.CI {
-					cb, err := cmd.GitProvider().GetCIBranch()
-					util.ExitOnError(err)
-					currentBranch = cb
-				} else {
-					cb, _, _, err := cmd.GitClient().CurrentBranch()
-					util.ExitOnError(err)
-					currentBranch = cb
-				}
+				currentBranch := cmd.CurrentBranch(RootCmdOptions.CI)
 
 				err := cmd.GitProvider().Close(currentBranch)
 				if !util.MergeRequestFlags.Gracefully {
