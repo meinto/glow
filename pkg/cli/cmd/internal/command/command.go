@@ -45,12 +45,15 @@ func Setup(cmd Service, parent Service) Service {
 
 type Command struct {
 	*cobra.Command
-	gitClient        git.Service
-	gitProvider      gitprovider.Service
-	semverClient     semver.Service
-	Run              func(cmd Service, args []string)
-	PostRun          func(cmd Service, args []string)
-	PersistentPreRun func(cmd Service, args []string)
+	gitClient         git.Service
+	gitProvider       gitprovider.Service
+	semverClient      semver.Service
+	PreRun            func(cmd Service, args []string)
+	Run               func(cmd Service, args []string)
+	PostRun           func(cmd Service, args []string)
+	PersistentPreRun  func(cmd Service, args []string)
+	PersistentRun     func(cmd Service, args []string)
+	PersistentPostRun func(cmd Service, args []string)
 }
 
 func (c *Command) Cmd() *cobra.Command {
@@ -116,8 +119,11 @@ func (c *Command) SetupServices(override bool) Service {
 
 func (c *Command) Patch() Service {
 	c.PatchRun("Run", c.Run)
+	c.PatchRun("PreRun", c.PreRun)
 	c.PatchRun("PostRun", c.PostRun)
 	c.PatchRun("PersistentPreRun", c.PersistentPreRun)
+	c.PatchRun("PersistentRun", c.PersistentRun)
+	c.PatchRun("PersistentPostRun", c.PersistentPostRun)
 	return c
 }
 

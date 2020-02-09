@@ -32,6 +32,23 @@ func SetupPushCommand(parent command.Service) command.Service {
 				Use:   "push",
 				Short: "push changes",
 			},
+			PreRun: func(cmd command.Service, args []string) {
+				if !RootCmdOptions.CI {
+					// check if there are unstaged files
+					// cobraUtils.PromptSelect("There are unstaged files. Do you want to add them?", []string{
+					// 	"Yes", "No",
+					// })
+					// set pushCmdOptions addAll flag
+
+					// check if there are uncomitted files
+					// cobraUtils.PromptSelect("There are uncommited files. Do you want to commit them?", []string{
+					// 	"Yes", "No",
+					// })
+
+					// set commit message
+					// set pushCmdOptions CommitMessage flag
+				}
+			},
 			Run: func(cmd command.Service, args []string) {
 				currentBranch := cmd.CurrentBranch(RootCmdOptions.CI)
 

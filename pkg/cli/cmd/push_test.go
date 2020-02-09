@@ -39,7 +39,8 @@ var _ = Describe("Push command", func() {
 		b := glow.NewBranch("test")
 		mockGitClient.EXPECT().CurrentBranch().Return(b, "", "", nil)
 		mockGitClient.EXPECT().RemoteBranchExists(b.BranchName()).Return(true, "", "", nil)
-		mockGitClient.EXPECT().Push(false)
+		setUpstream := false
+		mockGitClient.EXPECT().Push(setUpstream)
 		mockRootCmd.Execute()
 	})
 
@@ -50,7 +51,8 @@ var _ = Describe("Push command", func() {
 		b := glow.NewBranch("test")
 		mockGitClient.EXPECT().CurrentBranch().Return(b, "", "", nil)
 		mockGitClient.EXPECT().RemoteBranchExists(b.BranchName()).Return(false, "", "", nil)
-		mockGitClient.EXPECT().Push(true)
+		setUpstream := true
+		mockGitClient.EXPECT().Push(setUpstream)
 		mockRootCmd.Execute()
 	})
 
