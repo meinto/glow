@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/meinto/promter"
@@ -22,6 +21,10 @@ type Config struct {
 	GitProvider       string `json:"gitProvider,omitempty"`
 	ProjectNamespace  string `json:"projectNamespace,omitempty"`
 	ProjectName       string `json:"projectName,omitempty"`
+	SquashCommits     bool   `json:"squashCommits,omitempty"`
+	VersionFile       string `json:"versionFile,omitempty"`
+	VersionFileType   string `json:"versionFileType,omitempty"`
+	LogLevel          string `json:"logLevel,omitempty"`
 }
 
 type PrivateConfig struct {
@@ -77,34 +80,32 @@ func SetupInitCommand(parent command.Service) command.Service {
 				gitProvider(p, &config)
 				projectNamespace(p, &config)
 				projectName(p, &config)
+				squashCommits(p, &config)
+				versionFile(p, &config)
+				versionFileType(p, &config)
+				logLevel(p, &config)
 
 				promtReplaceFile(publicConfigFileName)
 
 				writeJSONFile(config, publicConfigFileName)
 
-				token, err := p.Text("Git provider ci token")
-				if err != nil {
-					log.Fatalf("error setting gitlab ci token: %s", err)
+				shouldCreate := shouldCreatePrivateConfig(p)
+
+				if shouldCreate {
+					token, err := p.Text("Git provider ci token")
+					if err != nil {
+						log.Fatalf("error setting gitlab ci token: %s", err)
+					}
+					addToGitIgnore(privateConfigFileName)
+
+					privateConfig := PrivateConfig{
+						Token: token,
+					}
+
+					promtReplaceFile(privateConfigFileName)
+
+					writeJSONFile(privateConfig, privateConfigFileName)
 				}
-				addToGitIgnore(privateConfigFileName)
-
-				privateConfig := PrivateConfig{
-					Token: token,
-				}
-
-				promtReplaceFile(privateConfigFileName)
-
-				writeJSONFile(privateConfig, privateConfigFileName)
-
-				l.Log().Info(l.Fields{
-					"config":            config,
-					"author":            author,
-					"gitProviderDomain": gitProviderDomain,
-					"gitProvider":       gitProvider,
-					"projectNamespace":  projectNamespace,
-					"projectName":       projectName,
-					"token":             token,
-				})
 			},
 		},
 	}, parent)
@@ -130,6 +131,17 @@ func addToGitIgnore(configFileName string) {
 	if _, err = f.WriteString(fmt.Sprintf("\n%s", configFileName)); err != nil {
 		panic(err)
 	}
+}
+
+func shouldCreatePrivateConfig(p promter.Promter) bool {
+	index, _, err := p.YesNo("Do you want to create a private.glow config?")
+	if err != nil {
+		return false
+	}
+	if index == 0 {
+		return true
+	}
+	return false
 }
 
 // promts
@@ -178,4 +190,55 @@ func projectName(p promter.Promter, config *Config) {
 	)
 	util.ExitOnError(err)
 	config.ProjectName = val
+}
+
+func squashCommits(p promter.Promter, config *Config) {
+	defaultVal := "Yes"
+	if initConfig.GetBool("squashCommits") == false {
+		defaultVal = "No"
+	}
+	index, _, err := p.YesNoDefault("Squash commits?", defaultVal)
+	util.ExitOnError(err)
+	switch index {
+	case 0:
+		config.SquashCommits = true
+	case 1:
+		config.SquashCommits = false
+	default:
+		config.SquashCommits = false
+	}
+}
+
+func versionFile(p promter.Promter, config *Config) {
+	val, err := p.TextDefault(
+		"Version file name",
+		initConfig.GetString("versionFile"),
+	)
+	util.ExitOnError(err)
+	config.VersionFile = val
+}
+
+func versionFileType(p promter.Promter, config *Config) {
+	val, err := p.TextDefault(
+		"Version file type",
+		initConfig.GetString("versionFileType"),
+	)
+	util.ExitOnError(err)
+	config.VersionFileType = val
+}
+
+func logLevel(p promter.Promter, config *Config) {
+	_, val, err := p.SelectDefault(
+		"Log level",
+		initConfig.GetString("logLevel"),
+		[]string{
+			"trace",
+			"debug",
+			"error",
+			"warning",
+			"info",
+		},
+	)
+	util.ExitOnError(err)
+	config.LogLevel = val
 }

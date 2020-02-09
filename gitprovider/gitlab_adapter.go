@@ -86,7 +86,7 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		TargetBranch:       targetBranchName,
 		Title:              fmt.Sprintf("Merge %s in %s", sourceBranchName, targetBranchName),
 		RemoveSourceBranch: removeSourceBranch,
-		Squash:             viper.GetBool("mergeRequest.squashCommits"),
+		Squash:             viper.GetBool("squashCommits"),
 	}
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
