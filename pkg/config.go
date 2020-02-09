@@ -1,7 +1,9 @@
 package pkg
 
 import (
+	"log"
 	"os"
+	"os/user"
 
 	"github.com/meinto/glow/cmd"
 	"github.com/meinto/glow/git"
@@ -42,6 +44,22 @@ func InitGlobalConfig() {
 		viper.AddConfigPath(rootRepoPath)
 		err = viper.MergeInConfig()
 		l.Log().ErrorFields(err, l.Fields{"msg": "there is no private glow config"})
+
+		// load global config
+		usr, err := user.Current()
+		if err != nil {
+			log.Fatal(err)
+		}
+		globalConfigPath := usr.HomeDir + "/.glow"
+		viper.SetConfigName("glow.config")
+		viper.AddConfigPath(globalConfigPath)
+		err = viper.MergeInConfig()
+		l.Log().ErrorFields(err, l.Fields{"msg": "there is no global glow config"})
+
+		viper.SetConfigName("glow.private")
+		viper.AddConfigPath(globalConfigPath)
+		err = viper.MergeInConfig()
+		l.Log().ErrorFields(err, l.Fields{"msg": "there is no global private glow config"})
 
 		viper.SetEnvPrefix("glow")
 		err = viper.BindEnv("token")
