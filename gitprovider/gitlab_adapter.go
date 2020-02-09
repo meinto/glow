@@ -37,8 +37,8 @@ func (s *gitlabAdapter) SetGitService(gs git.Service) {
 
 func (a *gitlabAdapter) Close(b glow.Branch) error {
 	if b.CanBeClosed() {
-		_, _, remoteBranchExists := a.GitService().RemoteBranchExists(b.ShortBranchName())
-		if remoteBranchExists == nil {
+		exists, _, _, err := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if exists && err == nil {
 			branchList, _, _, err := a.GitService().BranchList()
 			if err != nil {
 				return errors.Wrap(err, "error getting branch list")
@@ -60,8 +60,8 @@ func (a *gitlabAdapter) Close(b glow.Branch) error {
 
 func (a *gitlabAdapter) Publish(b glow.Branch) error {
 	if b.CanBePublished() {
-		_, _, remoteBranchExists := a.GitService().RemoteBranchExists(b.ShortBranchName())
-		if remoteBranchExists == nil {
+		exists, _, _, err := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if exists && err == nil {
 			t := b.PublishBranch()
 			return a.createMergeRequest(b, t, false)
 		}

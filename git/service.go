@@ -22,7 +22,7 @@ type Service interface {
 	Checkout(b glow.Branch) (stdout, stderr string, err error)
 	CleanupBranches(cleanupGone, cleanupUntracked bool) (stdout, stderr string, err error)
 	CleanupTags(cleanupUntracked bool) (stdout, stderr string, err error)
-	RemoteBranchExists(branchName string) (stdout, stderr string, err error)
+	RemoteBranchExists(branchName string) (exists bool, stdout, stderr string, err error)
 }
 
 type NativeService interface {

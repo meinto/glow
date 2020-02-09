@@ -167,19 +167,19 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) (stdout, stderr str
 	return stdout, stderr, err
 }
 
-func (a nativeGitAdapter) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
+func (a nativeGitAdapter) RemoteBranchExists(branchName string) (exists bool, stdout, stderr string, err error) {
 	stdout, stderr, err = a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l", branchName)).Run()
 	if err != nil {
-		return stdout, stderr, err
+		return false, stdout, stderr, err
 	}
 
 	branchCount := strings.TrimSpace(stdout)
 	if branchCount == "1" {
-		return stdout, stderr, err
+		return true, stdout, stderr, err
 	}
 
 	err = errors.New(fmt.Sprintf("Remote Branch %s does not exist", branchName))
-	return stdout, stderr, err
+	return false, stdout, stderr, err
 }
 
 type cmdBranch struct {

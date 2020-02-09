@@ -33,8 +33,8 @@ func (s *githubAdapter) SetGitService(gs git.Service) {
 }
 
 func (a *githubAdapter) Close(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBeClosed() && remoteBranchExists == nil {
+	exists, _, _, err := a.gitService.RemoteBranchExists(b.ShortBranchName())
+	if b.CanBeClosed() && exists && err == nil {
 		branchList, _, _, err := a.gitService.BranchList()
 		if err != nil {
 			return errors.Wrap(err, "error getting branch list")
@@ -49,16 +49,16 @@ func (a *githubAdapter) Close(b glow.Branch) error {
 		}
 		return nil
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be closed")
+	return errors.Wrap(err, "cannot be closed")
 }
 
 func (a *githubAdapter) Publish(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBePublished() && remoteBranchExists == nil {
+	exists, _, _, err := a.gitService.RemoteBranchExists(b.ShortBranchName())
+	if b.CanBePublished() && exists && err == nil {
 		t := b.PublishBranch()
 		return a.createPullRequest(b, t)
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be published")
+	return errors.Wrap(err, "cannot be published")
 }
 
 func (a *githubAdapter) createPullRequest(source glow.Branch, target glow.Branch) error {
