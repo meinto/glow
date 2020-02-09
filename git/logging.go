@@ -169,7 +169,7 @@ func (s loggingService) CleanupTags(cleanupUntracked bool) (stdout, stderr strin
 	return s.next.CleanupTags(cleanupUntracked)
 }
 
-func (s loggingService) RemoteBranchExists(branchName string) (stdout, stderr string, err error) {
+func (s loggingService) RemoteBranchExists(branchName string) (exists bool, stdout, stderr string, err error) {
 	l.Log().Info(l.Fields{"branchName": branchName})
 	defer func() {
 		l.Log().

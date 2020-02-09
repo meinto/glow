@@ -4,7 +4,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/meinto/glow"
 	mockg "github.com/meinto/glow/git/__mock__"
-	mockgp "github.com/meinto/glow/gitprovider/__mock__"
+
+	// mockgp "github.com/meinto/glow/gitprovider/__mock__"
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	. "github.com/onsi/ginkgo"
@@ -12,18 +13,18 @@ import (
 
 var _ = Describe("Push command", func() {
 	var (
-		mockCtrl        *gomock.Controller
-		mockRootCmd     command.Service
-		mockPushCmd     command.Service
-		mockGitProvider mockgp.MockServiceInterface
-		mockGitClient   mockg.MockNativeServiceInterface
+		mockCtrl    *gomock.Controller
+		mockRootCmd command.Service
+		mockPushCmd command.Service
+		// mockGitProvider mockgp.MockServiceInterface
+		mockGitClient mockg.MockNativeServiceInterface
 	)
 
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRootCmd = NewMockCommand(SetupRootCommand(), mockCtrl)
 		mockPushCmd = NewMockCommand(SetupPushCommand(mockRootCmd), mockCtrl)
-		mockGitProvider = mockPushCmd.GitProvider().(mockgp.MockServiceInterface)
+		// mockGitProvider = mockPushCmd.GitProvider().(mockgp.MockServiceInterface)
 		mockGitClient = mockPushCmd.GitClient().(mockg.MockNativeServiceInterface)
 	})
 
@@ -31,23 +32,25 @@ var _ = Describe("Push command", func() {
 		mockCtrl.Finish()
 	})
 
-	It("trys to close the current branch", func() {
+	It("pushes the branch #happyPath", func() {
 		mockRootCmd.Cmd().SetArgs([]string{
-			"close",
+			"push",
 		})
 		b := glow.NewBranch("test")
 		mockGitClient.EXPECT().CurrentBranch().Return(b, "", "", nil)
-		mockGitProvider.EXPECT().Close(b)
+		mockGitClient.EXPECT().RemoteBranchExists(b.BranchName()).Return(true, "", "", nil)
+		mockGitClient.EXPECT().Push(false)
 		mockRootCmd.Execute()
 	})
 
-	It("trys to detect the cicd branch and close it", func() {
+	It("pushes the branch and sets the upstream", func() {
 		mockRootCmd.Cmd().SetArgs([]string{
-			"close", "--ci",
+			"push",
 		})
 		b := glow.NewBranch("test")
-		mockGitProvider.EXPECT().GetCIBranch().Return(b, nil)
-		mockGitProvider.EXPECT().Close(b)
+		mockGitClient.EXPECT().CurrentBranch().Return(b, "", "", nil)
+		mockGitClient.EXPECT().RemoteBranchExists(b.BranchName()).Return(false, "", "", nil)
+		mockGitClient.EXPECT().Push(true)
 		mockRootCmd.Execute()
 	})
 

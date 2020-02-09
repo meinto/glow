@@ -47,7 +47,10 @@ func SetupPushCommand(parent command.Service) command.Service {
 					}
 				}
 
-				_, _, err := cmd.GitClient().Push(false)
+				exists, _, _, err := cmd.GitClient().RemoteBranchExists(currentBranch.BranchName())
+				util.ExitOnError(err)
+
+				_, _, err = cmd.GitClient().Push(!exists)
 				util.ExitOnError(err)
 			},
 		},
