@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"strings"
 
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
@@ -31,6 +33,8 @@ type PrivateConfig struct {
 	Token string `json:"token,omitempty"`
 }
 
+var configDir = "."
+var initGlobal = false
 var publicConfigFileName = "glow.config.json"
 var privateConfigFileName = "glow.private.json"
 
@@ -56,19 +60,32 @@ func SetupInitCommand(parent command.Service) command.Service {
 				Short: "init glow",
 			},
 			PreRun: func(cmd command.Service, args []string) {
-				rootRepoPath, _, _, err := cmd.GitClient().GitRepoPath()
-				if err != nil {
-					rootRepoPath = "."
+				p := promter.NewPromter()
+				index := initProjectOrGlobalConfig(p)
+				if index == 1 {
+					usr, err := user.Current()
+					if err != nil {
+						log.Fatal(err)
+					}
+					configDir = usr.HomeDir + "/.glow"
+					initGlobal = true
+				} else {
+					rootRepoPath, _, _, err := cmd.GitClient().GitRepoPath()
+					if err != nil {
+						rootRepoPath = "."
+					}
+					configDir = rootRepoPath
+					initGlobal = false
 				}
 
 				initConfig = viper.New()
 				initConfig.SetConfigName("glow.config")
-				initConfig.AddConfigPath(rootRepoPath)
+				initConfig.AddConfigPath(configDir)
 				initConfig.ReadInConfig()
 
 				initPrivateConfig = viper.New()
 				initPrivateConfig.SetConfigName("glow.private")
-				initPrivateConfig.AddConfigPath(rootRepoPath)
+				initPrivateConfig.AddConfigPath(configDir)
 				initPrivateConfig.ReadInConfig()
 			},
 			Run: func(cmd command.Service, args []string) {
@@ -78,16 +95,18 @@ func SetupInitCommand(parent command.Service) command.Service {
 				author(p, &config)
 				gitProviderDomain(p, &config)
 				gitProvider(p, &config)
-				projectNamespace(p, &config)
-				projectName(p, &config)
-				squashCommits(p, &config)
-				versionFile(p, &config)
-				versionFileType(p, &config)
+				if !initGlobal {
+					projectNamespace(p, &config)
+					projectName(p, &config)
+					squashCommits(p, &config)
+					versionFile(p, &config)
+					versionFileType(p, &config)
+				}
 				logLevel(p, &config)
 
-				promtReplaceFile(publicConfigFileName)
+				promtReplaceFile(configDir + "/" + publicConfigFileName)
 
-				writeJSONFile(config, publicConfigFileName)
+				writeJSONFile(config, configDir+"/"+publicConfigFileName)
 
 				shouldCreate := shouldCreatePrivateConfig(p)
 
@@ -102,9 +121,9 @@ func SetupInitCommand(parent command.Service) command.Service {
 						Token: token,
 					}
 
-					promtReplaceFile(privateConfigFileName)
+					promtReplaceFile(configDir + "/" + privateConfigFileName)
 
-					writeJSONFile(privateConfig, privateConfigFileName)
+					writeJSONFile(privateConfig, configDir+"/"+privateConfigFileName)
 				}
 			},
 		},
@@ -113,6 +132,7 @@ func SetupInitCommand(parent command.Service) command.Service {
 
 func writeJSONFile(jsonContent interface{}, fileName string) error {
 	newJSONContent, _ := json.MarshalIndent(jsonContent, "", "  ")
+	os.MkdirAll(filepath.Dir(fileName), os.ModePerm)
 	err := ioutil.WriteFile(fileName, newJSONContent, 0644)
 	if err != nil {
 		return fmt.Errorf("error writing %s: %s", fileName, err.Error())
@@ -142,6 +162,13 @@ func shouldCreatePrivateConfig(p promter.Promter) bool {
 		return true
 	}
 	return false
+}
+
+func initProjectOrGlobalConfig(p promter.Promter) int {
+	index, _, _ := p.Select("Do you want a global or a project setup?", []string{
+		"project", "global",
+	})
+	return index
 }
 
 // promts
