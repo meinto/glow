@@ -6,24 +6,32 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/promter"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-type ConfigType struct {
+type Config struct {
 	Author            string `json:"author,omitempty"`
 	GitProviderDomain string `json:"gitProviderDomain,omitempty"`
 	GitProvider       string `json:"gitProvider,omitempty"`
 	ProjectNamespace  string `json:"projectNamespace,omitempty"`
 	ProjectName       string `json:"projectName,omitempty"`
-	Token             string `json:"token,omitempty"`
+}
+
+type PrivateConfig struct {
+	Token string `json:"token,omitempty"`
 }
 
 var publicConfigFileName = "glow.config.json"
 var privateConfigFileName = "glow.private.json"
+
+var initConfig *viper.Viper
+var initPrivateConfig *viper.Viper
 
 type InitCommand struct {
 	command.Service
@@ -38,38 +46,68 @@ var initCmd = SetupInitCommand(RootCmd)
 
 func SetupInitCommand(parent command.Service) command.Service {
 	return command.Setup(&InitCommand{
-		&command.Command{
+		Service: &command.Command{
 			Command: &cobra.Command{
 				Use:   "init",
 				Short: "init glow",
 			},
+			PreRun: func(cmd command.Service, args []string) {
+				rootRepoPath, _, _, err := cmd.GitClient().GitRepoPath()
+				if err != nil {
+					rootRepoPath = "."
+				}
+
+				initConfig = viper.New()
+				initConfig.SetConfigName("glow.config")
+				initConfig.AddConfigPath(rootRepoPath)
+				initConfig.ReadInConfig()
+
+				initPrivateConfig = viper.New()
+				initPrivateConfig.SetConfigName("glow.private")
+				initPrivateConfig.AddConfigPath(rootRepoPath)
+				initPrivateConfig.ReadInConfig()
+			},
 			Run: func(cmd command.Service, args []string) {
 				p := promter.NewPromter()
 
-				author, err := p.Text("Short author name; Will be used for the 'author part' in feature branch names")
+				author, err := p.TextDefault(
+					"Short author name; Will be used for the 'author part' in feature branch names",
+					initConfig.GetString("author"),
+				)
 				if err != nil {
 					log.Fatalf("error setting author: %s", err)
 				}
 
-				gitProviderDomain, err := p.URLDefault("Your git host api endpoint (%s)", "https://gitlab.com")
+				defaultUrl := initConfig.GetString("gitProviderDomain")
+				if strings.TrimSpace(defaultUrl) == "" {
+					defaultUrl = "https://gitlab.com"
+				}
+				gitProviderDomain, err := p.URLDefault("Your git host api endpoint", defaultUrl)
 				if err != nil {
 					log.Fatalf("error setting git provider api endpoint: %s", err)
 				}
 
-				_, gitProvider, err := p.Select(
+				_, gitProvider, err := p.SelectDefault(
 					"Select which git provider you use",
+					initConfig.GetString("gitProvider"),
 					[]string{"gitlab", "github"},
 				)
 				if err != nil {
 					log.Fatalf("error setting git provider: %s", err)
 				}
 
-				projectNamespace, err := p.Text("Project namespace")
+				projectNamespace, err := p.TextDefault(
+					"Project namespace",
+					initConfig.GetString("projectNamespace"),
+				)
 				if err != nil {
 					log.Fatalf("error setting project namespace: %s", err)
 				}
 
-				projectName, err := p.Text("Project name")
+				projectName, err := p.TextDefault(
+					"Project name",
+					initConfig.GetString("projectName"),
+				)
 				if err != nil {
 					log.Fatalf("error setting project name: %s", err)
 				}
@@ -84,7 +122,7 @@ func SetupInitCommand(parent command.Service) command.Service {
 					}
 				}
 
-				var config = ConfigType{
+				var config = Config{
 					Author:            author,
 					GitProviderDomain: gitProviderDomain,
 					GitProvider:       gitProvider,
@@ -99,10 +137,10 @@ func SetupInitCommand(parent command.Service) command.Service {
 				}
 				addToGitIgnore(privateConfigFileName)
 
-				config = ConfigType{
+				privateConfig := PrivateConfig{
 					Token: token,
 				}
-				writeJSONFile(config, privateConfigFileName)
+				writeJSONFile(privateConfig, privateConfigFileName)
 
 				l.Log().Info(l.Fields{
 					"config":            config,
@@ -118,7 +156,7 @@ func SetupInitCommand(parent command.Service) command.Service {
 	}, parent)
 }
 
-func writeJSONFile(jsonContent ConfigType, fileName string) error {
+func writeJSONFile(jsonContent interface{}, fileName string) error {
 	newJSONContent, _ := json.MarshalIndent(jsonContent, "", "  ")
 	err := ioutil.WriteFile(fileName, newJSONContent, 0644)
 	if err != nil {
