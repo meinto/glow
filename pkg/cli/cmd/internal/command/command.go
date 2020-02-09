@@ -3,6 +3,7 @@ package command
 import (
 	"reflect"
 
+	"github.com/meinto/glow"
 	"github.com/meinto/glow/git"
 	"github.com/meinto/glow/gitprovider"
 	"github.com/meinto/glow/pkg"
@@ -29,6 +30,8 @@ type Service interface {
 
 	Patch() Service
 	PatchRun(fieldName string, run func(cmd Service, args []string))
+
+	CurrentBranch(ci bool) glow.Branch
 }
 
 func Setup(cmd Service, parent Service) Service {
@@ -133,4 +136,16 @@ func (c *Command) PatchRun(fieldName string, run func(cmd Service, args []string
 
 func (c *Command) Add(cmd Service) {
 	c.Command.AddCommand(cmd.Cmd())
+}
+
+func (c *Command) CurrentBranch(ci bool) glow.Branch {
+	if ci {
+		cb, err := c.GitProvider().GetCIBranch()
+		util.ExitOnError(err)
+		return cb
+	} else {
+		cb, _, _, err := c.GitClient().CurrentBranch()
+		util.ExitOnError(err)
+		return cb
+	}
 }
