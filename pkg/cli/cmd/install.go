@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/manifoldco/promptui"
-	cobraUtils "github.com/meinto/cobra-utils"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
+	"github.com/meinto/promter"
 	"github.com/spf13/cobra"
 )
 
@@ -35,11 +35,12 @@ func SetupInstallCommand(parent command.Service) command.Service {
 				Short: "install glow",
 			},
 			Run: func(cmd command.Service, args []string) {
+				p := promter.NewPromter()
 
 				flist, err := fileList(".")
 				util.ExitOnErrorWithMessage("cannot get file list")(err)
 
-				index, _, err := cobraUtils.PromptSelect(
+				index, _, err := p.Select(
 					"Select your downloaded glow file",
 					flist,
 				)

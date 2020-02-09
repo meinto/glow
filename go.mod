@@ -11,8 +11,8 @@ require (
 	github.com/imdario/mergo v0.3.8
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/manifoldco/promptui v0.3.2
-	github.com/meinto/cobra-utils v0.1.0
 	github.com/meinto/git-semver v0.0.0-20190330170514-565cfbd0d11f
+	github.com/meinto/promter v0.0.0-20200209155846-db2a95efb65b
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/nathany/looper v0.3.3 // indirect
 	github.com/onsi/ginkgo v1.11.0
