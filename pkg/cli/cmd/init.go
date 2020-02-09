@@ -71,55 +71,15 @@ func SetupInitCommand(parent command.Service) command.Service {
 			Run: func(cmd command.Service, args []string) {
 				p := promter.NewPromter()
 
-				author, err := p.TextDefault(
-					"Short author name; Will be used for the 'author part' in feature branch names",
-					initConfig.GetString("author"),
-				)
-				util.ExitOnError(err)
+				var config = Config{}
+				author(p, &config)
+				gitProviderDomain(p, &config)
+				gitProvider(p, &config)
+				projectNamespace(p, &config)
+				projectName(p, &config)
 
-				defaultUrl := initConfig.GetString("gitProviderDomain")
-				if strings.TrimSpace(defaultUrl) == "" {
-					defaultUrl = "https://gitlab.com"
-				}
-				gitProviderDomain, err := p.URLDefault("Your git host api endpoint", defaultUrl)
-				util.ExitOnError(err)
+				promtReplaceFile(publicConfigFileName)
 
-				_, gitProvider, err := p.SelectDefault(
-					"Select which git provider you use",
-					initConfig.GetString("gitProvider"),
-					[]string{"gitlab", "github"},
-				)
-				util.ExitOnError(err)
-
-				projectNamespace, err := p.TextDefault(
-					"Project namespace",
-					initConfig.GetString("projectNamespace"),
-				)
-				util.ExitOnError(err)
-
-				projectName, err := p.TextDefault(
-					"Project name",
-					initConfig.GetString("projectName"),
-				)
-				util.ExitOnError(err)
-
-				if _, err := os.Stat(publicConfigFileName); !os.IsNotExist(err) {
-					replace, err := replaceFile(publicConfigFileName)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if !replace {
-						log.Fatal("file not replaced")
-					}
-				}
-
-				var config = Config{
-					Author:            author,
-					GitProviderDomain: gitProviderDomain,
-					GitProvider:       gitProvider,
-					ProjectNamespace:  projectNamespace,
-					ProjectName:       projectName,
-				}
 				writeJSONFile(config, publicConfigFileName)
 
 				token, err := p.Text("Git provider ci token")
@@ -131,6 +91,9 @@ func SetupInitCommand(parent command.Service) command.Service {
 				privateConfig := PrivateConfig{
 					Token: token,
 				}
+
+				promtReplaceFile(privateConfigFileName)
+
 				writeJSONFile(privateConfig, privateConfigFileName)
 
 				l.Log().Info(l.Fields{
@@ -167,4 +130,52 @@ func addToGitIgnore(configFileName string) {
 	if _, err = f.WriteString(fmt.Sprintf("\n%s", configFileName)); err != nil {
 		panic(err)
 	}
+}
+
+// promts
+func author(p promter.Promter, config *Config) {
+	val, err := p.TextDefault(
+		"Short author name; Will be used for the 'author part' in feature branch names",
+		initConfig.GetString("author"),
+	)
+	util.ExitOnError(err)
+	config.Author = val
+}
+
+func gitProviderDomain(p promter.Promter, config *Config) {
+	defaultUrl := initConfig.GetString("gitProviderDomain")
+	if strings.TrimSpace(defaultUrl) == "" {
+		defaultUrl = "https://gitlab.com"
+	}
+	val, err := p.URLDefault("Your git host api endpoint", defaultUrl)
+	util.ExitOnError(err)
+	config.GitProviderDomain = val
+}
+
+func gitProvider(p promter.Promter, config *Config) {
+	_, val, err := p.SelectDefault(
+		"Select which git provider you use",
+		initConfig.GetString("gitProvider"),
+		[]string{"gitlab", "github"},
+	)
+	util.ExitOnError(err)
+	config.GitProvider = val
+}
+
+func projectNamespace(p promter.Promter, config *Config) {
+	val, err := p.TextDefault(
+		"Project namespace",
+		initConfig.GetString("projectNamespace"),
+	)
+	util.ExitOnError(err)
+	config.ProjectNamespace = val
+}
+
+func projectName(p promter.Promter, config *Config) {
+	val, err := p.TextDefault(
+		"Project name",
+		initConfig.GetString("projectName"),
+	)
+	util.ExitOnError(err)
+	config.ProjectName = val
 }
