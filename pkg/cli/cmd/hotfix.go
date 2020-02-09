@@ -54,7 +54,7 @@ func SetupHotfixCommand(parent command.Service) command.Service {
 				hotfix, err := glow.NewHotfix(version)
 				util.ExitOnError(err)
 
-				util.ExitOnError(cmd.GitClient().Create(hotfix, rootCmdOptions.SkipChecks))
+				util.ExitOnError(cmd.GitClient().Create(hotfix, RootCmdOptions.SkipChecks))
 				util.ExitOnError(cmd.GitClient().Checkout(hotfix))
 
 				if util.IsSemanticVersion(args[0]) {

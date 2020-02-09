@@ -34,7 +34,7 @@ func SetupFeatureCommand(parent command.Service) command.Service {
 				feature, err := glow.NewFeature(viper.GetString("author"), featureName)
 				util.ExitOnError(err)
 
-				util.ExitOnError(cmd.GitClient().Create(feature, rootCmdOptions.SkipChecks))
+				util.ExitOnError(cmd.GitClient().Create(feature, RootCmdOptions.SkipChecks))
 				util.ExitOnError(cmd.GitClient().Checkout(feature))
 			},
 		},

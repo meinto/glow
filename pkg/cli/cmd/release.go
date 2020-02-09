@@ -46,7 +46,7 @@ func SetupReleaseCommand(parent command.Service) command.Service {
 				release, err := glow.NewRelease(version)
 				util.ExitOnError(err)
 
-				util.ExitOnError(cmd.GitClient().Create(release, rootCmdOptions.SkipChecks))
+				util.ExitOnError(cmd.GitClient().Create(release, RootCmdOptions.SkipChecks))
 
 				_, _, err = cmd.GitClient().Checkout(release)
 				util.ExitOnError(err)
