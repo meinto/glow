@@ -7,5 +7,5 @@
   "squashCommits": true,
   "versionFile": "VERSION",
   "versionFileType": "raw",
-  "logLevel": "fatal"
+  "logLevel": "info"
 }
