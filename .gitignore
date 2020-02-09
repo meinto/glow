@@ -13,3 +13,4 @@ package.json
 glow.private.json
 packrd
 pkg/cli/cmd/cmd-packr.go
+glow.private.json

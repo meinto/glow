@@ -61,7 +61,7 @@ func SetupInstallCommand(parent command.Service) command.Service {
 				}
 
 				if _, err := os.Stat(newFileName); !os.IsNotExist(err) {
-					replace, err := replaceFile(newFileName)
+					replace, err := promtReplaceFile(newFileName)
 					util.ExitOnErrorWithMessage(err.Error())(err)
 					if !replace {
 						log.Fatal("file not replaced")
@@ -123,19 +123,22 @@ func usageOptions() (int, error) {
 	return index, nil
 }
 
-func replaceFile(filePath string) (bool, error) {
-	prompt := promptui.Select{
-		Label: "File exists. Do you want to replace it?",
-		Items: []string{"yes", "no"},
-	}
+func promtReplaceFile(filePath string) (bool, error) {
+	if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+		prompt := promptui.Select{
+			Label: "File exists. Do you want to replace it?",
+			Items: []string{"yes", "no"},
+		}
 
-	index, _, err := prompt.Run()
-	if err != nil {
-		return false, err
-	}
+		index, _, err := prompt.Run()
+		if err != nil {
+			return false, err
+		}
 
-	if index == 0 {
-		return true, nil
+		if index == 0 {
+			return true, nil
+		}
+		return false, nil
 	}
 	return false, nil
 }
