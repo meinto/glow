@@ -1,6 +1,8 @@
 package glow_test
 
 import (
+	"reflect"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -12,9 +14,21 @@ var _ = Describe("Feature", func() {
 	var branches []AuthoredBranch
 
 	BeforeEach(func() {
-		f1, _ := NewFeature("luke", "falcon")
-		f2, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon")
-		branches = []AuthoredBranch{f1, f2}
+		f1, _ := NewFeature("luke", "falcon-shuttle")
+		f2, _ := FeatureFromBranch("feature/luke/falcon-shuttle")
+		f3, _ := FeatureFromBranch(BRANCH_NAME_PREFIX + "feature/luke/falcon-shuttle")
+		f4, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "feature/luke/falcon-shuttle")
+		f5, _ := BranchFromBranchName("feature/luke/falcon-shuttle")
+		branches = []AuthoredBranch{f1, f2, f3, f4, f5}
+	})
+
+	It("is of type feature branch", func() {
+		f, _ := NewFeature("a", "b")
+		rf := reflect.ValueOf(f)
+		ForEachTestSet(branches, func(branch interface{}) {
+			r := reflect.ValueOf(branch)
+			Expect(r.Type().AssignableTo(rf.Type())).To(BeTrue())
+		})
 	})
 
 	It("can be closed", func() {
@@ -31,12 +45,12 @@ var _ = Describe("Feature", func() {
 		})
 	})
 
-	It("is only allowed to create from develop branch", func() {
+	It("is allowed to create from develop or feature branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			f := branch.(AuthoredBranch)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
-				if testBranchName == DEVELOP_BRANCH {
+				if testBranchName == DEVELOP_BRANCH || testBranchName == FEAUTURE_BRANCH {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeTrue())
 				} else {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeFalse())

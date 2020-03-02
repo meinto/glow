@@ -3,7 +3,10 @@ package glow
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
+
+	l "github.com/meinto/glow/logging"
 )
 
 // Branch interface
@@ -22,14 +25,47 @@ type branch struct {
 	name string
 }
 
-const BRANCH_NAME_PREFIX = "refs/heads/"
+const (
+	BRANCH_NAME_PREFIX     = "refs/heads/"
+	FEATURE_BRANCH_PATTERN = `feature/[^/]+/.*`
+	FIX_BRANCH_PATTERN     = `fix/[^/]+/.*`
+	HOTFIX_BRANCH_PATTERN  = `hotfix/v.*`
+	RELEASE_BRANCH_PATTERN = `release/v.*`
+)
 
 // NewBranch creates a new branch definition
 func NewBranch(name string) Branch {
+	l.Log().Debug(l.Fields{"name": name})
 	if !strings.HasPrefix(name, BRANCH_NAME_PREFIX) {
 		name = BRANCH_NAME_PREFIX + name
 	}
 	return NewBranchLoggingService(branch{name})
+}
+
+func BranchFromBranchName(name string) (b Branch, err error) {
+	l.Log().Debug(l.Fields{"name": name})
+	defer func() {
+		l.Log().
+			Debug(l.Fields{"branch": b}).
+			Error(err)
+	}()
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(name))
+	if matched && err == nil {
+		return FeatureFromBranch(name)
+	}
+	matched, err = regexp.Match(FIX_BRANCH_PATTERN, []byte(name))
+	if matched && err == nil {
+		return FixFromBranch(name)
+	}
+	matched, err = regexp.Match(HOTFIX_BRANCH_PATTERN, []byte(name))
+	if matched && err == nil {
+		return HotfixFromBranch(name)
+	}
+	matched, err = regexp.Match(RELEASE_BRANCH_PATTERN, []byte(name))
+	if matched && err == nil {
+		return ReleaseFromBranch(name)
+	}
+	return NewBranch(name), nil
 }
 
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
@@ -91,11 +127,11 @@ func NewAuthoredBranch(branchType, author, featureName string) (AuthoredBranch, 
 	}
 	branchName := fmt.Sprintf("%s/%s/%s", branchType, author, featureName)
 	branch := NewBranch(branchName)
-	return NewBranchLoggingService(authoredBranch{
+	return authoredBranch{
 		author,
 		featureName,
 		branch,
-	}), nil
+	}, nil
 }
 
 // AuthoredBranchFromBranchName extracts a feature definition from branch name

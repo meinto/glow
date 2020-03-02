@@ -1,22 +1,32 @@
 package cmd
 
 import (
+	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	cleanupCmd.AddCommand(cleanupTagsCmd)
+type CleanupTagsCommand struct {
+	command.Service
 }
 
-var cleanupTagsCmd = &cobra.Command{
-	Use:   "tags",
-	Short: "cleanup tags",
-	Run: func(cmd *cobra.Command, args []string) {
+func (cmd *CleanupTagsCommand) PostSetup(parent command.Service) command.Service {
+	parent.Add(cmd)
+	return cmd
+}
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+var cleanupTagsCmd = SetupCleanupTagsCommand(cleanupCmd)
 
-		util.ExitOnError(g.CleanupTags(cleanupCmdFlags.cleanupUntracked))
-	},
+func SetupCleanupTagsCommand(parent command.Service) command.Service {
+	return command.Setup(&CleanupTagsCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:   "tags",
+				Short: "cleanup tags",
+			},
+			Run: func(cmd command.Service, args []string) {
+				util.ExitOnError(cmd.GitClient().CleanupTags(cleanupCmdFlags.cleanupUntracked))
+			},
+		},
+	}, parent)
 }

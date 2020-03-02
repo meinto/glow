@@ -1,47 +1,41 @@
 package cmd
 
 import (
-	"github.com/meinto/glow"
 	l "github.com/meinto/glow/logging"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(closeCmd)
-	util.AddFlagsForMergeRequests(closeCmd)
+type CloseCommand struct {
+	command.Service
 }
 
-var closeCmd = &cobra.Command{
-	Use:   "close",
-	Short: "close a branch",
-	Run: func(cmd *cobra.Command, args []string) {
+func (cmd *CloseCommand) PostSetup(parent command.Service) command.Service {
+	parent.Add(cmd)
+	util.AddFlagsForMergeRequests(cmd.Cmd())
+	return cmd
+}
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+var closeCmd = SetupCloseCommand(RootCmd)
 
-		// err := g.Fetch()
-		// util.CheckForError(err, "Fetch")
+func SetupCloseCommand(parent command.Service) command.Service {
+	return command.Setup(&CloseCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:   "close",
+				Short: "close a branch",
+			},
+			Run: func(cmd command.Service, args []string) {
+				currentBranch := cmd.CurrentBranch(RootCmdOptions.CI)
 
-		gp, err := util.GetGitProvider()
-		util.ExitOnError(err)
-
-		var currentBranch glow.Branch
-		if rootCmdOptions.CI {
-			cb := gp.GetCIBranch()
-			util.ExitOnError(err)
-			currentBranch = cb
-		} else {
-			cb, _, _, err := g.CurrentBranch()
-			util.ExitOnError(err)
-			currentBranch = cb
-		}
-
-		err = gp.Close(currentBranch)
-		if !util.MergeRequestFlags.Gracefully {
-			util.ExitOnError(err)
-		} else {
-			l.Log().Error(err)
-		}
-	},
+				err := cmd.GitProvider().Close(currentBranch)
+				if !util.MergeRequestFlags.Gracefully {
+					util.ExitOnError(err)
+				} else {
+					l.Log().Error(err)
+				}
+			},
+		},
+	}, parent)
 }

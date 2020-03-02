@@ -6,23 +6,75 @@ import (
 
 	"github.com/imdario/mergo"
 	"github.com/sirupsen/logrus"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
+	prefixedFormatter "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 type Fields logrus.Fields
 
-type logger struct {
-	prefixEntry *logrus.Entry
+func Stdout(stdout string) Fields {
+	return Fields{"stdout": stdout}
 }
 
-func Log() *logger {
+func StdoutFields(stdout string, fields Fields) Fields {
+	mergo.Merge(
+		&fields,
+		Fields{"stdout": stdout},
+	)
+	return fields
+}
+
+type Logger struct {
+	*logrus.Logger
+}
+
+type Options struct {
+	Level logrus.Level
+}
+
+var defaultOptions = Options{
+	Level: logrus.InfoLevel,
+}
+
+var logger = &Logger{logrus.New()}
+
+func GetLevel(lvl string) logrus.Level {
+	switch lvl {
+	case "trace":
+		return logrus.TraceLevel
+	case "debug":
+		return logrus.DebugLevel
+	case "panic":
+		return logrus.PanicLevel
+	case "fatal":
+		return logrus.FatalLevel
+	case "error":
+		return logrus.ErrorLevel
+	case "warning":
+		return logrus.WarnLevel
+	case "info":
+		return logrus.InfoLevel
+	default:
+		return logrus.InfoLevel
+	}
+}
+
+func Configure(options ...Options) {
+	var _options Options
+	if len(options) > 0 {
+		_options = options[0]
+	}
 	l := logrus.New()
-	l.SetFormatter(&prefixed.TextFormatter{
+	l.SetFormatter(&prefixedFormatter.TextFormatter{
 		ForceColors:     true,
 		ForceFormatting: true,
 		FullTimestamp:   true,
 		TimestampFormat: "15:04:05",
 	})
+	l.SetLevel(_options.Level)
+	logger = &Logger{l}
+}
+
+func Log() *prefixed {
 
 	pc, _, _, _ := runtime.Caller(1)
 	nameFull := runtime.FuncForPC(pc).Name()
@@ -35,68 +87,68 @@ func Log() *logger {
 		prefix = strings.Join(nameParts[:len(nameParts)-1], ".")
 	}
 
-	return &logger{l.WithFields(logrus.Fields{
+	return &prefixed{logger.WithFields(logrus.Fields{
 		"prefix": prefix,
 	})}
 }
 
-func (l *logger) Stdout(stdout string) *logger {
-	l.prefixEntry.WithFields(logrus.Fields{"stdout": stdout}).Info()
-	return l
+type prefixed struct {
+	prefix *logrus.Entry
 }
 
-func (l *logger) StdoutFields(stdout string, fields Fields) *logger {
-	mergo.Merge(
-		&fields,
-		Fields{"stdout": stdout},
-	)
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Info()
-	return l
+func (p *prefixed) Trace(fields Fields, args ...interface{}) *prefixed {
+	p.prefix.WithFields(logrus.Fields(fields)).Trace(args...)
+	return p
 }
 
-func (l *logger) Info(fields Fields) *logger {
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Info()
-	return l
+func (p *prefixed) Debug(fields Fields, args ...interface{}) *prefixed {
+	p.prefix.WithFields(logrus.Fields(fields)).Debug(args...)
+	return p
 }
 
-func (l *logger) Warn(fields Fields) *logger {
-	l.prefixEntry.WithFields(logrus.Fields(fields)).Warn()
-	return l
+func (p *prefixed) Info(fields Fields, args ...interface{}) *prefixed {
+	p.prefix.WithFields(logrus.Fields(fields)).Info(args...)
+	return p
 }
 
-func (l *logger) WarnIf(fields Fields, condition bool) *logger {
+func (p *prefixed) Warn(fields Fields, args ...interface{}) *prefixed {
+	p.prefix.WithFields(logrus.Fields(fields)).Warn(args...)
+	return p
+}
+
+func (p *prefixed) WarnIf(fields Fields, condition bool, args ...interface{}) *prefixed {
 	if condition {
-		l.prefixEntry.WithFields(logrus.Fields(fields)).Warn()
+		p.prefix.WithFields(logrus.Fields(fields)).Warn(args...)
 	}
-	return l
+	return p
 }
 
-func (l *logger) Stderr(stderr string, err error) *logger {
+func (p *prefixed) Stderr(stderr string, err error, args ...interface{}) *prefixed {
 	if strings.TrimSpace(stderr) != "" {
-		entry := l.prefixEntry.WithFields(logrus.Fields{"stderr": stderr})
-		entry.Warn()
+		entry := p.prefix.WithFields(logrus.Fields{"stderr": stderr})
+		entry.Warn(args...)
 	}
 	if err != nil {
-		entry := l.prefixEntry.WithFields(logrus.Fields{"err": err})
-		entry.Error()
+		entry := p.prefix.WithFields(logrus.Fields{"err": err})
+		entry.Error(args...)
 	}
-	return l
+	return p
 }
 
-func (l *logger) Error(err error) *logger {
+func (p *prefixed) Error(err error, args ...interface{}) *prefixed {
 	if err != nil {
-		l.prefixEntry.WithFields(logrus.Fields{"err": err}).Error()
+		p.prefix.WithFields(logrus.Fields{"err": err}).Error(args...)
 	}
-	return l
+	return p
 }
 
-func (l *logger) ErrorFields(err error, fields Fields) *logger {
+func (p *prefixed) ErrorFields(err error, fields Fields, args ...interface{}) *prefixed {
 	if err != nil {
 		mergo.Merge(
 			&fields,
 			Fields{"err": err},
 		)
-		l.prefixEntry.WithFields(logrus.Fields(fields)).Error()
+		p.prefix.WithFields(logrus.Fields(fields)).Error(args...)
 	}
-	return l
+	return p
 }

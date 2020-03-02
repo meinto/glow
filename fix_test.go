@@ -1,6 +1,8 @@
 package glow_test
 
 import (
+	"reflect"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,7 +16,18 @@ var _ = Describe("Fix", func() {
 	BeforeEach(func() {
 		f1, _ := NewFix("luke", "falcon")
 		f2, _ := FixFromBranch(BRANCH_NAME_PREFIX + "fix/luke/falcon")
-		branches = []AuthoredBranch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "fix/luke/falcon")
+		f4, _ := BranchFromBranchName("fix/luke/falcon")
+		branches = []AuthoredBranch{f1, f2, f3, f4}
+	})
+
+	It("is of type fix branch", func() {
+		f, _ := NewFix("a", "b")
+		rf := reflect.ValueOf(f)
+		ForEachTestSet(branches, func(branch interface{}) {
+			r := reflect.ValueOf(branch)
+			Expect(r.Type().AssignableTo(rf.Type())).To(BeTrue())
+		})
 	})
 
 	It("can be closed", func() {

@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/meinto/glow"
+	"github.com/meinto/glow/git"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -18,33 +19,54 @@ type gitlabAdapter struct {
 	service
 }
 
-func (a *gitlabAdapter) Close(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBeClosed() && remoteBranchExists == nil {
-		branchList, _, _, err := a.gitService.BranchList()
-		if err != nil {
-			return errors.Wrap(err, "error getting branch list")
-		}
-		targets := b.CloseBranches(branchList)
+func (s *gitlabAdapter) GitService() (gs git.Service) {
+	return s.gitService
+}
 
-		for _, t := range targets {
-			err := a.createMergeRequest(b, t, true)
+func (s *gitlabAdapter) HTTPClient() HttpClient {
+	return s.httpClient
+}
+
+func (s *gitlabAdapter) SetHTTPClient(client HttpClient) {
+	s.SetHTTPClient(client)
+}
+
+func (s *gitlabAdapter) SetGitService(gs git.Service) {
+	s.gitService = gs
+}
+
+func (a *gitlabAdapter) Close(b glow.Branch) error {
+	if b.CanBeClosed() {
+		exists, _, _, err := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if exists && err == nil {
+			branchList, _, _, err := a.GitService().BranchList()
 			if err != nil {
-				return errors.Wrap(err, "error creating merge request")
+				return errors.Wrap(err, "error getting branch list")
 			}
+			targets := b.CloseBranches(branchList)
+
+			for _, t := range targets {
+				log.Println(t.BranchName())
+				err := a.createMergeRequest(b, t, false)
+				if err != nil {
+					return errors.Wrap(err, "error creating merge request")
+				}
+			}
+			return nil
 		}
-		return nil
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be closed")
+	return errors.New("cannot be closed")
 }
 
 func (a *gitlabAdapter) Publish(b glow.Branch) error {
-	_, _, remoteBranchExists := a.gitService.RemoteBranchExists(b.ShortBranchName())
-	if b.CanBePublished() && remoteBranchExists == nil {
-		t := b.PublishBranch()
-		return a.createMergeRequest(b, t, false)
+	if b.CanBePublished() {
+		exists, _, _, err := a.GitService().RemoteBranchExists(b.ShortBranchName())
+		if exists && err == nil {
+			t := b.PublishBranch()
+			return a.createMergeRequest(b, t, false)
+		}
 	}
-	return errors.Wrap(remoteBranchExists, "cannot be published")
+	return errors.New("cannot be published")
 }
 
 func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branch, removeSourceBranch bool) error {
@@ -56,12 +78,15 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		Squash             bool   `json:"squash"`
 	}
 
+	sourceBranchName := source.ShortBranchName()
+	targetBranchName := target.ShortBranchName()
+
 	data := Payload{
-		SourceBranch:       source.ShortBranchName(),
-		TargetBranch:       target.ShortBranchName(),
-		Title:              fmt.Sprintf("Merge %s in %s", source.ShortBranchName(), target.ShortBranchName()),
+		SourceBranch:       sourceBranchName,
+		TargetBranch:       targetBranchName,
+		Title:              fmt.Sprintf("Merge %s in %s", sourceBranchName, targetBranchName),
 		RemoveSourceBranch: removeSourceBranch,
-		Squash:             viper.GetBool("mergeRequest.squashCommits"),
+		Squash:             viper.GetBool("squashCommits"),
 	}
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
@@ -83,20 +108,20 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Private-Token", a.token)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := a.HTTPClient().Do(req)
 	if err != nil {
 		return errors.Wrap(err, "do request")
 	}
 	defer resp.Body.Close()
 
-	log.Printf("created merge request of %s into %s", source.ShortBranchName(), target.ShortBranchName())
+	log.Printf("created merge request of %s into %s", sourceBranchName, targetBranchName)
 	return nil
 }
 
-func (a *gitlabAdapter) GetCIBranch() glow.Branch {
+func (a *gitlabAdapter) GetCIBranch() (glow.Branch, error) {
 	branchName := os.Getenv("CI_COMMIT_REF_NAME")
-	branch := glow.NewBranch(branchName)
-	return branch
+	branch, err := glow.BranchFromBranchName(branchName)
+	return branch, err
 }
 
 func (a *gitlabAdapter) DetectCICDOrigin() (string, error) {

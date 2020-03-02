@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/meinto/glow"
+	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/spf13/cobra"
 )
@@ -11,48 +11,63 @@ var pushCmdOptions struct {
 	CommitMessage string
 }
 
-func init() {
-	rootCmd.AddCommand(pushCmd)
-	pushCmd.Flags().BoolVar(&pushCmdOptions.AddAll, "addAll", false, "add all changes made on the current branch")
-	pushCmd.Flags().StringVar(&pushCmdOptions.CommitMessage, "commitMessage", "", "add a commit message (flag --addAll required)")
-	util.AddFlagsForMergeRequests(pushCmd)
+type PushCommand struct {
+	command.Service
 }
 
-var pushCmd = &cobra.Command{
-	Use:   "push",
-	Short: "push changes",
-	Run: func(cmd *cobra.Command, args []string) {
+func (cmd *PushCommand) PostSetup(parent command.Service) command.Service {
+	parent.Add(cmd)
+	cmd.Cmd().Flags().BoolVar(&pushCmdOptions.AddAll, "addAll", false, "add all changes made on the current branch")
+	cmd.Cmd().Flags().StringVar(&pushCmdOptions.CommitMessage, "commitMessage", "", "add a commit message (flag --addAll required)")
+	util.AddFlagsForMergeRequests(cmd.Cmd())
+	return cmd
+}
 
-		g, err := util.GetGitClient()
-		util.ExitOnError(err)
+var pushCmd = SetupPushCommand(RootCmd)
 
-		gp, err := util.GetGitProvider()
-		util.ExitOnError(err)
+func SetupPushCommand(parent command.Service) command.Service {
+	return command.Setup(&PushCommand{
+		&command.Command{
+			Command: &cobra.Command{
+				Use:   "push",
+				Short: "push changes",
+			},
+			PreRun: func(cmd command.Service, args []string) {
+				if !RootCmdOptions.CI {
+					// check if there are unstaged files
+					// cobraUtils.PromptSelect("There are unstaged files. Do you want to add them?", []string{
+					// 	"Yes", "No",
+					// })
+					// set pushCmdOptions addAll flag
 
-		var currentBranch glow.Branch
-		if rootCmdOptions.CI {
-			cb := gp.GetCIBranch()
-			util.ExitOnError(err)
-			currentBranch = cb
-		} else {
-			cb, _, _, err := g.CurrentBranch()
-			util.ExitOnError(err)
-			currentBranch = cb
-		}
+					// check if there are uncomitted files
+					// cobraUtils.PromptSelect("There are uncommited files. Do you want to commit them?", []string{
+					// 	"Yes", "No",
+					// })
 
-		if pushCmdOptions.AddAll {
-			util.ExitOnError(g.AddAll())
-			util.ExitOnError(g.Stash())
-			util.ExitOnError(g.Checkout(currentBranch))
-			util.ExitOnError(g.StashPop())
-			util.ExitOnError(g.AddAll())
+					// set commit message
+					// set pushCmdOptions CommitMessage flag
+				}
+			},
+			Run: func(cmd command.Service, args []string) {
+				currentBranch := cmd.CurrentBranch(RootCmdOptions.CI)
 
-			if pushCmdOptions.CommitMessage != "" {
-				util.ExitOnError(g.Commit(pushCmdOptions.CommitMessage))
-			}
-		}
+				if pushCmdOptions.AddAll {
+					util.ExitOnError(cmd.GitClient().AddAll())
+					util.ExitOnError(cmd.GitClient().Stash())
+					util.ExitOnError(cmd.GitClient().Checkout(currentBranch))
+					util.ExitOnError(cmd.GitClient().StashPop())
+					util.ExitOnError(cmd.GitClient().AddAll())
 
-		g.Push(false)
-		util.ExitOnError(err)
-	},
+					if pushCmdOptions.CommitMessage != "" {
+						util.ExitOnError(cmd.GitClient().Commit(pushCmdOptions.CommitMessage))
+					}
+				}
+
+				exists, _, _, _ := cmd.GitClient().RemoteBranchExists(currentBranch.BranchName())
+				_, _, err := cmd.GitClient().Push(!exists)
+				util.ExitOnError(err)
+			},
+		},
+	}, parent)
 }

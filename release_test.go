@@ -1,6 +1,8 @@
 package glow_test
 
 import (
+	"reflect"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,7 +16,18 @@ var _ = Describe("Release", func() {
 	BeforeEach(func() {
 		f1, _ := NewRelease("1.2.3")
 		f2, _ := ReleaseFromBranch(BRANCH_NAME_PREFIX + "release/v1.2.3")
-		branches = []Branch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "release/v1.2.3")
+		f4, _ := BranchFromBranchName("release/v1.2.3")
+		branches = []Branch{f1, f2, f3, f4}
+	})
+
+	It("is of type release branch", func() {
+		f, _ := NewRelease("a")
+		rf := reflect.ValueOf(f)
+		ForEachTestSet(branches, func(branch interface{}) {
+			r := reflect.ValueOf(branch)
+			Expect(r.Type().AssignableTo(rf.Type())).To(BeTrue())
+		})
 	})
 
 	It("can be closed", func() {

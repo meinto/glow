@@ -1,8 +1,10 @@
 package glow
 
 import (
+	"regexp"
 	"strings"
 
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -12,14 +14,27 @@ type feature struct {
 }
 
 // NewFeature creates a new feature definition
-func NewFeature(author, name string) (AuthoredBranch, error) {
+func NewFeature(author, name string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"author": author, "name": name})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	ab, err := NewAuthoredBranch(AUTHORED_BRANCH_TYPE_FEATURE, author, name)
 	return feature{ab}, errors.Wrap(err, "error while creating feature definition")
 }
 
 // FeatureFromBranch extracts a feature definition from branch name
-func FeatureFromBranch(branchName string) (AuthoredBranch, error) {
-	if !strings.Contains(branchName, "/feature/") {
+func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(branchName))
+	if !matched || err != nil {
 		return feature{}, errors.New("no valid feature branch")
 	}
 	ab, err := AuthoredBranchFromBranchName(branchName)
@@ -29,7 +44,8 @@ func FeatureFromBranch(branchName string) (AuthoredBranch, error) {
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (f feature) CreationIsAllowedFrom(sourceBranch Branch) bool {
-	return strings.Contains(sourceBranch.ShortBranchName(), "develop")
+	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(sourceBranch.BranchName()))
+	return strings.Contains(sourceBranch.ShortBranchName(), "develop") || (matched && err == nil)
 }
 
 // CanBeClosed checks if the branch name is a valid

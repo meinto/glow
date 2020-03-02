@@ -22,7 +22,9 @@ var _ = Describe("git service", func() {
 	BeforeEach(func() {
 		local, bare, teardown = testenv.SetupEnv()
 		exec := cmd.NewCmdExecutorInDir("/bin/bash", local.Folder)
-		s = NewNativeService(exec)
+		s = NewNativeService(Options{
+			CmdExecutor: exec,
+		})
 	})
 
 	AfterEach(func() {
@@ -43,7 +45,9 @@ var _ = Describe("git service", func() {
 	Describe("GitRepoPath", func() {
 		It("returns the path to the git repository", func() {
 			exec := cmd.NewCmdExecutorInDir("/bin/bash", local.Folder+"/subfolder")
-			s = NewNativeService(exec)
+			s = NewNativeService(Options{
+				CmdExecutor: exec,
+			})
 			repoPath, _, _, err := s.GitRepoPath()
 			Expect(err).To(BeNil())
 			Expect(strings.TrimPrefix(repoPath, "/private")).To(Equal(local.Folder))

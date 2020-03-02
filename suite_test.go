@@ -17,7 +17,7 @@ const (
 	MASTER_BRANCH   = "master"
 	DEVELOP_BRANCH  = "develop"
 	RELEASE_BRANCH  = "release/v1.2.3"
-	FEAUTURE_BRANCH = "feature/luke/falcon"
+	FEAUTURE_BRANCH = "feature/luke/falcon-shuttle"
 	HOTFIX_BRANCH   = "hotfix/v0.0.1"
 	FIX_BRANCH      = "fix/luke/falcon"
 	ANOTHER_BRANCH  = "another-branch"

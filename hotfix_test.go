@@ -1,6 +1,8 @@
 package glow_test
 
 import (
+	"reflect"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,7 +16,18 @@ var _ = Describe("Hotfix", func() {
 	BeforeEach(func() {
 		f1, _ := NewHotfix("0.0.1")
 		f2, _ := HotfixFromBranch(BRANCH_NAME_PREFIX + "hotfix/v0.0.1")
-		branches = []Branch{f1, f2}
+		f3, _ := BranchFromBranchName(BRANCH_NAME_PREFIX + "hotfix/v0.0.1")
+		f4, _ := BranchFromBranchName("hotfix/v0.0.1")
+		branches = []Branch{f1, f2, f3, f4}
+	})
+
+	It("is of type hotfix branch", func() {
+		f, _ := NewHotfix("a")
+		rf := reflect.ValueOf(f)
+		ForEachTestSet(branches, func(branch interface{}) {
+			r := reflect.ValueOf(branch)
+			Expect(r.Type().AssignableTo(rf.Type())).To(BeTrue())
+		})
 	})
 
 	It("can be closed", func() {

@@ -2,8 +2,10 @@ package glow
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
+	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
 )
 
@@ -14,18 +16,31 @@ type release struct {
 }
 
 // NewRelease creates a new release definition
-func NewRelease(version string) (Branch, error) {
+func NewRelease(version string) (b Branch, err error) {
+	l.Log().Info(l.Fields{"version": version})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
 	branchName := fmt.Sprintf(BRANCH_NAME_PREFIX+"release/v%s", version)
-	b := NewBranch(branchName)
+	b = NewBranch(branchName)
 	return release{version, b}, nil
 }
 
 // ReleaseFromBranch extracts a release definition from branch name
-func ReleaseFromBranch(branchName string) (Branch, error) {
-	if !strings.Contains(branchName, "/release/v") {
+func ReleaseFromBranch(branchName string) (b Branch, err error) {
+	l.Log().Info(l.Fields{"branchName": branchName})
+	defer func() {
+		l.Log().
+			Info(l.Fields{"branch": b}).
+			Error(err)
+	}()
+	matched, err := regexp.Match(RELEASE_BRANCH_PATTERN, []byte(branchName))
+	if !matched || err != nil {
 		return release{}, errors.New("no valid release branch")
 	}
-	b := NewBranch(branchName)
+	b = NewBranch(branchName)
 	parts := strings.Split(branchName, "/")
 	if len(parts) < 1 {
 		return release{}, errors.New("invalid branch name " + branchName)

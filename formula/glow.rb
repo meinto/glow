@@ -2,16 +2,16 @@
 class Glow < Formula
   desc ""
   homepage ""
-  version "3.3.1"
+  version "4.3.1"
   bottle :unneeded
 
   if OS.mac?
-    url "https://github.com/meinto/glow/releases/download/v3.3.1/glow_3.3.1_darwin_x86_64.tar.gz"
-    sha256 "6601f840b83b957419614d96b65fcab015dc5d78226f3a3d013ff23e0d012ac0"
+    url "https://github.com/meinto/glow/releases/download/v4.3.1/glow_4.3.1_darwin_x86_64.tar.gz"
+    sha256 "7df57d392eddd4022833d1fadda798d0d0d879d6b5a73541ee1b9bbec73b8044"
   elsif OS.linux?
     if Hardware::CPU.intel?
-      url "https://github.com/meinto/glow/releases/download/v3.3.1/glow_3.3.1_linux_x86_64.tar.gz"
-      sha256 "04c579a827448c10431820e27fa0814e9ebfc35c71dc522680e5566e541b2d82"
+      url "https://github.com/meinto/glow/releases/download/v4.3.1/glow_4.3.1_linux_x86_64.tar.gz"
+      sha256 "3b46cad303a6ea02dd38ca980ddb56fa6ffd39a5501eeb90d2e206333563ffba"
     end
   end
   
