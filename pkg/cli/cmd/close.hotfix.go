@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	l "github.com/meinto/glow/logging"
-
 	"github.com/meinto/glow"
+	l "github.com/meinto/glow/logging"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/util"
 	"github.com/meinto/glow/semver"
@@ -27,7 +26,7 @@ func SetupCloseHotfixCommand(parent command.Service) command.Service {
 		&command.Command{
 			Command: &cobra.Command{
 				Use:   "hotfix",
-				Short: "close a release branch",
+				Short: "close a hotfix branch",
 				Args:  cobra.MinimumNArgs(1),
 			},
 			Run: func(cmd command.Service, args []string) {
@@ -40,8 +39,8 @@ func SetupCloseHotfixCommand(parent command.Service) command.Service {
 					s := semver.NewSemverService(
 						pathToRepo,
 						"/bin/bash",
-						releaseCmdOptions.VersionFile,
-						releaseCmdOptions.VersionFileType,
+						hotfixCmdOptions.VersionFile,
+						hotfixCmdOptions.VersionFileType,
 					)
 					v, err := s.GetCurrentVersion()
 					util.ExitOnError(err)
