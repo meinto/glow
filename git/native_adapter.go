@@ -168,7 +168,7 @@ func (a nativeGitAdapter) CleanupTags(cleanupUntracked bool) (stdout, stderr str
 }
 
 func (a nativeGitAdapter) RemoteBranchExists(branchName string) (exists bool, stdout, stderr string, err error) {
-	stdout, stderr, err = a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l", branchName)).Run()
+	stdout, stderr, err = a.exec.Command(fmt.Sprintf("git ls-remote --heads $(git remote get-url origin) %s | wc -l | tr -d ' '", branchName)).Run()
 	if err != nil {
 		return false, stdout, stderr, err
 	}
