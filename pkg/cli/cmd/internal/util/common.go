@@ -37,16 +37,16 @@ func GetGitProvider() (gitprovider.Service, error) {
 	case "github":
 		s = gitprovider.NewGithubService(gitprovider.Options{
 			Endpoint:  endpoint,
-			Namespace: projectName,
-			Project:   projectNamespace,
+			Namespace: projectNamespace,
+			Project:   projectName,
 			Token:     gitproviderToken,
 		})
 		break
 	case "gitlab":
 		s = gitprovider.NewGitlabService(gitprovider.Options{
 			Endpoint:  endpoint,
-			Namespace: projectName,
-			Project:   projectNamespace,
+			Namespace: projectNamespace,
+			Project:   projectName,
 			Token:     gitproviderToken,
 		})
 		break
