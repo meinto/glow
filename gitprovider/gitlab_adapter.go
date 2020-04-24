@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -17,6 +18,10 @@ import (
 
 type gitlabAdapter struct {
 	service
+}
+
+type mergeRequestResponse struct {
+	URL string `json:"web_url"`
 }
 
 func (s *gitlabAdapter) GitService() (gs git.Service) {
@@ -114,7 +119,25 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 	}
 	defer resp.Body.Close()
 
-	log.Printf("created merge request of %s into %s", sourceBranchName, targetBranchName)
+	if resp.StatusCode == http.StatusCreated {
+		log.Printf("created merge request of %s into %s", sourceBranchName, targetBranchName)
+
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, "failed to read response body")
+		}
+
+		var response mergeRequestResponse
+		err = json.Unmarshal(bodyBytes, &response)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode response body")
+		}
+
+		log.Printf("visit the merge request at %s", response.URL)
+	} else {
+		return errors.Errorf("failed to create a merge_request: %s", resp.Status)
+	}
+
 	return nil
 }
 
