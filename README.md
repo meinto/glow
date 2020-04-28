@@ -1,6 +1,8 @@
 # Glow - A CLI Tool to adapt Git-Flow
 
-<img src="./assets/glow-goopher.png" width="300">
+<div align="center">
+  <img src="./assets/glow-goopher.png" width="300">
+</div>
 
 ## Installation
 
