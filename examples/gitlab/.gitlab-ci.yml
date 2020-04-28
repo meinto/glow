@@ -1,0 +1,67 @@
+
+stages:
+  - test
+  - build
+  - glow
+
+#######################
+###### GLOW PART ######
+#######################
+
+# create a release
+create:patch:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release patch
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
+
+create:minor:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release minor
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
+
+create:major:release:
+ stage: glow
+ script: 
+   - git glow cleanup branches --untracked --gone
+   - git glow cleanup tags --untracked
+   - git glow release major
+       --push
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - develop
+ when: manual
+
+# publish release
+# publish hotfix
+publish:release:
+ stage: glow
+ script:
+   - git glow publish --ci
+ only:
+   - /^release\/v.*$/
+   - /^hotfix\/.*$/
+ when: manual
+
+# merge release back into develop
+close:release:
+ stage: glow
+ script:
+   - git glow close release current
+   - git glow tag
+       --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+ only:
+   - master
