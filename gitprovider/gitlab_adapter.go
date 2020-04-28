@@ -20,10 +20,6 @@ type gitlabAdapter struct {
 	service
 }
 
-type mergeRequestResponse struct {
-	URL string `json:"web_url"`
-}
-
 func (s *gitlabAdapter) GitService() (gs git.Service) {
 	return s.gitService
 }
@@ -81,6 +77,10 @@ func (a *gitlabAdapter) createMergeRequest(source glow.Branch, target glow.Branc
 		Title              string `json:"title"`
 		RemoveSourceBranch bool   `json:"remove_source_branch"`
 		Squash             bool   `json:"squash"`
+	}
+
+	type mergeRequestResponse struct {
+		URL string `json:"web_url"`
 	}
 
 	sourceBranchName := source.ShortBranchName()
