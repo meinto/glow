@@ -1,6 +1,6 @@
 # Glow - A CLI Tool to adapt Git-Flow
 
-![glow logo](./assets/glow-logo.svg)
+<img src="./assets/glow-goopher.png" width="300">
 
 ## Installation
 
@@ -96,7 +96,7 @@ glow init
 
 **List of all config params**
 
-*glow.config.json*
+_glow.config.json_
 
 ```json
 {
@@ -113,7 +113,7 @@ glow init
 }
 ```
 
-*glow.private.json*
+_glow.private.json_
 
 ```json
 {
