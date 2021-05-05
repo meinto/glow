@@ -1,5 +1,7 @@
 module github.com/meinto/glow
 
+go 1.15
+
 require (
 	github.com/cpuguy83/go-md2man v1.0.10 // indirect
 	github.com/go-kit/kit v0.8.0
