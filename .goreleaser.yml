@@ -5,8 +5,7 @@ before:
     - go generate ./...
     - packr2
 builds:
-  - 
-    main: ./pkg/cli/main.go
+  - main: ./pkg/cli/main.go
     env:
       - CGO_ENABLED=0
     goos:
@@ -14,8 +13,7 @@ builds:
       - linux
       - windows
 archives:
-  -
-    name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  - name_template: "glow_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     replacements:
       386: i386
       amd64: x86_64
@@ -23,8 +21,7 @@ archives:
       - goos: windows
         format: zip
 brews:
-  -
-    github:
+  - tap:
       owner: meinto
       name: glow
     commit_author:
@@ -45,12 +42,12 @@ brews:
 #   grade: stable
 #   confinement: strict
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: desc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - "^docs:"
+      - "^test:"
