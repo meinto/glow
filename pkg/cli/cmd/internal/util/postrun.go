@@ -30,7 +30,7 @@ func PostRunWithCurrentVersion(
 	}
 	if len(postReleaseCommand) > 0 {
 		for _, command := range postReleaseCommand {
-			execute(version, command)
+			ExitOnError(execute(version, command))
 		}
 	}
 
@@ -56,7 +56,7 @@ func PostRunWithCurrentVersionS(
 	if len(postReleaseCommand) > 0 {
 		version := ProcessVersionS("current", semverClient)
 		for _, command := range postReleaseCommand {
-			execute(version, command)
+			ExitOnError(execute(version, command))
 		}
 	}
 
@@ -79,7 +79,7 @@ func postRelease(version, script string) {
 		Error(err)
 }
 
-func execute(version, command string) {
+func execute(version, command string) error {
 	cmdString := string(command)
 	if strings.Contains(command, "%s") {
 		cmdString = fmt.Sprintf(command, version)
@@ -92,4 +92,6 @@ func execute(version, command string) {
 	l.Log().
 		Info(l.Stdout(stdout.String())).
 		Stderr(stderr.String(), err)
+
+	return err
 }
