@@ -6,7 +6,6 @@ class Glow < Formula
   desc ""
   homepage ""
   version "4.3.8"
-  bottle :unneeded
 
   if OS.mac? && Hardware::CPU.intel?
     url "https://github.com/meinto/glow/releases/download/v4.3.8/glow_4.3.8_darwin_x86_64.tar.gz"
