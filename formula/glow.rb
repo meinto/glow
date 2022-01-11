@@ -16,6 +16,14 @@ class Glow < Formula
         bin.install "glow"
       end
     end
+    if Hardware::CPU.arm?
+      url "https://github.com/meinto/glow/releases/download/v4.3.13/glow_4.3.13_darwin_arm64.tar.gz"
+      sha256 "xxx"
+
+      def install
+        bin.install "glow"
+      end
+    end
   end
 
   on_linux do
