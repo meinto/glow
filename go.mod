@@ -9,7 +9,7 @@ require (
 	github.com/gobuffalo/envy v1.7.1 // indirect
 	github.com/gobuffalo/logger v1.0.3
 	github.com/gobuffalo/packr v1.23.0
-	github.com/gobuffalo/packr/v2 v2.8.0
+	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/golang/mock v1.4.0
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8
@@ -30,6 +30,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200117160349-530e935923ad // indirect
 	golang.org/x/sys v0.0.0-20200120151820-655fe14d7479 // indirect
 	golang.org/x/text v0.3.2 // indirect
+	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/src-d/go-billy.v3 v3.1.0
 	gopkg.in/src-d/go-billy.v4 v4.2.1

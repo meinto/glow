@@ -5,24 +5,37 @@
 class Glow < Formula
   desc ""
   homepage ""
-  version "4.3.8"
+  version "4.3.13"
 
-  if OS.mac? && Hardware::CPU.intel?
-    url "https://github.com/meinto/glow/releases/download/v4.3.8/glow_4.3.8_darwin_x86_64.tar.gz"
-    sha256 "c2ec8f868410fd0bd2e62a85e457b14498bc032596911f311bb917adfabb8aa0"
+  on_macos do
+    if Hardware::CPU.intel?
+      url "https://github.com/meinto/glow/releases/download/v4.3.13/glow_4.3.13_darwin_x86_64.tar.gz"
+      sha256 "25b73c361cc9d9db8579669018585ad397afd107e491344e631daf3ab96b1590"
+
+      def install
+        bin.install "glow"
+      end
+    end
   end
-  if OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/meinto/glow/releases/download/v4.3.8/glow_4.3.8_linux_x86_64.tar.gz"
-    sha256 "420992b7796a791ef033859101db5dbdfa2d36e747b750680752bfd4758f8ac8"
-  end
-  if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-    url "https://github.com/meinto/glow/releases/download/v4.3.8/glow_4.3.8_linux_arm64.tar.gz"
-    sha256 "afe187959789f9e3d8da5ce5bf84eb3d5a95e2f9d6469e9aa3d32c2223eb0794"
+
+  on_linux do
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+      url "https://github.com/meinto/glow/releases/download/v4.3.13/glow_4.3.13_linux_arm64.tar.gz"
+      sha256 "f3b96284cf6f01c928be20ba1b8e0de074c94521bdccd996050412986dbcac4f"
+
+      def install
+        bin.install "glow"
+      end
+    end
+    if Hardware::CPU.intel?
+      url "https://github.com/meinto/glow/releases/download/v4.3.13/glow_4.3.13_linux_x86_64.tar.gz"
+      sha256 "af7de919c79af1445c47d09c6d55483cde9b59fdd5a2be894eb857b198ef00c0"
+
+      def install
+        bin.install "glow"
+      end
+    end
   end
 
   depends_on "git"
-
-  def install
-    bin.install "glow"
-  end
 end
