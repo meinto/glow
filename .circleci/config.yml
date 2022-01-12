@@ -3,13 +3,13 @@ version: 2
 jobs:
   release:
     docker:
-      - image: circleci/golang:1.14
+      - image: circleci/golang:1.17
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
-      - run: go get github.com/gobuffalo/packr/v2/packr2
+      - run: go get -d github.com/gobuffalo/packr/v2/packr2
       - run: curl -sL https://git.io/goreleaser | bash
   #     - persist_to_workspace:
   #         root: .
