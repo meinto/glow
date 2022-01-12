@@ -27,6 +27,8 @@ brews:
     commit_author:
       name: Tobias Meinhardt
       email: tobias.meinhardt@mailbox.org
+    homepage: "https://github.com/meinto/glow"
+    description: "A cli tool to adapt git-flow"
     folder: formula
     dependencies:
       - git
