@@ -9,7 +9,7 @@ jobs:
     working_directory: /go/src/github.com/meinto/glow
     steps:
       - checkout
-      - run: go get -d github.com/gobuffalo/packr/v2/packr2
+      - run: go install github.com/gobuffalo/packr/v2/packr2
       - run: curl -sL https://git.io/goreleaser | bash
   #     - persist_to_workspace:
   #         root: .
