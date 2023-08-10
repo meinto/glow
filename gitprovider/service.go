@@ -30,6 +30,7 @@ type service struct {
 	endpoint   string
 	namespace  string
 	project    string
+	mainBranch string
 	token      string
 	gitService git.Service
 	httpClient HttpClient
@@ -39,6 +40,7 @@ type Options struct {
 	Endpoint   string
 	Namespace  string
 	Project    string
+	MainBranch string
 	Token      string
 	ShouldLog  bool
 	HttpClient HttpClient
@@ -61,6 +63,7 @@ func NewGitlabService(options Options) Service {
 			options.Endpoint,
 			options.Namespace,
 			options.Project,
+			options.MainBranch,
 			options.Token,
 			g,
 			options.HttpClient,
@@ -86,6 +89,7 @@ func NewGithubService(options Options) Service {
 			options.Endpoint,
 			options.Namespace,
 			options.Project,
+			options.MainBranch,
 			options.Token,
 			g,
 			options.HttpClient,

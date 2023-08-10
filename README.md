@@ -107,6 +107,7 @@ _glow.config.json_
   "gitProvider": "gitlab",
   "projectNamespace": "my-namespace",
   "projectName": "my-project",
+  "projectMainBranchName": "master",
   "gitPath": "/usr/local/bin/git",
   "squashCommits": true,
   "versionFile": "VERSION",
@@ -126,3 +127,11 @@ _glow.private.json_
 ## Git bindings
 
 glow uses the native git installation per default. The default configured path to git is `/usr/local/bin/git`. You can change the path with the flag `--gitPath` or the property `gitPath` in the config file.
+
+## Development
+
+### Testing
+
+```bash
+ginkgo -p
+```

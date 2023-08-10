@@ -32,22 +32,25 @@ func GetGitProvider() (gitprovider.Service, error) {
 	endpoint := viper.GetString("gitProviderDomain")
 	projectNamespace := viper.GetString("projectNamespace")
 	projectName := viper.GetString("projectName")
+	projectMainBranchName := viper.GetString("projectMainBranchName")
 	gitproviderToken := viper.GetString("token")
 	switch viper.GetString("gitProvider") {
 	case "github":
 		s = gitprovider.NewGithubService(gitprovider.Options{
-			Endpoint:  endpoint,
-			Namespace: projectNamespace,
-			Project:   projectName,
-			Token:     gitproviderToken,
+			Endpoint:   endpoint,
+			Namespace:  projectNamespace,
+			Project:    projectName,
+			MainBranch: projectMainBranchName,
+			Token:      gitproviderToken,
 		})
 		break
 	case "gitlab":
 		s = gitprovider.NewGitlabService(gitprovider.Options{
-			Endpoint:  endpoint,
-			Namespace: projectNamespace,
-			Project:   projectName,
-			Token:     gitproviderToken,
+			Endpoint:   endpoint,
+			Namespace:  projectNamespace,
+			Project:    projectName,
+			MainBranch: projectMainBranchName,
+			Token:      gitproviderToken,
 		})
 		break
 	default:
