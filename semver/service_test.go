@@ -6,7 +6,7 @@ import (
 	. "github.com/meinto/glow/semver"
 	"github.com/meinto/glow/testenv"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

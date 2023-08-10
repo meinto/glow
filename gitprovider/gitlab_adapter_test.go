@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/golang/mock/gomock"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 
 	"github.com/meinto/glow"
 	mockb "github.com/meinto/glow/__mock__"

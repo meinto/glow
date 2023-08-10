@@ -6,7 +6,7 @@ import (
 	mockgp "github.com/meinto/glow/gitprovider/__mock__"
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var _ = Describe("Root command", func() {

@@ -5,7 +5,7 @@ import (
 	mockg "github.com/meinto/glow/git/__mock__"
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var _ = Describe("Cleanup branches command", func() {

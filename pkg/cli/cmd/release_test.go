@@ -7,7 +7,7 @@ import (
 	. "github.com/meinto/glow/pkg/cli/cmd"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	mocksemver "github.com/meinto/glow/semver/__mock__"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var _ = Describe("Release command", func() {

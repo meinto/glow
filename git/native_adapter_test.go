@@ -8,7 +8,7 @@ import (
 	. "github.com/meinto/glow/git"
 	"github.com/meinto/glow/testenv"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

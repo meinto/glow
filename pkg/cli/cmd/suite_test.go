@@ -10,7 +10,7 @@ import (
 	mockgp "github.com/meinto/glow/gitprovider/__mock__"
 	"github.com/meinto/glow/pkg/cli/cmd/internal/command"
 	mocksemver "github.com/meinto/glow/semver/__mock__"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
