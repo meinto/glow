@@ -37,20 +37,20 @@ var _ = Describe("Feature", func() {
 		})
 	})
 
-	It("only closes on develop", func() {
+	It("only closes on dev branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			closeBanches := branch.(AuthoredBranch).CloseBranches([]Branch{})
 			Expect(len(closeBanches)).To(Equal(1))
-			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEVELOP_BRANCH))
+			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEV_BRANCH))
 		})
 	})
 
-	It("is allowed to create from develop or feature branch", func() {
+	It("is allowed to create from dev branch or feature branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			f := branch.(AuthoredBranch)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
-				if testBranchName == DEVELOP_BRANCH || testBranchName == FEAUTURE_BRANCH {
+				if testBranchName == DEV_BRANCH || testBranchName == FEAUTURE_BRANCH {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeTrue())
 				} else {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeFalse())

@@ -55,7 +55,7 @@ var _ = Describe("git service", func() {
 	})
 
 	Describe("CurrentBranch", func() {
-		It("returns 'master'", func() {
+		It("returns the main branch name", func() {
 			b, _, _, err := s.CurrentBranch()
 			Expect(err).To(BeNil())
 			Expect(b.ShortBranchName()).To(Equal("master"))

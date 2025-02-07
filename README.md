@@ -72,7 +72,7 @@ glow release 1.2.3
 
 ### Publish a release
 
-When you decide that the release is stable and you want to publish it, the following command will create a merge request on the `master` branch in Gitlab.
+When you decide that the release is stable and you want to publish it, the following command will create a merge request on the main branch in Gitlab. You can configure the main branch name in the `glow.config.json`.
 
 ```bash
 glow publish
@@ -80,7 +80,7 @@ glow publish
 
 ### Close a release
 
-After publishing the release, you have to merge all changes made on the release branch back into `develop`. The following command creates a merge request of the release branch into `develop`.
+After publishing the release, you have to merge all changes made on the release branch back into the dev branch. The following command creates a merge request of the release branch into the dev branch.
 
 ```bash
 glow close
@@ -111,7 +111,9 @@ _glow.config.json_
   "squashCommits": true,
   "versionFile": "VERSION",
   "versionFileType": "raw",
-  "logLevel": "info"
+  "logLevel": "info",
+  "mainBranch": "main",
+  "devBranch": "develop"
 }
 ```
 

@@ -7,5 +7,7 @@
   "squashCommits": true,
   "versionFile": "VERSION",
   "versionFileType": "raw",
-  "logLevel": "info"
+  "logLevel": "info",
+  "mainBranch": "master",
+  "devBranch": "develop"
 }

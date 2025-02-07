@@ -6,16 +6,19 @@ import (
 	. "github.com/meinto/glow"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/spf13/viper"
 )
 
 func TestGlow(t *testing.T) {
+	viper.SetDefault("devBranch", "develop")
+	viper.SetDefault("mainBranch", "master")
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Glow Suite")
 }
 
 const (
-	MASTER_BRANCH   = "master"
-	DEVELOP_BRANCH  = "develop"
+	MAIN_BRANCH     = "master"
+	DEV_BRANCH      = "develop"
 	RELEASE_BRANCH  = "release/v1.2.3"
 	FEAUTURE_BRANCH = "feature/luke/falcon-shuttle"
 	HOTFIX_BRANCH   = "hotfix/v0.0.1"
@@ -24,8 +27,8 @@ const (
 )
 
 func MockBranchCollection() []Branch {
-	b1 := NewBranch(MASTER_BRANCH)
-	b2 := NewBranch(DEVELOP_BRANCH)
+	b1 := NewBranch(MAIN_BRANCH)
+	b2 := NewBranch(DEV_BRANCH)
 	b3 := NewBranch(RELEASE_BRANCH)
 	b4 := NewBranch(FEAUTURE_BRANCH)
 	b5 := NewBranch(HOTFIX_BRANCH)

@@ -7,6 +7,7 @@ import (
 
 	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 // Release definition
@@ -54,7 +55,8 @@ func ReleaseFromBranch(branchName string) (b Branch, err error) {
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (f release) CreationIsAllowedFrom(sourceBranch Branch) bool {
-	if strings.Contains(sourceBranch.ShortBranchName(), "develop") {
+	devBranch := viper.GetString("devBranch")
+	if strings.Contains(sourceBranch.ShortBranchName(), devBranch) {
 		return true
 	}
 	return false
@@ -72,12 +74,14 @@ func (f release) CanBePublished() bool {
 
 // CloseBranches returns all branches which this branch have to be merged with
 func (f release) CloseBranches(availableBranches []Branch) []Branch {
+	devBranch := viper.GetString("devBranch")
 	return []Branch{
-		NewBranch("develop"),
+		NewBranch(devBranch),
 	}
 }
 
 // PublishBranch returns the publish branch if available
 func (f release) PublishBranch() Branch {
-	return NewBranch("master")
+	mainBranch := viper.GetString("mainBranch")
+	return NewBranch(mainBranch)
 }

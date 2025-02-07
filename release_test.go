@@ -46,16 +46,16 @@ var _ = Describe("Release", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			closeBanches := branch.(Branch).CloseBranches(MockBranchCollection())
 			Expect(len(closeBanches)).To(Equal(1))
-			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEVELOP_BRANCH))
+			Expect(closeBanches[0].ShortBranchName()).To(Equal(DEV_BRANCH))
 		})
 	})
 
-	It("is only allowed to create from develop branch", func() {
+	It("is only allowed to create from dev branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			f := branch.(Branch)
 			for _, testBranch := range MockBranchCollection() {
 				testBranchName := testBranch.ShortBranchName()
-				if testBranchName == DEVELOP_BRANCH {
+				if testBranchName == DEV_BRANCH {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeTrue())
 				} else {
 					Expect(f.CreationIsAllowedFrom(testBranch)).To(BeFalse())
@@ -64,10 +64,10 @@ var _ = Describe("Release", func() {
 		})
 	})
 
-	It("publishes on the master branch", func() {
+	It("publishes on the main branch", func() {
 		ForEachTestSet(branches, func(branch interface{}) {
 			f := branch.(Branch)
-			Expect(f.PublishBranch().ShortBranchName()).To(Equal(MASTER_BRANCH))
+			Expect(f.PublishBranch().ShortBranchName()).To(Equal(MAIN_BRANCH))
 		})
 	})
 

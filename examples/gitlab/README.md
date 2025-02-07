@@ -12,7 +12,7 @@ All actions which are represented by manual triggers in the Gitlab pipeline take
 stage:
   - test
   - build
-  - glow    # <-- this one
+  - glow # <-- this one
 ```
 
 Depending on the conditions defined with the `only` property of a Gitlab ci job definition, the corresponding job is only present on specific branches for example.
@@ -26,12 +26,12 @@ The following example shows how to trigger a release branch creation of a `patch
 ```yml
 create:patch:release:
   stage: glow
-  script: 
+  script:
     - git glow cleanup branches --untracked --gone
     - git glow cleanup tags --untracked
     - git glow release patch
-        --push
-        --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+      --push
+      --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
   only:
     - develop
   when: manual
@@ -39,7 +39,7 @@ create:patch:release:
 
 First of all we cleanup the repository managed by the Gitlab runner with the first two cleanup scripts `git glow cleanup ...`.
 
-After that the `release` command would create a patch release branch, and push it to the bare repository. 
+After that the `release` command would create a patch release branch, and push it to the bare repository.
 
 To make this possible, you have to make shure, that your Gitlab runner have access rights to push to your repository. One way to do so is to set a new origin with an access token. In the example above you can see how this would look like.
 
@@ -62,24 +62,23 @@ trigger:prod:release:
   when: manual
 ```
 
-This manual trigger would create a merge-request in Gitlab to merge the feature with the `master` branch.
+This manual trigger would create a merge-request in Gitlab to merge the feature with the main branch.
 
 This trigger also applies to hotfix branches.
 
 ## Close a release
 
-After creating a merge request on `master`, you should define another pipeline which creates another merge request of the release branch back into your develop branch, and tags your published release in git.
+After creating a merge request on main branch, you should define another pipeline which creates another merge request of the release branch back into your develop branch, and tags your published release in git.
 
-```yml 
+```yml
 trigger:close:release:
   stage: glow
   script:
     - git glow close release current
     - git glow tag
-        --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
+      --cicdOrigin https://$CI_GIT_USER:$CI_GIT_TOKEN@gitlab.com/$NAMESPACE/$PROJECT/
   only:
-    - master
+    - main
 ```
 
-This pipeline job runs when the release branch was successfully merged into the master branch, by accepting the merge-request created in the step before. The first command `git glow close release current` closes the release branch with the current version number of the master branch. The second command creates a git tag and pushes it up to the bare repository.
-
+This pipeline job runs when the release branch was successfully merged into the main branch, by accepting the merge-request created in the step before. The first command `git glow close release current` closes the release branch with the current version number of the main branch. The second command creates a git tag and pushes it up to the bare repository.

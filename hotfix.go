@@ -7,6 +7,7 @@ import (
 
 	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 // Hotfix definition
@@ -54,7 +55,8 @@ func HotfixFromBranch(branchName string) (b Branch, err error) {
 // CreationIsAllowedFrom returns wheter branch is allowed to be created
 // from given this source branch
 func (f hotfix) CreationIsAllowedFrom(sourceBranch Branch) bool {
-	if strings.Contains(sourceBranch.ShortBranchName(), "master") {
+	mainBranch := viper.GetString("mainBranch")
+	if strings.Contains(sourceBranch.ShortBranchName(), mainBranch) {
 		return true
 	}
 	return false
@@ -72,17 +74,20 @@ func (f hotfix) CanBePublished() bool {
 
 // CloseBranches returns all branches which this branch have to be merged with
 func (f hotfix) CloseBranches(availableBranches []Branch) []Branch {
+
 	branches := make([]Branch, 0)
 	for _, b := range availableBranches {
 		if strings.Contains(b.BranchName(), "/release/v") {
 			branches = append(branches, b)
 		}
 	}
-	branches = append(branches, NewBranch("develop"))
+	devBranch := viper.GetString("devBranch")
+	branches = append(branches, NewBranch(devBranch))
 	return branches
 }
 
 // PublishBranch returns the publish branch if available
 func (f hotfix) PublishBranch() Branch {
-	return NewBranch("master")
+	mainBranch := viper.GetString("mainBranch")
+	return NewBranch(mainBranch)
 }

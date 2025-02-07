@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 type LocalRepository struct {
@@ -34,7 +36,9 @@ func (r *LocalRepository) Init(pathToBare string) {
 	r.Do("touch subfolder/somefile")
 	r.Do("git add .")
 	r.Do("git commit -m 'initial commit'")
-	r.Do("git push -u origin master")
+
+	mainBranch := viper.GetString("mainBranch")
+	r.Do(fmt.Sprintf("git push -u origin %s", mainBranch))
 }
 
 func (r *LocalRepository) CreateBranch(branch string) {

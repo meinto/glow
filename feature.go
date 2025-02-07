@@ -6,6 +6,7 @@ import (
 
 	l "github.com/meinto/glow/logging"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 // Feature definition
@@ -45,7 +46,8 @@ func FeatureFromBranch(branchName string) (b AuthoredBranch, err error) {
 // from given this source branch
 func (f feature) CreationIsAllowedFrom(sourceBranch Branch) bool {
 	matched, err := regexp.Match(FEATURE_BRANCH_PATTERN, []byte(sourceBranch.BranchName()))
-	return strings.Contains(sourceBranch.ShortBranchName(), "develop") || (matched && err == nil)
+	devBranch := viper.GetString("devBranch")
+	return strings.Contains(sourceBranch.ShortBranchName(), devBranch) || (matched && err == nil)
 }
 
 // CanBeClosed checks if the branch name is a valid
@@ -55,7 +57,8 @@ func (f feature) CanBeClosed() bool {
 
 // CloseBranches returns all branches which this branch have to be merged with
 func (f feature) CloseBranches(availableBranches []Branch) []Branch {
+	devBranch := viper.GetString("devBranch")
 	return []Branch{
-		NewBranch("develop"),
+		NewBranch(devBranch),
 	}
 }
