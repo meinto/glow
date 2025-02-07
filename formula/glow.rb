@@ -5,20 +5,22 @@
 class Glow < Formula
   desc "A cli tool to adapt git-flow"
   homepage "https://github.com/meinto/glow"
-  version "4.3.16"
+  version "5.0.3"
+
+  depends_on "git"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/meinto/glow/releases/download/v4.3.16/glow_4.3.16_darwin_x86_64.tar.gz"
-      sha256 "3d23b87890668a064206da86554ddf43353997ccab2c9a9b63ecb8f013b97ce8"
+      url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ darwin_x86_64.tar.gz"
+      sha256 "d9b4544d55c04efd7985f1be20431ae1ad21c22aeb34e54e9f1e65199d2c91ac"
 
       def install
         bin.install "glow"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/meinto/glow/releases/download/v4.3.16/glow_4.3.16_darwin_arm64.tar.gz"
-      sha256 "dc1990505058e7235bea28ed28d7aa4e78e452afec5a810a8a789dc4d83c1610"
+      url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ darwin_arm64.tar.gz"
+      sha256 "e404d3dea308dd23bc6b10033b5469945072918ff18799216abd4963ef3d3817"
 
       def install
         bin.install "glow"
@@ -27,23 +29,25 @@ class Glow < Formula
   end
 
   on_linux do
-    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/meinto/glow/releases/download/v4.3.16/glow_4.3.16_linux_arm64.tar.gz"
-      sha256 "ca3b3e51e15f7f5d7322fc17ea26e033ced69202079c9002fb83a47833465048"
+    if Hardware::CPU.intel?
+      if Hardware::CPU.is_64_bit?
+        url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ linux_x86_64.tar.gz"
+        sha256 "a8d3cae983866f9813b356ece886602d0ce18dae28c7a3fe1efd0c0d7b6b924c"
 
-      def install
-        bin.install "glow"
+        def install
+          bin.install "glow"
+        end
       end
     end
-    if Hardware::CPU.intel?
-      url "https://github.com/meinto/glow/releases/download/v4.3.16/glow_4.3.16_linux_x86_64.tar.gz"
-      sha256 "68ccebb7e334f6ca9e6c8634867eac521b093099481a422325e2af3876f906d4"
+    if Hardware::CPU.arm?
+      if Hardware::CPU.is_64_bit?
+        url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ linux_arm64.tar.gz"
+        sha256 "e7ca6c36661b02f95bfa4042e9732bfcf028693db2e158070e9969a260dcde73"
 
-      def install
-        bin.install "glow"
+        def install
+          bin.install "glow"
+        end
       end
     end
   end
-
-  depends_on "git"
 end
