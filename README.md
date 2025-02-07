@@ -72,7 +72,7 @@ glow release 1.2.3
 
 ### Publish a release
 
-When you decide that the release is stable and you want to publish it, the following command will create a merge request on the main branch in Gitlab. You can configure the main branch name in the `glow.config.json`.
+When you decide that the release is stable and you want to publish it, the following command will create a merge request on the main branch in Gitlab. You can configure the main branch name in the `glow.config.json`. Default is `master`.
 
 ```bash
 glow publish
@@ -112,7 +112,7 @@ _glow.config.json_
   "versionFile": "VERSION",
   "versionFileType": "raw",
   "logLevel": "info",
-  "mainBranch": "main",
+  "mainBranch": "master",
   "devBranch": "develop"
 }
 ```

@@ -28,6 +28,8 @@ func InitGlobalConfig() {
 		viper.SetDefault("versionFile", "VERSION")
 		viper.SetDefault("logLevel", "info")
 		viper.SetDefault("versionFileType", "raw")
+		viper.SetDefault("mainBranch", "master")
+		viper.SetDefault("devBranch", "develop")
 
 		viper.SetConfigName("glow.config")
 		viper.AddConfigPath(rootRepoPath)
