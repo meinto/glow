@@ -5,22 +5,22 @@
 class Glow < Formula
   desc "A cli tool to adapt git-flow"
   homepage "https://github.com/meinto/glow"
-  version "5.0.3"
+  version "5.0.4"
 
   depends_on "git"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ darwin_x86_64.tar.gz"
-      sha256 "d9b4544d55c04efd7985f1be20431ae1ad21c22aeb34e54e9f1e65199d2c91ac"
+      url "https://github.com/meinto/glow/releases/download/v5.0.4/glow_ darwin_x86_64.tar.gz"
+      sha256 "7a4189af4a1b57e3c7707bb69cb2229df85338b0e50c945c5c745f9b499a4c3c"
 
       def install
         bin.install "glow"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ darwin_arm64.tar.gz"
-      sha256 "e404d3dea308dd23bc6b10033b5469945072918ff18799216abd4963ef3d3817"
+      url "https://github.com/meinto/glow/releases/download/v5.0.4/glow_ darwin_arm64.tar.gz"
+      sha256 "804d0eccddb3cfd1a46a5961093cf21125110e94b22c6ebc977b96938c7f6ff0"
 
       def install
         bin.install "glow"
@@ -31,8 +31,8 @@ class Glow < Formula
   on_linux do
     if Hardware::CPU.intel?
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ linux_x86_64.tar.gz"
-        sha256 "a8d3cae983866f9813b356ece886602d0ce18dae28c7a3fe1efd0c0d7b6b924c"
+        url "https://github.com/meinto/glow/releases/download/v5.0.4/glow_ linux_x86_64.tar.gz"
+        sha256 "a49a4479019810c21d746437617d7a707b5549f2a6181603a049577159b9c244"
 
         def install
           bin.install "glow"
@@ -41,8 +41,8 @@ class Glow < Formula
     end
     if Hardware::CPU.arm?
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/meinto/glow/releases/download/v5.0.3/glow_ linux_arm64.tar.gz"
-        sha256 "e7ca6c36661b02f95bfa4042e9732bfcf028693db2e158070e9969a260dcde73"
+        url "https://github.com/meinto/glow/releases/download/v5.0.4/glow_ linux_arm64.tar.gz"
+        sha256 "d9a0dd6287383e624f20892c8666f9344ceb3d953279b3f08d1376b563077f8c"
 
         def install
           bin.install "glow"
