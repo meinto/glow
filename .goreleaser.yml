@@ -14,12 +14,7 @@ builds:
       - linux
       - windows
 archives:
-  - name_template: >-
-      glow_
-      {{ .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
+  - name_template: 'glow_{{ .Os }}_{{- if eq .Arch "amd64" }}x86_64{{- else if eq .Arch "386" }}i386{{- else }}{{ .Arch }}{{ end }}'
     format_overrides:
       - goos: windows
         formats: ["zip"]
